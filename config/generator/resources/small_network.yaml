@@ -40,7 +40,7 @@ hosts:
     commands:
       - "route add default gw 10.100.0.1 dev eth0"
       - "arp -i eth0 -s 10.100.0.1 08:00:00:00:01:00"
-      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h1' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --config config/generator/out/traffic-generator-config.json &"
+      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h1' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
   h2:
     ipv4:
       ip: 10.200.0.20
@@ -54,7 +54,7 @@ hosts:
     commands:
       - "route add default gw 10.200.1 dev eth0"
       - "arp -i eth0 -s 10.200.0.1 08:00:00:00:04:00"
-      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h2' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --config config/generator/out/traffic-generator-config.json &"
+      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h2' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
   h3:
     ipv4:
       ip: 10.201.0.30
@@ -68,7 +68,7 @@ hosts:
     commands:
       - "route add default gw 10.201.0.1 dev eth0"
       - "arp -i eth0 -s 10.201.0.1 08:00:00:00:04:00"
-      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h3' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --config config/generator/out/traffic-generator-config.json &"
+      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h3' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
   h4:
     ipv4:
       ip: 10.255.0.40
@@ -82,7 +82,7 @@ hosts:
     commands:
       - "route add default gw 10.255.0.1 dev eth0"
       - "arp -i eth0 -s 10.255.0.1 08:00:00:00:06:00"
-      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h4' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --config config/generator/out/traffic-generator-config.json &"
+      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h4' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
 switches:
   s1:
     mac: 08:00:00:00:01:00

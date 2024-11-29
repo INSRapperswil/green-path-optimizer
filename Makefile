@@ -49,26 +49,37 @@ config:
 
 run: build config run-monitoring run-network
 
+run-debug: build config run-monitoring run-network-verbose
+
 ### network tasks ###
 
 build-network:
-	mkdir -p $(P4_BUILD_DIR) $(P4_PCAP_DIR) $(P4_LOG_DIR)
+	mkdir -p $(P4_BUILD_DIR)
 	$(P4C) --p4v 16 $(P4C_ARGS) -o $(P4_BUILD_DIR)/main.json ${P4_DIR}/main.p4
 
-run-network:
-	sudo python3 $(RUN_NETWORK_SCRIPT) -t $(CONFIG_GEN_OUT_DIR)/topology.json $(run_args) -l $(P4_LOG_DIR) -p $(P4_PCAP_DIR) --quiet
+run-network: build config
+	mkdir -p $(P4_LOG_DIR)
+	sudo python3 $(RUN_NETWORK_SCRIPT) -t $(CONFIG_GEN_OUT_DIR)/topology.json $(run_args) -l $(P4_LOG_DIR)
+
+run-network-verbose: build config
+	mkdir -p $(P4_PCAP_DIR) $(P4_LOG_DIR)
+	sudo python3 $(RUN_NETWORK_SCRIPT) -t $(CONFIG_GEN_OUT_DIR)/topology.json $(run_args) -l $(P4_LOG_DIR) -p $(P4_PCAP_DIR) --bmv2-log-console
+
+stop-network:
+	sudo mn -c
 
 ### monitoring tasks ###
 
-run-monitoring:
+run-monitoring: build config
 	sudo docker compose -f monitoring/docker-compose.yaml up --detach
 
 stop-monitoring:
 	sudo docker compose -f monitoring/docker-compose.yaml down
 
-stop: stop-monitoring
+stop: stop-network stop-monitoring
 
-clean:
+
+clean: stop
 	rm -rf ${P4_LOG_DIR} ${P4_BUILD_DIR} ${P4_PCAP_DIR}
 	rm -rf ${CONFIG_LOG_DIR} ${CONFIG_GEN_OUT_DIR}
 	sudo docker volume prune -a

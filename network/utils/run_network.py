@@ -72,7 +72,16 @@ class ExerciseTopo(Topo):
     """The mininet topology class for the P4 tutorial exercises."""
 
     def __init__(
-        self, hosts, switches, links, log_dir, bmv2_exe, bmv2_modules, pcap_dir, **opts
+        self,
+        hosts,
+        switches,
+        links,
+        log_dir,
+        bmv2_exe,
+        bmv2_modules,
+        bmv2_log_console,
+        pcap_dir,
+        **opts
     ):
         Topo.__init__(self, **opts)
         host_links = []
@@ -90,7 +99,7 @@ class ExerciseTopo(Topo):
                 switchClass = configureP4Switch(
                     sw_path=bmv2_exe,
                     json_path=params["program"],
-                    log_console=True,
+                    log_console=bmv2_log_console,
                     pcap_dump=pcap_dir,
                     modules=bmv2_modules,
                 )
@@ -149,6 +158,7 @@ class ExerciseRunner:
         switch_json : string // json of the compiled p4 example
         bmv2_exe    : string // name or path of the p4 switch binary
         bmv2_modules : string // name or path of the bmv2 dynamic libraries
+        bmv2_log_console : bool // enable verbose logging on bmv2 switches
 
         topo : Topo object   // The mininet topology instance
         net : Mininet object // The mininet instance
@@ -175,6 +185,7 @@ class ExerciseRunner:
         bmv2_exe="simple_switch",
         bmv2_modules=None,
         quiet=False,
+        bmv2_log_console=False,
     ):
         """Initializes some attributes and reads the topology json. Does not
         actually run the exercise. Use run_exercise() for that.
@@ -196,18 +207,12 @@ class ExerciseRunner:
         self.hosts = topo["hosts"]
         self.switches = topo["switches"]
         self.links = self.parse_links(topo["links"])
-
-        # Ensure all the needed directories exist and are directories
-        for dir_name in [log_dir, pcap_dir]:
-            if not os.path.isdir(dir_name):
-                if os.path.exists(dir_name):
-                    raise Exception("'%s' exists and is not a directory!" % dir_name)
-                os.mkdir(dir_name)
         self.log_dir = log_dir
         self.pcap_dir = pcap_dir
         self.switch_json = switch_json
         self.bmv2_exe = bmv2_exe
         self.bmv2_modules = bmv2_modules
+        self.bmv2_log_console = bmv2_log_console
 
     def run_exercise(self):
         """Sets up the mininet instance, programs the switches,
@@ -274,7 +279,7 @@ class ExerciseRunner:
         defaultSwitchClass = configureP4Switch(
             sw_path=self.bmv2_exe,
             json_path=self.switch_json,
-            log_console=True,
+            log_console=self.bmv2_log_console,
             pcap_dump=self.pcap_dir,
             modules=self.bmv2_modules,
         )
@@ -286,6 +291,7 @@ class ExerciseRunner:
             self.log_dir,
             self.bmv2_exe,
             self.bmv2_modules,
+            self.bmv2_log_console,
             self.pcap_dir,
         )
 
@@ -405,9 +411,6 @@ class ExerciseRunner:
 
 
 def get_args():
-    cwd = os.getcwd()
-    default_logs = os.path.join(cwd, "logs")
-    default_pcaps = os.path.join(cwd, "pcaps")
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-q",
@@ -425,12 +428,8 @@ def get_args():
         required=False,
         default="./topology.json",
     )
-    parser.add_argument(
-        "-l", "--log-dir", type=str, required=False, default=default_logs
-    )
-    parser.add_argument(
-        "-p", "--pcap-dir", type=str, required=False, default=default_pcaps
-    )
+    parser.add_argument("-l", "--log-dir", type=str, required=False, default=None)
+    parser.add_argument("-p", "--pcap-dir", type=str, required=False, default=None)
     parser.add_argument("-j", "--switch_json", type=str, required=False)
     parser.add_argument(
         "-b",
@@ -447,6 +446,7 @@ def get_args():
         type=str,
         required=False,
     )
+    parser.add_argument("--bmv2-log-console", action="store_true")
     return parser.parse_args()
 
 
@@ -463,6 +463,6 @@ if __name__ == "__main__":
         args.behavioral_exe,
         args.modules,
         args.quiet,
+        args.bmv2_log_console,
     )
-
     exercise.run_exercise()

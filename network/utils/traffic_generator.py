@@ -174,8 +174,6 @@ def load_config_file(config):
 
 # initialize argparse
 def get_args():
-    cwd = os.getcwd()
-    default_logs = os.path.join(cwd, "logs")
     parser = argparse.ArgumentParser(description="Network Traffic Simulator")
     parser.add_argument(
         "--ipv6",
@@ -209,14 +207,7 @@ def get_args():
         type=str,
         required=True,
     )
-    parser.add_argument("--log-dir", type=str, required=False, default=default_logs)
-    parser.add_argument(
-        "--logfile",
-        help="Write a logfile",
-        default=False,
-        required=False,
-        action=argparse.BooleanOptionalAction,
-    )
+    parser.add_argument("--log-dir", type=str, required=False, default=None)
     parser.add_argument(
         "--startup-delay",
         help="Startup delay before starting the traffic generator",
@@ -235,21 +226,18 @@ def get_args():
 def main():
     args = get_args()
 
-    # Make sure required directories exist
-    Path(args.log_dir).mkdir(parents=True, exist_ok=True)
-
     # Configure logging
     current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     log_filename = f"traffic_generator_{args.src}_{current_time}.log"
-    if args.logfile:
+    if args.log_dir is not None:
         logging.basicConfig(
-            level=logging.WARNING,
+            level=logging.INFO,
             format="%(asctime)s - %(levelname)s - %(message)s",
             filename=f"{args.log_dir}/{log_filename}",
         )
     else:
         logging.basicConfig(
-            level=logging.WARNING,
+            level=logging.INFO,
             format="%(asctime)s - %(levelname)s - %(message)s",
             handlers=[logging.StreamHandler()],
         )
