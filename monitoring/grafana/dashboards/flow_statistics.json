@@ -1,0 +1,739 @@
+{
+ "annotations": {
+  "list": [
+   {
+    "builtIn": 1,
+    "datasource": {
+     "type": "grafana",
+     "uid": "-- Grafana --"
+    },
+    "enable": true,
+    "hide": true,
+    "iconColor": "rgba(0, 211, 255, 1)",
+    "name": "Annotations & Alerts",
+    "type": "dashboard"
+   }
+  ]
+ },
+ "editable": true,
+ "fiscalYearStartMonth": 0,
+ "graphTooltip": 0,
+ "id": 1,
+ "links": [],
+ "panels": [
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "description": "",
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "continuous-GrYlRd"
+     },
+     "custom": {
+      "axisBorderShow": false,
+      "axisCenteredZero": false,
+      "axisColorMode": "text",
+      "axisLabel": "",
+      "axisPlacement": "auto",
+      "barAlignment": 0,
+      "drawStyle": "line",
+      "fillOpacity": 20,
+      "gradientMode": "scheme",
+      "hideFrom": {
+       "legend": false,
+       "tooltip": false,
+       "viz": false
+      },
+      "insertNulls": false,
+      "lineInterpolation": "smooth",
+      "lineWidth": 3,
+      "pointSize": 5,
+      "scaleDistribution": {
+       "type": "linear"
+      },
+      "showPoints": "auto",
+      "spanNulls": false,
+      "stacking": {
+       "group": "A",
+       "mode": "none"
+      },
+      "thresholdsStyle": {
+       "mode": "off"
+      }
+     },
+     "displayName": "Average flow efficiency indicator",
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green",
+        "value": null
+       },
+       {
+        "color": "red",
+        "value": 80
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 14,
+    "w": 24,
+    "x": 0,
+    "y": 0
+   },
+   "id": 2,
+   "options": {
+    "legend": {
+     "calcs": [],
+     "displayMode": "list",
+     "placement": "bottom",
+     "showLegend": true
+    },
+    "tooltip": {
+     "mode": "single",
+     "sort": "none"
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x01\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"flow_label\"])\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> drop(columns: [\"type_5051\", \"in_packets\"])\n  |> group()\n  |> aggregateWindow(every: 5m, fn: mean)",
+     "refId": "A"
+    }
+   ],
+   "title": "Network Flow Efficiency (Last 5min Average)",
+   "type": "timeseries"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "description": "",
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "thresholds"
+     },
+     "mappings": [
+      {
+       "options": {
+        "2a00:10c0::a": {
+         "index": 1,
+         "text": "h02"
+        },
+        "2a04:f340::a": {
+         "index": 0,
+         "text": "h01"
+        }
+       },
+       "type": "value"
+      }
+     ],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green",
+        "value": null
+       },
+       {
+        "color": "#EAB839",
+        "value": 20000
+       },
+       {
+        "color": "red",
+        "value": 30000
+       }
+      ]
+     },
+     "unit": "none"
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 18,
+    "w": 10,
+    "x": 0,
+    "y": 14
+   },
+   "id": 6,
+   "options": {
+    "addUrl": false,
+    "cellPadding": 5,
+    "cellSize": 50,
+    "defaultColor": "#948d8d",
+    "inputList": false,
+    "nullColor": "#E6E6E6",
+    "sourceField": "src",
+    "sourceText": "From",
+    "targetField": "dst",
+    "targetText": "To",
+    "txtLength": 50,
+    "txtSize": 10,
+    "valueField": "_value",
+    "valueText": "Current Flow Efficiency"
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x01\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"src\", \"dst\"])\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> aggregateWindow(every: 5m, fn: mean)\n  |> filter(fn: (r) => r[\"_value\"] != 0)\n  |> last()\n  |> group()\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a04:f340::a\" then \"h01\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a04:f340::a\" then \"h01\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:10c0::a\" then \"h02\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:10c0::a\" then \"h02\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:67c:470::a\" then \"h03\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:67c:470::a\" then \"h03\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:c38::a\" then \"h04\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:c38::a\" then \"h04\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a02:2d8::a\" then \"h05\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a02:2d8::a\" then \"h05\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2607:5d00::a\" then \"h06\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2607:5d00::a\" then \"h06\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a05:ff80::a\" then \"h07\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a05:ff80::a\" then \"h07\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a0a:de00::a\" then \"h08\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a0a:de00::a\" then \"h08\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:274::a\" then \"h09\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:274::a\" then \"h09\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:e0::a\" then \"h10\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:e0::a\" then \"h10\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:7f0::a\" then \"h11\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:7f0::a\" then \"h11\" else r.dst }))",
+     "refId": "A"
+    }
+   ],
+   "title": "End to End Flow Efficiency Matrix (Last 5min Average)",
+   "type": "esnet-matrix-panel"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "continuous-GrYlRd"
+     },
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green",
+        "value": null
+       },
+       {
+        "color": "red",
+        "value": 80
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 18,
+    "w": 14,
+    "x": 10,
+    "y": 14
+   },
+   "id": 4,
+   "options": {
+    "displayMode": "basic",
+    "maxVizHeight": 300,
+    "minVizHeight": 16,
+    "minVizWidth": 8,
+    "namePlacement": "auto",
+    "orientation": "horizontal",
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "showUnfilled": true,
+    "sizing": "auto",
+    "valueMode": "color"
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x01\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"flow_label\", \"dst\"])\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> group(columns: [\"dst\"])\n  |> drop(columns: [\"type_5051\", \"in_packets\"])\n  |> aggregateWindow(every: 5m, fn: mean)\n",
+     "refId": "A"
+    }
+   ],
+   "title": "Flow Efficiency by Receiver  (Last 5min Average)",
+   "transformations": [
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a04:f340::a)",
+      "renamePattern": "h01"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a00:10c0::a)",
+      "renamePattern": "h02"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2001:67c:470::a)",
+      "renamePattern": "h03"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a00:c38::a)",
+      "renamePattern": "h04"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a02:2d8::a)",
+      "renamePattern": "h05"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2607:5d00::a)",
+      "renamePattern": "h06"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a05:ff80::a)",
+      "renamePattern": "h07"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a0a:de00::a)",
+      "renamePattern": "h08"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2001:678:274::a)",
+      "renamePattern": "h09"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2001:678:e0::a)",
+      "renamePattern": "h10"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2001:678:7f0::a)",
+      "renamePattern": "h11"
+     }
+    }
+   ],
+   "type": "bargauge"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "palette-classic"
+     },
+     "custom": {
+      "axisBorderShow": false,
+      "axisCenteredZero": false,
+      "axisColorMode": "text",
+      "axisLabel": "Average Flow Efficiency Indicator",
+      "axisPlacement": "auto",
+      "barAlignment": 0,
+      "drawStyle": "line",
+      "fillOpacity": 0,
+      "gradientMode": "none",
+      "hideFrom": {
+       "legend": false,
+       "tooltip": false,
+       "viz": false
+      },
+      "insertNulls": false,
+      "lineInterpolation": "smooth",
+      "lineWidth": 1,
+      "pointSize": 5,
+      "scaleDistribution": {
+       "type": "linear"
+      },
+      "showPoints": "auto",
+      "spanNulls": false,
+      "stacking": {
+       "group": "A",
+       "mode": "none"
+      },
+      "thresholdsStyle": {
+       "mode": "off"
+      }
+     },
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green",
+        "value": null
+       },
+       {
+        "color": "red",
+        "value": 80
+       }
+      ]
+     }
+    },
+    "overrides": [
+     {
+      "__systemRef": "hideSeriesFrom",
+      "matcher": {
+       "id": "byNames",
+       "options": {
+        "mode": "exclude",
+        "names": [
+         "h05",
+         "h11",
+         "h10",
+         "h09",
+         "h08",
+         "h07",
+         "h04",
+         "h03",
+         "h02",
+         "h01"
+        ],
+        "prefix": "All except:",
+        "readOnly": true
+       }
+      },
+      "properties": [
+       {
+        "id": "custom.hideFrom",
+        "value": {
+         "legend": false,
+         "tooltip": false,
+         "viz": true
+        }
+       }
+      ]
+     }
+    ]
+   },
+   "gridPos": {
+    "h": 25,
+    "w": 24,
+    "x": 0,
+    "y": 32
+   },
+   "id": 3,
+   "options": {
+    "legend": {
+     "calcs": [
+      "last",
+      "min",
+      "max",
+      "mean"
+     ],
+     "displayMode": "table",
+     "placement": "bottom",
+     "showLegend": true,
+     "sortBy": "Name",
+     "sortDesc": true
+    },
+    "tooltip": {
+     "mode": "single",
+     "sort": "none"
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x01\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"flow_label\", \"dst\"])\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> group(columns: [\"dst\"])\n  |> drop(columns: [\"type_5051\", \"in_packets\"])\n  |> aggregateWindow(every: 5m, fn: mean)\n",
+     "refId": "A"
+    }
+   ],
+   "title": "Flow Efficiency by Receiver  (Last 5min Average)",
+   "transformations": [
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a04:f340::a)",
+      "renamePattern": "h01"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a00:10c0::a)",
+      "renamePattern": "h02"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2001:67c:470::a)",
+      "renamePattern": "h03"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a00:c38::a)",
+      "renamePattern": "h04"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a02:2d8::a)",
+      "renamePattern": "h05"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2607:5d00::a)",
+      "renamePattern": "h06"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a05:ff80::a)",
+      "renamePattern": "h07"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a0a:de00::a)",
+      "renamePattern": "h08"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2001:678:274::a)",
+      "renamePattern": "h09"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2001:678:e0::a)",
+      "renamePattern": "h10"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2001:678:7f0::a)",
+      "renamePattern": "h11"
+     }
+    }
+   ],
+   "type": "timeseries"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "description": "",
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "palette-classic"
+     },
+     "custom": {
+      "fillOpacity": 80,
+      "gradientMode": "none",
+      "hideFrom": {
+       "legend": false,
+       "tooltip": false,
+       "viz": false
+      },
+      "lineWidth": 1
+     },
+     "displayName": "Number of flows in corresponding efficiency range",
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green"
+       },
+       {
+        "color": "red",
+        "value": 80
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 14,
+    "w": 24,
+    "x": 0,
+    "y": 57
+   },
+   "id": 1,
+   "options": {
+    "legend": {
+     "calcs": [],
+     "displayMode": "list",
+     "placement": "bottom",
+     "showLegend": true
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x01\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"flow_label\"])\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> drop(columns: [\"type_5051\", \"in_packets\"])\n  |> group()",
+     "refId": "A"
+    }
+   ],
+   "title": "Flow Efficiency Indicator Distribution",
+   "type": "histogram"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "thresholds"
+     },
+     "custom": {
+      "align": "left",
+      "cellOptions": {
+       "type": "auto"
+      },
+      "filterable": true,
+      "inspect": false
+     },
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green"
+       },
+       {
+        "color": "red",
+        "value": 80
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 13,
+    "w": 24,
+    "x": 0,
+    "y": 71
+   },
+   "id": 7,
+   "options": {
+    "cellHeight": "sm",
+    "footer": {
+     "countRows": false,
+     "fields": "",
+     "reducer": [
+      "sum"
+     ],
+     "show": false
+    },
+    "showHeader": true,
+    "sortBy": [
+     {
+      "desc": true,
+      "displayName": "Flow Efficiency Indicator"
+     }
+    ]
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x01\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"flow_label\"])\n  |> pivot(rowKey: [\"_time\", \"dst\", \"src\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> drop(columns: [\"type_5051\", \"in_packets\", \"_start\", \"_stop\"])\n  |> group(columns: [\"dst\"])\n  |> sort(columns: [\"_value\"], desc: true)\n  |> unique(column: \"dst\")\n  |> group()\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a04:f340::a\" then \"h01\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a04:f340::a\" then \"h01\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:10c0::a\" then \"h02\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:10c0::a\" then \"h02\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:67c:470::a\" then \"h03\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:67c:470::a\" then \"h03\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:c38::a\" then \"h04\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:c38::a\" then \"h04\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a02:2d8::a\" then \"h05\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a02:2d8::a\" then \"h05\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2607:5d00::a\" then \"h06\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2607:5d00::a\" then \"h06\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a05:ff80::a\" then \"h07\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a05:ff80::a\" then \"h07\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a0a:de00::a\" then \"h08\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a0a:de00::a\" then \"h08\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:274::a\" then \"h09\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:274::a\" then \"h09\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:e0::a\" then \"h10\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:e0::a\" then \"h10\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:7f0::a\" then \"h11\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:7f0::a\" then \"h11\" else r.dst }))",
+     "refId": "A"
+    }
+   ],
+   "title": "Most Inefficient Flow by Destination",
+   "transformations": [
+    {
+     "id": "organize",
+     "options": {
+      "excludeByName": {},
+      "includeByName": {},
+      "indexByName": {
+       "_time": 0,
+       "_value": 4,
+       "dst": 3,
+       "flow_label": 1,
+       "src": 2
+      },
+      "renameByName": {
+       "Destination": "",
+       "Flow Efficiency Value": "",
+       "IPv6 Flow Label": "",
+       "Source": "",
+       "_time": "Timestamp",
+       "_value": "Flow Efficiency Indicator",
+       "dst": "Destination",
+       "flow_label": "IPv6 Flow Label",
+       "src": "Source"
+      }
+     }
+    }
+   ],
+   "type": "table"
+  }
+ ],
+ "refresh": "1m",
+ "schemaVersion": 39,
+ "tags": [],
+ "templating": {
+  "list": []
+ },
+ "time": {
+  "from": "now-1h",
+  "to": "now"
+ },
+ "timepicker": {},
+ "timezone": "browser",
+ "title": "Flow Statistics",
+ "uid": "bdkinnptlkr9ca",
+ "version": 1,
+ "weekStart": ""
+}

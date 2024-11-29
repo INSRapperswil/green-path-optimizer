@@ -1,0 +1,19 @@
+apiVersion: 1
+
+deleteDatasources:
+  - name: influxdb
+    orgId: 1
+
+datasources:
+  - name: influxdb
+    type: influxdb
+    access: proxy
+    orgId: 1
+    url: http://192.168.100.10:8086
+    jsonData:
+      version: Flux
+      organization: OST
+      defaultBucket: network_energy_efficiency_data
+      tlsSkipVerify: true
+    secureJsonData:
+      token: DkX-6JeCjrHwlmbb6Ts2zxnHwFFNery4_YkufMAr4GSiESF187x-C9UkCciWNhfd8JqWro_9fo6-Sz7f3NuYpw==

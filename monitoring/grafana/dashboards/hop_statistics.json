@@ -1,0 +1,814 @@
+{
+ "annotations": {
+  "list": [
+   {
+    "builtIn": 1,
+    "datasource": {
+     "type": "grafana",
+     "uid": "-- Grafana --"
+    },
+    "enable": true,
+    "hide": true,
+    "iconColor": "rgba(0, 211, 255, 1)",
+    "name": "Annotations & Alerts",
+    "type": "dashboard"
+   }
+  ]
+ },
+ "editable": true,
+ "fiscalYearStartMonth": 0,
+ "graphTooltip": 0,
+ "id": 2,
+ "links": [],
+ "panels": [
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "description": "This graph shows the percentage of paths a specific hop was discovered to be the most efficient one. To calculate the percentage of paths only the paths traversing via the specific hop are taken into consideration.\n",
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "continuous-RdYlGr"
+     },
+     "mappings": [
+      {
+       "options": {
+        "1": {
+         "index": 0,
+         "text": "s01"
+        },
+        "2": {
+         "index": 1,
+         "text": "s02"
+        },
+        "3": {
+         "index": 2,
+         "text": "s03"
+        },
+        "4": {
+         "index": 3,
+         "text": "s04"
+        },
+        "11": {
+         "index": 4,
+         "text": "s11"
+        },
+        "12": {
+         "index": 5,
+         "text": "s12"
+        },
+        "13": {
+         "index": 6,
+         "text": "s13"
+        },
+        "14": {
+         "index": 7,
+         "text": "s14"
+        },
+        "15": {
+         "index": 8,
+         "text": "s15"
+        },
+        "16": {
+         "index": 9,
+         "text": "s16"
+        },
+        "17": {
+         "index": 10,
+         "text": "s17"
+        },
+        "18": {
+         "index": 11,
+         "text": "s18"
+        }
+       },
+       "type": "value"
+      }
+     ],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green",
+        "value": null
+       },
+       {
+        "color": "red",
+        "value": 80
+       }
+      ]
+     },
+     "unit": "percent"
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 12,
+    "w": 12,
+    "x": 0,
+    "y": 0
+   },
+   "id": 7,
+   "options": {
+    "displayMode": "lcd",
+    "maxVizHeight": 300,
+    "minVizHeight": 16,
+    "minVizWidth": 8,
+    "namePlacement": "auto",
+    "orientation": "vertical",
+    "reduceOptions": {
+     "calcs": [],
+     "fields": "/^percentage_discovered_total_paths$/",
+     "values": true
+    },
+    "showUnfilled": true,
+    "sizing": "auto",
+    "valueMode": "color"
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "import \"join\"\nnumber_of_paths_via_s01 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"1\" or r.node_02 == \"1\" or r.node_03 == \"1\" or r.node_04 == \"1\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"1\"}))\n\nnumber_of_paths_via_s02 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"2\" or r.node_02 == \"2\" or r.node_03 == \"2\" or r.node_04 == \"2\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"2\"}))\n\nnumber_of_paths_via_s03 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"3\" or r.node_02 == \"3\" or r.node_03 == \"3\" or r.node_04 == \"3\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"3\"}))\n\nnumber_of_paths_via_s04 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"4\" or r.node_02 == \"4\" or r.node_03 == \"4\" or r.node_04 == \"4\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"4\"}))\n\nnumber_of_paths_via_s11 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"11\" or r.node_02 == \"11\" or r.node_03 == \"11\" or r.node_04 == \"11\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"11\"}))\n\nnumber_of_paths_via_s12 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"12\" or r.node_02 == \"12\" or r.node_03 == \"12\" or r.node_04 == \"12\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"12\"}))\n\nnumber_of_paths_via_s13 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"13\" or r.node_02 == \"13\" or r.node_03 == \"13\" or r.node_04 == \"13\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"13\"}))\n\nnumber_of_paths_via_s14 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"14\" or r.node_02 == \"14\" or r.node_03 == \"14\" or r.node_04 == \"14\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"14\"}))\n\nnumber_of_paths_via_s15 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"15\" or r.node_02 == \"15\" or r.node_03 == \"15\" or r.node_04 == \"15\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"15\"}))\n\nnumber_of_paths_via_s16 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"16\" or r.node_02 == \"16\" or r.node_03 == \"16\" or r.node_04 == \"16\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"16\"}))\n\nnumber_of_paths_via_s17 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"17\" or r.node_02 == \"17\" or r.node_03 == \"17\" or r.node_04 == \"17\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"17\"}))\n\nnumber_of_paths_via_s18 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"18\" or r.node_02 == \"18\" or r.node_03 == \"18\" or r.node_04 == \"18\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"18\"}))\n\n\nnumber_of_paths_per_switch = union(\n  tables: [\n    number_of_paths_via_s01,\n    number_of_paths_via_s02,\n    number_of_paths_via_s03,\n    number_of_paths_via_s04,\n    number_of_paths_via_s11,\n    number_of_paths_via_s12,\n    number_of_paths_via_s13,\n    number_of_paths_via_s14,\n    number_of_paths_via_s15,\n    number_of_paths_via_s16,\n    number_of_paths_via_s17,\n    number_of_paths_via_s18,\n  ]\n)\n\nmain = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"aggregator\"] == \"2\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> map(fn: (r) => ({ r with path: r.node_01 + \"-\" + r.node_02 + \"-\" + r.node_03 + \"-\" + r.node_04}))\n  |> keep(columns: [\"_time\", \"path\", \"_value\", \"auxil_data_node_id\"])\n  |> truncateTimeColumn(unit: 1s)\n  |> map(fn: (r) => ({ r with timestamp: r._time }))\n  |> group(columns: [\"path\"])\n  |> aggregateWindow(every: inf, fn: last)\n  |> group(columns: [\"auxil_data_node_id\"])\n  |> aggregateWindow(every: inf, fn: count)\n  |> drop(columns: [\"_time\", \"_start\", \"_stop\"])\n  |> filter(fn: (r) => r[\"_value\"] != 0 and r[\"auxil_data_node_id\"] != \"0\")\n  |> rename(columns: {_value: \"switch_discovered_path_count\"})\n  |> group()\n  |> sort(desc: true)\n\njoin.inner(\n    left: main,\n    right: number_of_paths_per_switch,\n    on: (l, r) => l.auxil_data_node_id == r.switch_id,\n    as: (l, r) => ({l with switch_total_path_count: r.switch_total_path_count}),\n)",
+     "refId": "A"
+    }
+   ],
+   "title": "Efficient Hop Discovery (Relative)",
+   "transformations": [
+    {
+     "id": "calculateField",
+     "options": {
+      "alias": "ratio_discovered_total_paths",
+      "binary": {
+       "left": "switch_discovered_path_count",
+       "operator": "/",
+       "right": "switch_total_path_count"
+      },
+      "mode": "binary",
+      "reduce": {
+       "include": [
+        "switch_discovered_path_count",
+        "switch_total_path_count"
+       ],
+       "reducer": "sum"
+      },
+      "replaceFields": false
+     }
+    },
+    {
+     "id": "calculateField",
+     "options": {
+      "alias": "percentage_discovered_total_paths",
+      "binary": {
+       "left": "ratio_discovered_total_paths",
+       "operator": "*",
+       "right": "100"
+      },
+      "mode": "binary",
+      "reduce": {
+       "include": [
+        "ratio_discovered_total_paths"
+       ],
+       "reducer": "sum"
+      }
+     }
+    },
+    {
+     "id": "filterFieldsByName",
+     "options": {
+      "include": {
+       "names": [
+        "percentage_discovered_total_paths",
+        "auxil_data_node_id"
+       ]
+      }
+     }
+    },
+    {
+     "id": "sortBy",
+     "options": {
+      "fields": {},
+      "sort": [
+       {
+        "desc": true,
+        "field": "percentage_discovered_total_paths"
+       }
+      ]
+     }
+    }
+   ],
+   "type": "bargauge"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "description": "This graph shows the percentage of paths a specific hop was discovered to be the most inefficient one. To calculate the percentage of paths only the paths traversing via the specific hop are taken into consideration.\n",
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "continuous-GrYlRd"
+     },
+     "mappings": [
+      {
+       "options": {
+        "1": {
+         "index": 0,
+         "text": "s01"
+        },
+        "2": {
+         "index": 1,
+         "text": "s02"
+        },
+        "3": {
+         "index": 2,
+         "text": "s03"
+        },
+        "4": {
+         "index": 3,
+         "text": "s04"
+        },
+        "11": {
+         "index": 4,
+         "text": "s11"
+        },
+        "12": {
+         "index": 5,
+         "text": "s12"
+        },
+        "13": {
+         "index": 6,
+         "text": "s13"
+        },
+        "14": {
+         "index": 7,
+         "text": "s14"
+        },
+        "15": {
+         "index": 8,
+         "text": "s15"
+        },
+        "16": {
+         "index": 9,
+         "text": "s16"
+        },
+        "17": {
+         "index": 10,
+         "text": "s17"
+        },
+        "18": {
+         "index": 11,
+         "text": "s18"
+        }
+       },
+       "type": "value"
+      }
+     ],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green",
+        "value": null
+       },
+       {
+        "color": "red",
+        "value": 80
+       }
+      ]
+     },
+     "unit": "percent"
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 12,
+    "w": 12,
+    "x": 12,
+    "y": 0
+   },
+   "id": 8,
+   "options": {
+    "displayMode": "lcd",
+    "maxVizHeight": 300,
+    "minVizHeight": 16,
+    "minVizWidth": 8,
+    "namePlacement": "auto",
+    "orientation": "vertical",
+    "reduceOptions": {
+     "calcs": [],
+     "fields": "/^percentage_discovered_total_paths$/",
+     "values": true
+    },
+    "showUnfilled": true,
+    "sizing": "auto",
+    "valueMode": "color"
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "import \"join\"\nnumber_of_paths_via_s01 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"1\" or r.node_02 == \"1\" or r.node_03 == \"1\" or r.node_04 == \"1\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"1\"}))\n\nnumber_of_paths_via_s02 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"2\" or r.node_02 == \"2\" or r.node_03 == \"2\" or r.node_04 == \"2\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"2\"}))\n\nnumber_of_paths_via_s03 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"3\" or r.node_02 == \"3\" or r.node_03 == \"3\" or r.node_04 == \"3\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"3\"}))\n\nnumber_of_paths_via_s04 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"4\" or r.node_02 == \"4\" or r.node_03 == \"4\" or r.node_04 == \"4\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"4\"}))\n\nnumber_of_paths_via_s11 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"11\" or r.node_02 == \"11\" or r.node_03 == \"11\" or r.node_04 == \"11\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"11\"}))\n\nnumber_of_paths_via_s12 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"12\" or r.node_02 == \"12\" or r.node_03 == \"12\" or r.node_04 == \"12\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"12\"}))\n\nnumber_of_paths_via_s13 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"13\" or r.node_02 == \"13\" or r.node_03 == \"13\" or r.node_04 == \"13\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"13\"}))\n\nnumber_of_paths_via_s14 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"14\" or r.node_02 == \"14\" or r.node_03 == \"14\" or r.node_04 == \"14\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"14\"}))\n\nnumber_of_paths_via_s15 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"15\" or r.node_02 == \"15\" or r.node_03 == \"15\" or r.node_04 == \"15\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"15\"}))\n\nnumber_of_paths_via_s16 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"16\" or r.node_02 == \"16\" or r.node_03 == \"16\" or r.node_04 == \"16\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"16\"}))\n\nnumber_of_paths_via_s17 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"17\" or r.node_02 == \"17\" or r.node_03 == \"17\" or r.node_04 == \"17\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"17\"}))\n\nnumber_of_paths_via_s18 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"18\" or r.node_02 == \"18\" or r.node_03 == \"18\" or r.node_04 == \"18\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"18\"}))\n\n\nnumber_of_paths_per_switch = union(\n  tables: [\n    number_of_paths_via_s01,\n    number_of_paths_via_s02,\n    number_of_paths_via_s03,\n    number_of_paths_via_s04,\n    number_of_paths_via_s11,\n    number_of_paths_via_s12,\n    number_of_paths_via_s13,\n    number_of_paths_via_s14,\n    number_of_paths_via_s15,\n    number_of_paths_via_s16,\n    number_of_paths_via_s17,\n    number_of_paths_via_s18,\n  ]\n)\n\nmain = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"aggregator\"] == \"2\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> map(fn: (r) => ({ r with path: r.node_01 + \"-\" + r.node_02 + \"-\" + r.node_03 + \"-\" + r.node_04}))\n  |> keep(columns: [\"_time\", \"path\", \"_value\", \"auxil_data_node_id\"])\n  |> truncateTimeColumn(unit: 1s)\n  |> map(fn: (r) => ({ r with timestamp: r._time }))\n  |> group(columns: [\"path\"])\n  |> aggregateWindow(every: inf, fn: last)\n  |> group(columns: [\"auxil_data_node_id\"])\n  |> aggregateWindow(every: inf, fn: count)\n  |> drop(columns: [\"_time\", \"_start\", \"_stop\"])\n  |> filter(fn: (r) => r[\"_value\"] != 0 and r[\"auxil_data_node_id\"] != \"0\")\n  |> rename(columns: {_value: \"switch_discovered_path_count\"})\n  |> group()\n  |> sort(desc: true)\n\njoin.inner(\n    left: main,\n    right: number_of_paths_per_switch,\n    on: (l, r) => l.auxil_data_node_id == r.switch_id,\n    as: (l, r) => ({l with switch_total_path_count: r.switch_total_path_count}),\n)",
+     "refId": "A"
+    }
+   ],
+   "title": "Inefficient Hop Discovery (Relative)",
+   "transformations": [
+    {
+     "id": "calculateField",
+     "options": {
+      "alias": "ratio_discovered_total_paths",
+      "binary": {
+       "left": "switch_discovered_path_count",
+       "operator": "/",
+       "right": "switch_total_path_count"
+      },
+      "mode": "binary",
+      "reduce": {
+       "include": [
+        "switch_discovered_path_count",
+        "switch_total_path_count"
+       ],
+       "reducer": "sum"
+      },
+      "replaceFields": false
+     }
+    },
+    {
+     "id": "calculateField",
+     "options": {
+      "alias": "percentage_discovered_total_paths",
+      "binary": {
+       "left": "ratio_discovered_total_paths",
+       "operator": "*",
+       "right": "100"
+      },
+      "mode": "binary",
+      "reduce": {
+       "include": [
+        "ratio_discovered_total_paths"
+       ],
+       "reducer": "sum"
+      }
+     }
+    },
+    {
+     "id": "filterFieldsByName",
+     "options": {
+      "include": {
+       "names": [
+        "percentage_discovered_total_paths",
+        "auxil_data_node_id"
+       ]
+      }
+     }
+    },
+    {
+     "id": "sortBy",
+     "options": {
+      "fields": {},
+      "sort": [
+       {
+        "desc": true,
+        "field": "percentage_discovered_total_paths"
+       }
+      ]
+     }
+    }
+   ],
+   "type": "bargauge"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "description": "This graph shows the absolute number of times a specific hop was discovered to be the most efficient one.",
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "thresholds"
+     },
+     "custom": {
+      "axisBorderShow": false,
+      "axisCenteredZero": false,
+      "axisColorMode": "text",
+      "axisLabel": "",
+      "axisPlacement": "auto",
+      "fillOpacity": 80,
+      "gradientMode": "none",
+      "hideFrom": {
+       "legend": false,
+       "tooltip": false,
+       "viz": false
+      },
+      "lineWidth": 1,
+      "scaleDistribution": {
+       "type": "linear"
+      },
+      "thresholdsStyle": {
+       "mode": "off"
+      }
+     },
+     "displayName": "Number of paths voting for node",
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green",
+        "value": null
+       }
+      ]
+     }
+    },
+    "overrides": [
+     {
+      "matcher": {
+       "id": "byName",
+       "options": "auxil_data_node_id"
+      },
+      "properties": [
+       {
+        "id": "mappings",
+        "value": [
+         {
+          "options": "{ \"1\": {\"index\": 1, \"text\": \"s01\" },\"2\": {\"index\": 2, \"text\": \"s02\" },\"3\": {\"index\": 3, \"text\": \"s03\" },\"4\": {\"index\": 4, \"text\": \"s04\" },\"11\": {\"index\": 5, \"text\": \"s11\" },\"12\": {\"index\": 6, \"text\": \"s12\" },\"13\": {\"index\": 7, \"text\": \"s13\" },\"14\": {\"index\": 8, \"text\": \"s14\" },\"15\": {\"index\": 9, \"text\": \"s15\" },\"16\": {\"index\": 10, \"text\": \"s16\" },\"17\": {\"index\": 11, \"text\": \"s17\" },\"18\": {\"index\": 12, \"text\": \"s18\" }\n}",
+          "type": "value"
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "gridPos": {
+    "h": 12,
+    "w": 12,
+    "x": 0,
+    "y": 12
+   },
+   "id": 2,
+   "options": {
+    "barRadius": 0,
+    "barWidth": 0.97,
+    "fullHighlight": false,
+    "groupWidth": 0.7,
+    "legend": {
+     "calcs": [],
+     "displayMode": "list",
+     "placement": "bottom",
+     "showLegend": true
+    },
+    "orientation": "auto",
+    "showValue": "auto",
+    "stacking": "none",
+    "tooltip": {
+     "mode": "single",
+     "sort": "none"
+    },
+    "xTickLabelRotation": 0,
+    "xTickLabelSpacing": 0
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"aggregator\"] == \"2\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> map(fn: (r) => ({ r with path: r.node_01 + \"-\" + r.node_02 + \"-\" + r.node_03 + \"-\" + r.node_04}))\n  |> keep(columns: [\"_time\", \"path\", \"_value\", \"auxil_data_node_id\"])\n  |> truncateTimeColumn(unit: 1s)\n  |> map(fn: (r) => ({ r with timestamp: r._time }))\n  |> group(columns: [\"path\"])\n  |> aggregateWindow(every: inf, fn: last)\n  |> group(columns: [\"auxil_data_node_id\"])\n  |> aggregateWindow(every: inf, fn: count)\n  |> drop(columns: [\"_time\", \"_start\", \"_stop\"])\n  |> filter(fn: (r) => r[\"_value\"] != 0 and r[\"auxil_data_node_id\"] != \"0\")\n  |> group()\n  |> sort(desc: true)\n",
+     "refId": "A"
+    }
+   ],
+   "title": "Efficient Hop Discovery (Absolute)",
+   "type": "barchart"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "description": "This graph shows the absolute number of times a specific hop was discovered to be the most inefficient one.",
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "thresholds"
+     },
+     "custom": {
+      "axisBorderShow": false,
+      "axisCenteredZero": false,
+      "axisColorMode": "text",
+      "axisLabel": "",
+      "axisPlacement": "auto",
+      "fillOpacity": 80,
+      "gradientMode": "none",
+      "hideFrom": {
+       "legend": false,
+       "tooltip": false,
+       "viz": false
+      },
+      "lineWidth": 1,
+      "scaleDistribution": {
+       "type": "linear"
+      },
+      "thresholdsStyle": {
+       "mode": "off"
+      }
+     },
+     "displayName": "Number of paths voting for node",
+     "mappings": [],
+     "thresholds": {
+      "mode": "percentage",
+      "steps": [
+       {
+        "color": "red",
+        "value": null
+       }
+      ]
+     }
+    },
+    "overrides": [
+     {
+      "matcher": {
+       "id": "byName",
+       "options": "auxil_data_node_id"
+      },
+      "properties": [
+       {
+        "id": "mappings",
+        "value": [
+         {
+          "options": "{ \"1\": {\"index\": 1, \"text\": \"s01\" },\"2\": {\"index\": 2, \"text\": \"s02\" },\"3\": {\"index\": 3, \"text\": \"s03\" },\"4\": {\"index\": 4, \"text\": \"s04\" },\"11\": {\"index\": 5, \"text\": \"s11\" },\"12\": {\"index\": 6, \"text\": \"s12\" },\"13\": {\"index\": 7, \"text\": \"s13\" },\"14\": {\"index\": 8, \"text\": \"s14\" },\"15\": {\"index\": 9, \"text\": \"s15\" },\"16\": {\"index\": 10, \"text\": \"s16\" },\"17\": {\"index\": 11, \"text\": \"s17\" },\"18\": {\"index\": 12, \"text\": \"s18\" }\n}",
+          "type": "value"
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "gridPos": {
+    "h": 12,
+    "w": 12,
+    "x": 12,
+    "y": 12
+   },
+   "id": 3,
+   "options": {
+    "barRadius": 0,
+    "barWidth": 0.97,
+    "fullHighlight": false,
+    "groupWidth": 0.7,
+    "legend": {
+     "calcs": [],
+     "displayMode": "list",
+     "placement": "bottom",
+     "showLegend": true
+    },
+    "orientation": "auto",
+    "showValue": "auto",
+    "stacking": "none",
+    "tooltip": {
+     "mode": "single",
+     "sort": "none"
+    },
+    "xField": "auxil_data_node_id",
+    "xTickLabelRotation": 0,
+    "xTickLabelSpacing": 0
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"aggregator\"] == \"4\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> map(fn: (r) => ({ r with path: r.node_01 + \"-\" + r.node_02 + \"-\" + r.node_03 + \"-\" + r.node_04}))\n  |> keep(columns: [\"_time\", \"path\", \"_value\", \"auxil_data_node_id\"])\n  |> truncateTimeColumn(unit: 1s)\n  |> map(fn: (r) => ({ r with timestamp: r._time }))\n  |> group(columns: [\"path\"])\n  |> aggregateWindow(every: inf, fn: last)\n  |> group(columns: [\"auxil_data_node_id\"])\n  |> aggregateWindow(every: inf, fn: count)\n  |> drop(columns: [\"_time\", \"_start\", \"_stop\"])\n  |> filter(fn: (r) => r[\"_value\"] != 0 and r[\"auxil_data_node_id\"] != \"0\")\n  |> group()\n  |> sort(desc: true)\n",
+     "refId": "A"
+    }
+   ],
+   "title": "Inefficient Hop Discovery (Absolute)",
+   "type": "barchart"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "thresholds"
+     },
+     "custom": {
+      "align": "auto",
+      "cellOptions": {
+       "type": "auto"
+      },
+      "filterable": true,
+      "inspect": false
+     },
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green",
+        "value": null
+       },
+       {
+        "color": "red",
+        "value": 80
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 11,
+    "w": 12,
+    "x": 0,
+    "y": 24
+   },
+   "id": 5,
+   "options": {
+    "cellHeight": "sm",
+    "footer": {
+     "countRows": false,
+     "enablePagination": false,
+     "fields": "",
+     "reducer": [
+      "sum"
+     ],
+     "show": false
+    },
+    "showHeader": true,
+    "sortBy": [
+     {
+      "desc": false,
+      "displayName": "Node ID"
+     }
+    ]
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"aggregator\"] == \"2\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> map(fn: (r) => ({ r with path: r.node_01 + \"-\" + r.node_02 + \"-\" + r.node_03 + \"-\" + r.node_04}))\n  |> keep(columns: [\"_time\", \"path\", \"_value\", \"auxil_data_node_id\"])\n  |> truncateTimeColumn(unit: 1s)\n  |> map(fn: (r) => ({ r with timestamp: r._time }))\n  |> group(columns: [\"path\"])\n  |> aggregateWindow(every: inf, fn: last)\n  |> drop(columns: [\"_time\", \"_start\", \"_stop\"])\n  |> filter(fn: (r) => r[\"_value\"] != 0)\n  |> group()",
+     "refId": "A"
+    }
+   ],
+   "title": "Minimum Hop Transition Cost (HTC) per Path",
+   "transformations": [
+    {
+     "id": "organize",
+     "options": {
+      "excludeByName": {},
+      "includeByName": {},
+      "indexByName": {
+       "_value": 3,
+       "auxil_data_node_id": 2,
+       "path": 1,
+       "timestamp": 0
+      },
+      "renameByName": {
+       "_time": "Timestamp",
+       "_value": "HTC",
+       "auxil_data_node_id": "Node ID",
+       "path": "Path",
+       "timestamp": "Timestamp"
+      }
+     }
+    }
+   ],
+   "type": "table"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "thresholds"
+     },
+     "custom": {
+      "align": "auto",
+      "cellOptions": {
+       "type": "auto"
+      },
+      "filterable": true,
+      "inspect": false
+     },
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green",
+        "value": null
+       },
+       {
+        "color": "red",
+        "value": 80
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 11,
+    "w": 12,
+    "x": 12,
+    "y": 24
+   },
+   "id": 6,
+   "options": {
+    "cellHeight": "sm",
+    "footer": {
+     "countRows": false,
+     "fields": "",
+     "reducer": [
+      "sum"
+     ],
+     "show": false
+    },
+    "showHeader": true,
+    "sortBy": [
+     {
+      "desc": true,
+      "displayName": "Node ID"
+     }
+    ]
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"aggregator\"] == \"4\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> map(fn: (r) => ({ r with path: r.node_01 + \"-\" + r.node_02 + \"-\" + r.node_03 + \"-\" + r.node_04}))\n  |> keep(columns: [\"_time\", \"path\", \"_value\", \"auxil_data_node_id\"])\n  |> truncateTimeColumn(unit: 1s)\n  |> map(fn: (r) => ({ r with timestamp: r._time }))\n  |> group(columns: [\"path\"])\n  |> aggregateWindow(every: inf, fn: last)\n  |> drop(columns: [\"_time\", \"_start\", \"_stop\"])\n  |> filter(fn: (r) => r[\"_value\"] != 0)\n  |> group()",
+     "refId": "A"
+    }
+   ],
+   "title": "Maximum Hop Transition Cost (HTC) per Path",
+   "transformations": [
+    {
+     "id": "organize",
+     "options": {
+      "excludeByName": {},
+      "includeByName": {},
+      "indexByName": {
+       "_time": 1,
+       "_value": 4,
+       "auxil_data_node_id": 3,
+       "path": 2,
+       "timestamp": 0
+      },
+      "renameByName": {
+       "_time": "Timestamp",
+       "_value": "HTC",
+       "auxil_data_node_id": "Node ID",
+       "path": "Path",
+       "timestamp": "Timestamp"
+      }
+     }
+    }
+   ],
+   "type": "table"
+  }
+ ],
+ "refresh": "1m",
+ "schemaVersion": 39,
+ "tags": [],
+ "templating": {
+  "list": []
+ },
+ "time": {
+  "from": "now-15m",
+  "to": "now"
+ },
+ "timepicker": {},
+ "timezone": "browser",
+ "title": "Hop Statistics",
+ "uid": "adll745a9sm4gd",
+ "version": 1,
+ "weekStart": ""
+}

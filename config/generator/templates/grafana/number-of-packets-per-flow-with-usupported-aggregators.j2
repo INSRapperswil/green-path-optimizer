@@ -1,0 +1,24 @@
+from(bucket: "aggregated_data_export")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "netflow")
+  |> filter(fn: (r) => r["type_5053"] != "0")
+  |> filter(fn: (r) => r["_field"] == "type_5051")
+  |> keep(columns: ["_time", "flow_label", "src", "dst", "type_5052", "type_5053"])
+  |> map(fn: (r) => ({ r with _value: int(v: r.type_5053) }))
+  |> group(columns: ["flow_label"])
+  |> truncateTimeColumn(unit: 1s)
+  |> map(fn: (r) => ({ r with timestamp: r._time }))
+  |> group(columns: ["flow_label", "src", "dst", "timestamp"])
+  |> aggregateWindow(every: inf, fn: sum)
+  |> drop(columns: ["_time", "_start", "_stop", "type_5053"])
+  |> filter(fn: (r) => r["_value"] != 0)
+  |> group()
+
+{% for host_name, host_details in hosts.items() %}
+{% if loop.last %}
+  |> map(fn: (r) => ({ r with src: if r.src == "{{ host_details.ipv6.ip }}" then "{{ host_name }}" else r.src }))
+  |> map(fn: (r) => ({ r with dst: if r.dst == "{{ host_details.ipv6.ip }}" then "{{ host_name }}" else r.dst })){% else %}
+  |> map(fn: (r) => ({ r with src: if r.src == "{{ host_details.ipv6.ip }}" then "{{ host_name }}" else r.src }))
+  |> map(fn: (r) => ({ r with dst: if r.dst == "{{ host_details.ipv6.ip }}" then "{{ host_name }}" else r.dst }))
+
+{% endif %}{% endfor %}

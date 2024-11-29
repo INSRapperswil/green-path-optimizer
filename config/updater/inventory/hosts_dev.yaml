@@ -1,0 +1,32 @@
+---
+s1:
+  port: 50051
+  data:
+    device_id: 0
+    runtime_file_name: "s1-runtime.json"
+s2:
+  port: 50052
+  data:
+    device_id: 1
+    runtime_file_name: "s2-runtime.json"
+s3:
+  port: 50053
+  data:
+    device_id: 2
+    runtime_file_name: "s3-runtime.json"
+s4:
+  port: 50054
+  data:
+    device_id: 3
+    runtime_file_name: "s4-runtime.json"
+s5:
+  port: 50055
+  data:
+    device_id: 4
+    runtime_file_name: "s5-runtime.json"
+s6:
+  port: 50056
+  data:
+    device_id: 5
+    runtime_file_name: "s6-runtime.json"
+...

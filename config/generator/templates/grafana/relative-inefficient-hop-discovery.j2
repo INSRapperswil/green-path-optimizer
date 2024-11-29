@@ -1,0 +1,54 @@
+import "join"
+
+{% for switch_name, switch_details in switches.items() %}
+number_of_paths_via_{{ switch_name }} = from(bucket: "raw_data_export")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "netflow")
+  |> filter(fn: (r) => r["flags"] == "0")
+  |> filter(fn: (r) => r["_field"] == "aggregate")
+  |> group(columns: ["node_01", "node_02", "node_03", "node_04"])
+  |> limit(n: 1)
+  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == "{{ switch_details.ioam.node_id }}" or r.node_02 == "{{ switch_details.ioam.node_id }}" or r.node_03 == "{{ switch_details.ioam.node_id }}" or r.node_04 == "{{ switch_details.ioam.node_id }}" then true else false}))
+  |> filter(fn: (r) => r["is_via_switch"] == true)
+  |> group()
+  |> count()
+  |> rename(columns: {_value: "switch_total_path_count"})
+  |> map(fn: (r) => ({ r with switch_id: "{{ switch_details.ioam.node_id }}"}))
+
+{% endfor %}
+
+number_of_paths_per_switch = union(
+  tables: [
+{% for switch_name, switch_details in switches.items() %}
+    number_of_paths_via_{{ switch_name }},
+{% endfor %}
+  ]
+)
+
+main = from(bucket: "raw_data_export")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "netflow")
+  |> filter(fn: (r) => r["aggregator"] == "4")
+  |> filter(fn: (r) => r["flags"] == "0")
+  |> filter(fn: (r) => r["_field"] == "aggregate")
+  |> group(columns: ["node_01", "node_02", "node_03", "node_04"])
+  |> map(fn: (r) => ({ r with path: r.node_01 + "-" + r.node_02 + "-" + r.node_03 + "-" + r.node_04}))
+  |> keep(columns: ["_time", "path", "_value", "auxil_data_node_id"])
+  |> truncateTimeColumn(unit: 1s)
+  |> map(fn: (r) => ({ r with timestamp: r._time }))
+  |> group(columns: ["path"])
+  |> aggregateWindow(every: inf, fn: last)
+  |> group(columns: ["auxil_data_node_id"])
+  |> aggregateWindow(every: inf, fn: count)
+  |> drop(columns: ["_time", "_start", "_stop"])
+  |> filter(fn: (r) => r["_value"] != 0 and r["auxil_data_node_id"] != "0")
+  |> rename(columns: {_value: "switch_discovered_path_count"})
+  |> group()
+  |> sort(desc: true)
+
+join.inner(
+    left: main,
+    right: number_of_paths_per_switch,
+    on: (l, r) => l.auxil_data_node_id == r.switch_id,
+    as: (l, r) => ({l with switch_total_path_count: r.switch_total_path_count}),
+)

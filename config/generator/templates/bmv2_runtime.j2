@@ -1,0 +1,234 @@
+{
+  "target": "bmv2",
+  "p4info": "{{ p4info }}",
+  "bmv2_json": "{{ bmv2_json }}",
+  "table_entries": [
+    {% if switches[switch_name].tables is defined %}
+    {% if tables.ipv4_forwarding.default_action %}
+    {
+      "table": "{{ tables.ipv4_forwarding.name }}",
+      "default_action": true,
+      "action_name": "{{ tables.ipv4_forwarding.default_action }}",
+      "action_params": {}
+    },
+    {% endif %}
+    {% for host_name, forwarding_details in switches[switch_name].tables.ipv4_forwarding.items() %}
+    {
+      "table": "{{ tables.ipv4_forwarding.name }}",
+      "match": {
+        "{{ tables.ipv4_forwarding.match_key }}": [
+          "{{ forwarding_details.ip }}",
+          {{ forwarding_details.prefix_len }}
+        ]
+      },
+      "action_name": "{{ tables.ipv4_forwarding.action_name }}",
+      "action_params": {
+        "mac": "{{ forwarding_details.mac }}",
+        "port": {{ forwarding_details.port }},
+        "route_type": {{ forwarding_details.route_type }}
+      }
+    },
+    {% endfor %}
+    {% if tables.ipv6_forwarding.default_action %}
+    {
+      "table": "{{ tables.ipv6_forwarding.name }}",
+      "default_action": true,
+      "action_name": "{{ tables.ipv6_forwarding.default_action }}",
+      "action_params": {}
+    },
+    {% endif %}
+    {% for host_name, forwarding_details in switches[switch_name].tables.ipv6_forwarding.items() %}
+    {
+      "table": "{{ tables.ipv6_forwarding.name }}",
+      "match": {
+        "{{ tables.ipv6_forwarding.match_key }}": [
+          "{{ forwarding_details.ip }}",
+          {{ forwarding_details.prefix_len }}
+        ]
+      },
+      "action_name": "{{ tables.ipv6_forwarding.action_name }}",
+      "action_params": {
+        "mac": "{{ forwarding_details.mac }}",
+        "port": {{ forwarding_details.port }},
+        "route_type": {{ forwarding_details.route_type }}
+      }
+    },
+    {% endfor %}
+    {% if tables.ipv6_reverse_lookup.default_action %}
+    {
+      "table": "{{ tables.ipv6_reverse_lookup.name }}",
+      "default_action": true,
+      "action_name": "{{ tables.ipv6_reverse_lookup.default_action }}",
+      "action_params": {}
+    },
+    {% endif %}
+    {% for host_name, forwarding_details in switches[switch_name].tables.ipv6_forwarding.items() %}
+    {
+      "table": "{{ tables.ipv6_reverse_lookup.name }}",
+      "match": {
+        "{{ tables.ipv6_reverse_lookup.match_key }}": [
+          "{{ forwarding_details.ip }}",
+          {{ forwarding_details.prefix_len }}
+        ]
+      },
+      "action_name": "{{ tables.ipv6_reverse_lookup.action_name }}",
+      "action_params": {
+        "route_type": {{ forwarding_details.route_type }}
+      }
+    },
+    {% endfor %}
+    {% endif %}
+    {% if tables.hei.default_action %}
+    {
+      "table": "{{ tables.hei.name }}",
+      "default_action": true,
+      "action_name": "{{ tables.hei.default_action }}",
+      "action_params": {}
+    },
+    {% endif %}
+    {% for hei in switches[switch_name].hei %}
+    {
+      "table": "{{ tables.hei.name }}",
+      "match": {
+        "{{ tables.hei.match_key }}": [
+          {{ hei.data_param }}
+        ]
+      },
+      "action_name": "{{ tables.hei.action_name }}",
+      "action_params": {
+        "indicator_value": {{ hei.value }}
+      }
+    },
+    {% endfor %}
+    {% if tables.ingress_lei.default_action %}
+    {
+      "table": "{{ tables.ingress_lei.name }}",
+      "default_action": true,
+      "action_name": "{{ tables.ingress_lei.default_action }}",
+      "action_params": {}
+    },
+    {% endif %}
+    {% for port_number, port_details in switches[switch_name].ports.items() %}
+    {% if port_details.lei %}
+    {
+      "table": "{{ tables.ingress_lei.name }}",
+      "match": {
+        "{{ tables.ingress_lei.match_key }}": [
+          {{ port_number }}
+        ]
+      },
+      "action_name": "{{ tables.ingress_lei.action_name }}",
+      "action_params": {
+        "indicator_value":  {{ port_details.lei }}
+      }
+    },
+    {% endif %}
+    {% endfor %}
+    {% if tables.egress_lei.default_action %}
+    {
+      "table": "{{ tables.egress_lei.name }}",
+      "default_action": true,
+      "action_name": "{{ tables.egress_lei.default_action }}",
+      "action_params": {}
+    },
+    {% endif %}
+    {% for port_number, port_details in switches[switch_name].ports.items() %}
+    {% if port_details.lei %}
+    {
+      "table": "{{ tables.egress_lei.name }}",
+      "match": {
+        "{{ tables.egress_lei.match_key }}": [
+          {{ port_number }}
+        ]
+      },
+      "action_name": "{{ tables.egress_lei.action_name }}",
+      "action_params": {
+        "indicator_value":  {{ port_details.lei }}
+      }
+    },
+    {% endif %}
+    {% endfor %}
+    {% if tables.ioam_aggr_aggregator.default_action %}
+    {
+      "table": "{{tables.ioam_aggr_aggregator.name }}",
+      "default_action": true,
+      "action_name": "{{ tables.ioam_aggr_aggregator.default_action }}",
+      "action_params": {}
+    },
+    {% endif %}
+    {% for aggregator in switches[switch_name].ioam.aggregators %}
+    {
+      "table": "{{ tables.ioam_aggr_aggregator.name }}",
+      "match": {
+        "{{ tables.ioam_aggr_aggregator.match_key }}": [
+          {{ loop.index0 }}
+        ]
+      },
+      "action_name": "{{ tables.ioam_aggr_aggregator.action_name }}",
+      "action_params": {
+        "aggregator":  {{ aggregator }}
+      }
+    },
+    {% endfor %}
+    {% if tables.ioam_aggr_data_param.default_action %}
+    {
+      "table": "{{tables.ioam_aggr_data_param.name }}",
+      "default_action": true,
+      "action_name": "{{ tables.ioam_aggr_data_param.default_action }}",
+      "action_params": {}
+    },
+    {% endif %}
+    {
+      "table": "{{ tables.ioam_aggr_data_param.name }}",
+      "match": {
+        "{{ tables.ioam_aggr_data_param.match_key }}": [
+          "{{ switches[switch_name].mac }}"
+        ]
+      },
+      "action_name": "{{ tables.ioam_aggr_data_param.action_name }}",
+      "action_params": {
+        "data_param":  {{ switches[switch_name].ioam.data_param }}
+      }
+    },
+    {% if tables.ioam_namespace_id.default_action %}
+    {
+      "table": "{{tables.ioam_namespace_id.name }}",
+      "default_action": true,
+      "action_name": "{{ tables.ioam_namespace_id.default_action }}",
+      "action_params": {}
+    },
+    {% endif %}
+    {
+      "table": "{{ tables.ioam_namespace_id.name }}",
+      "match": {
+        "{{ tables.ioam_namespace_id.match_key }}": [
+          "{{ switches[switch_name].mac }}"
+        ]
+      },
+      "action_name": "{{ tables.ioam_namespace_id.action_name }}",
+      "action_params": {
+        "id":  {{ switches[switch_name].ioam.namespace_id }}
+      }
+    },
+    {% if tables.ioam_node_id.default_action %}
+    {
+      "table": "{{tables.ioam_node_id.name }}",
+      "default_action": true,
+      "action_name": "{{ tables.ioam_node_id.default_action }}",
+      "action_params": {}
+    },
+    {% endif %}
+    {
+      "table": "{{ tables.ioam_node_id.name }}",
+      "match": {
+        "{{ tables.ioam_node_id.match_key }}": [
+          "{{ switches[switch_name].mac }}"
+        ]
+      },
+      "action_name": "{{ tables.ioam_node_id.action_name }}",
+      "action_params": {
+        "id":  {{ switches[switch_name].ioam.node_id }}
+      }
+    }
+  ]
+}
