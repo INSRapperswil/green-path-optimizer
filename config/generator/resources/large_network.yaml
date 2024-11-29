@@ -5,7 +5,7 @@ paths:
   # routes from h01
   - from: h01
     to: h02
-    via: [s11, s01, s12]
+    via: [s11, s01, s02, s12]
     return_route: true
   - from: h01
     to: h03
@@ -153,7 +153,7 @@ paths:
     return_route: true
   - from: h05
     to: h08
-    via: [s13, s03, s16]
+    via: [s13, s03, s04, s16]
     return_route: true
   - from: h05
     to: h09

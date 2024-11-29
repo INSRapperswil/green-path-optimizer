@@ -1,8 +1,8 @@
 ---
 data: {
-  p4_repo_path: "/home/boss/git/ba/efficiency-indicator-p4/",
-  runtime_path: "dev-network/", # relative to p4_repo_path
-  mininet_host: 127.0.0.1,
-  checksum_file: "tmp/checksums.json"
+  log_dir: "config/logs/",
+  bmv2_config_path: "config/generator/out/",
+  checksum_file: "config/updater/checksums.json",
+  mininet_host: 127.0.0.1
 }
 ...

@@ -2,13 +2,13 @@
 inventory:
   plugin: SimpleInventory
   options:
-    host_file: "inventory/hosts_simulation.yaml"
-    group_file: "inventory/groups.yaml"
-    defaults_file: "inventory/defaults.yaml"
+    host_file: "config/updater/inventory/hosts_simulation.yaml"
+    group_file: "config/updater/inventory/groups.yaml"
+    defaults_file: "config/updater/inventory/defaults.yaml"
 runner:
   plugin: threaded
   options:
     num_workers: 12
 logging:
   level: DEBUG
-  log_file: "logs/nornir.log"
+  log_file: "config/logs/nornir.log"

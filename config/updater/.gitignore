@@ -1,6 +1,0 @@
-venv
-logs
-tmp
-runtime_shell_test.py
-__pycache__
-bmv2_updater/__pycache__

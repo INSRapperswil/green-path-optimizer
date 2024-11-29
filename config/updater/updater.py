@@ -9,32 +9,30 @@ from nornir.core.task import Task, Result
 from nornir_rich.progress_bar import RichProgressBar
 from nornir_rich.functions import print_result
 
-
 def update_bmv2_runtime(task: Task) -> Result:
-    outfile = f"logs/{task.host}-p4runtime-requests.txt"
-    runtime_file_absolute = path.join(
-        task.host.get("p4_repo_path"),
-        task.host.get("runtime_path"),
+    dump_file = path.join(
+        task.host.get("log_dir"),
+        f"{task.host}-p4runtime-requests.txt"
+    )
+    runtime_file = path.join(
+        task.host.get("bmv2_config_path"),
         task.host.get("runtime_file_name"),
     )
-    runtime_file_relative = path.join(
-        task.host.get("runtime_path"), task.host.get("runtime_file_name")
-    )
 
-    with open(runtime_file_absolute, "r") as f:
+    with open(runtime_file, "r") as f:
         p4runtime_lib.simple_controller.program_switch(
             addr=f"{task.host.get('mininet_host')}:{task.host.get('port')}",
             device_id=task.host.get("device_id"),
             sw_conf_file=f,
-            workdir=task.host.get("p4_repo_path"),
-            proto_dump_fpath=outfile,
-            runtime_json=runtime_file_relative,
+            workdir="/home/boss/git/green-path-optimizer",
+            proto_dump_fpath=dump_file,
+            runtime_json=runtime_file,
         )
     return Result(host=task.host, result="runtime configuration updated", changed=True)
 
 
 def main(verbose: bool = False):
-    nr = InitNornir(config_file="config.yaml", dry_run=False)
+    nr = InitNornir(config_file=f"config/updater/config.yaml", dry_run=False)
 
     # Retrieve the checksums of the previous run on the same host and inventory
     nr.inventory.defaults.data["previous_run_checksums"] = hlp.read_checksums(
@@ -46,8 +44,7 @@ def main(verbose: bool = False):
     # Get a list of all runtime configurations based on the target inventory
     runtime_files = [
         path.join(
-            nr.inventory.defaults.data.get("p4_repo_path"),
-            nr.inventory.defaults.data.get("runtime_path"),
+            nr.inventory.defaults.data.get("bmv2_config_path"),
             host[1].data.get("runtime_file_name"),
         )
         for host in nr.inventory.hosts.items()

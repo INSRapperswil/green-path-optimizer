@@ -1,5 +1,7 @@
 # Project specific entries
 config/generator/out/
+config/updater/checksums.json
+config/logs/
 network/p4/logs/
 network/p4/pcaps/
 
