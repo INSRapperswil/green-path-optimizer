@@ -12,4 +12,5 @@ dependencies = [
     "typer>=0.14.0",
     "protobuf<=3.20.1",
     "setuptools>=75.6.0",
+    "influxdb-client>=1.48.0",
 ]
