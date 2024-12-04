@@ -13,6 +13,11 @@ CONFIG_UPDATE_DIR = config/updater
 CONFIG_UPDATE_CHKSUM_FILE = ${CONFIG_UPDATE_DIR}/checksums.json
 CONFIG_LOG_DIR = config/logs
 
+GRAFANA_ENV_DATASOURCE_DIR = monitoring/grafana/envsubst
+GRAFANA_DATASOURCE_DIR = monitoring/grafana/provisioning/datasources
+INFLUX_ENV_SCRIPT_DIR = monitoring/influx/envsubst
+INFLUX_SCRIPT_DIR = monitoring/influx/entrypoint
+
 P4C = p4c-bm2-ss
 P4C_ARGS += --p4runtime-files $(P4_BUILD_DIR)/main.p4.p4info.txt --emit-externs
 
@@ -38,13 +43,27 @@ ifdef BMV2_EXTERNS
 run_args += -m $(BMV2_EXTERNS)
 endif
 
+# Include environment variables specific to monitoring
+include monitoring/.env
+export
+
 build: build-network
 
 config: generate-config update-config
 
-run: build generate-config run-monitoring run-network
+run: prepare build generate-config run-monitoring run-network
 
-run-debug: build generate-config run-monitoring run-network-verbose
+run-debug: prepare build generate-config run-monitoring run-network-verbose
+
+prepare: setup-env
+
+### prepare tasks ###
+
+setup-env:
+	mkdir -p ${GRAFANA_DATASOURCE_DIR}
+	mkdir -p ${INFLUX_SCRIPT_DIR}
+	envsubst < ${GRAFANA_ENV_DATASOURCE_DIR}/datasource.yaml > ${GRAFANA_DATASOURCE_DIR}/datasource.yaml
+	envsubst < ${INFLUX_ENV_SCRIPT_DIR}/create_buckets.sh > ${INFLUX_SCRIPT_DIR}/create_buckets.sh && chmod +x ${INFLUX_SCRIPT_DIR}/create_buckets.sh
 
 ### config tasks ###
 
@@ -93,4 +112,5 @@ stop: stop-network stop-monitoring
 clean: stop
 	rm -rf ${P4_LOG_DIR} ${P4_BUILD_DIR} ${P4_PCAP_DIR}
 	rm -rf ${CONFIG_LOG_DIR} ${CONFIG_GEN_OUT_DIR} ${CONFIG_UPDATE_CHKSUM_FILE}
+	rm -rf ${GRAFANA_DATASOURCE_DIR} ${INFLUX_SCRIPT_DIR}
 	sudo docker volume prune -a

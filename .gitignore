@@ -4,7 +4,8 @@ config/updater/checksums.json
 config/logs/
 network/p4/logs/
 network/p4/pcaps/
-
+monitoring/grafana/provisioning/datasources/datasource.yaml
+monitoring/influx/entrypoint/create_buckets.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
