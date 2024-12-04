@@ -68,7 +68,7 @@ setup-env:
 ### config tasks ###
 
 generate-config:
-	python3 ${CONFIG_GEN_DIR}/main.py \
+	uv run ${CONFIG_GEN_DIR}/main.py \
 	--template-dir $(CONFIG_GEN_DIR)/templates \
 	--grafana-template-dir $(CONFIG_GEN_DIR)/templates/grafana \
 	--mininet-template mininet_topology.j2 \
