@@ -81,7 +81,7 @@ class ExerciseTopo(Topo):
         bmv2_modules,
         bmv2_log_console,
         pcap_dir,
-        **opts
+        **opts,
     ):
         Topo.__init__(self, **opts)
         host_links = []

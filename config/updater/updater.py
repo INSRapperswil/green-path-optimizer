@@ -9,10 +9,10 @@ from nornir.core.task import Task, Result
 from nornir_rich.progress_bar import RichProgressBar
 from nornir_rich.functions import print_result
 
+
 def update_bmv2_runtime(task: Task) -> Result:
     dump_file = path.join(
-        task.host.get("log_dir"),
-        f"{task.host}-p4runtime-requests.txt"
+        task.host.get("log_dir"), f"{task.host}-p4runtime-requests.txt"
     )
     runtime_file = path.join(
         task.host.get("bmv2_config_path"),

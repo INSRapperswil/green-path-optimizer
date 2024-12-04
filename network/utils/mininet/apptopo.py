@@ -10,7 +10,7 @@ class AppTopo(Topo):
         target=None,
         log_dir="/tmp",
         bws={},
-        **opts
+        **opts,
     ):
         Topo.__init__(self, **opts)
 

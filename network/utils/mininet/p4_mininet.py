@@ -72,7 +72,7 @@ class P4Switch(Switch):
         verbose=False,
         device_id=None,
         enable_debugger=False,
-        **kwargs
+        **kwargs,
     ):
         Switch.__init__(self, name, **kwargs)
         assert sw_path

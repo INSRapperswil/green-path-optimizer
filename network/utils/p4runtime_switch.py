@@ -44,7 +44,7 @@ class P4RuntimeSwitch(P4Switch):
         enable_debugger=False,
         log_file=None,
         modules=None,
-        **kwargs
+        **kwargs,
     ):
         Switch.__init__(self, name, **kwargs)
         assert sw_path
