@@ -24,7 +24,7 @@ def update_bmv2_runtime(task: Task) -> Result:
             addr=f"{task.host.get('mininet_host')}:{task.host.get('port')}",
             device_id=task.host.get("device_id"),
             sw_conf_file=f,
-            workdir="/home/boss/git/green-path-optimizer",
+            workdir=task.host.defaults.data.get("repository_root"),
             proto_dump_fpath=dump_file,
             runtime_json=runtime_file,
         )
