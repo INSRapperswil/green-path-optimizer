@@ -317,7 +317,7 @@
       "type": "influxdb",
       "uid": "P3C6603E967DC8568"
      },
-     "query": "import \"join\"\nnumber_of_paths_via_s01 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"1\" or r.node_02 == \"1\" or r.node_03 == \"1\" or r.node_04 == \"1\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"1\"}))\n\nnumber_of_paths_via_s02 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"2\" or r.node_02 == \"2\" or r.node_03 == \"2\" or r.node_04 == \"2\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"2\"}))\n\nnumber_of_paths_via_s03 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"3\" or r.node_02 == \"3\" or r.node_03 == \"3\" or r.node_04 == \"3\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"3\"}))\n\nnumber_of_paths_via_s04 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"4\" or r.node_02 == \"4\" or r.node_03 == \"4\" or r.node_04 == \"4\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"4\"}))\n\nnumber_of_paths_via_s11 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"11\" or r.node_02 == \"11\" or r.node_03 == \"11\" or r.node_04 == \"11\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"11\"}))\n\nnumber_of_paths_via_s12 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"12\" or r.node_02 == \"12\" or r.node_03 == \"12\" or r.node_04 == \"12\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"12\"}))\n\nnumber_of_paths_via_s13 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"13\" or r.node_02 == \"13\" or r.node_03 == \"13\" or r.node_04 == \"13\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"13\"}))\n\nnumber_of_paths_via_s14 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"14\" or r.node_02 == \"14\" or r.node_03 == \"14\" or r.node_04 == \"14\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"14\"}))\n\nnumber_of_paths_via_s15 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"15\" or r.node_02 == \"15\" or r.node_03 == \"15\" or r.node_04 == \"15\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"15\"}))\n\nnumber_of_paths_via_s16 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"16\" or r.node_02 == \"16\" or r.node_03 == \"16\" or r.node_04 == \"16\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"16\"}))\n\nnumber_of_paths_via_s17 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"17\" or r.node_02 == \"17\" or r.node_03 == \"17\" or r.node_04 == \"17\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"17\"}))\n\nnumber_of_paths_via_s18 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"18\" or r.node_02 == \"18\" or r.node_03 == \"18\" or r.node_04 == \"18\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"18\"}))\n\n\nnumber_of_paths_per_switch = union(\n  tables: [\n    number_of_paths_via_s01,\n    number_of_paths_via_s02,\n    number_of_paths_via_s03,\n    number_of_paths_via_s04,\n    number_of_paths_via_s11,\n    number_of_paths_via_s12,\n    number_of_paths_via_s13,\n    number_of_paths_via_s14,\n    number_of_paths_via_s15,\n    number_of_paths_via_s16,\n    number_of_paths_via_s17,\n    number_of_paths_via_s18,\n  ]\n)\n\nmain = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"aggregator\"] == \"2\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> map(fn: (r) => ({ r with path: r.node_01 + \"-\" + r.node_02 + \"-\" + r.node_03 + \"-\" + r.node_04}))\n  |> keep(columns: [\"_time\", \"path\", \"_value\", \"auxil_data_node_id\"])\n  |> truncateTimeColumn(unit: 1s)\n  |> map(fn: (r) => ({ r with timestamp: r._time }))\n  |> group(columns: [\"path\"])\n  |> aggregateWindow(every: inf, fn: last)\n  |> group(columns: [\"auxil_data_node_id\"])\n  |> aggregateWindow(every: inf, fn: count)\n  |> drop(columns: [\"_time\", \"_start\", \"_stop\"])\n  |> filter(fn: (r) => r[\"_value\"] != 0 and r[\"auxil_data_node_id\"] != \"0\")\n  |> rename(columns: {_value: \"switch_discovered_path_count\"})\n  |> group()\n  |> sort(desc: true)\n\njoin.inner(\n    left: main,\n    right: number_of_paths_per_switch,\n    on: (l, r) => l.auxil_data_node_id == r.switch_id,\n    as: (l, r) => ({l with switch_total_path_count: r.switch_total_path_count}),\n)",
+     "query": "import \"join\"\n\nnumber_of_paths_via_s01 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"1\" or r.node_02 == \"1\" or r.node_03 == \"1\" or r.node_04 == \"1\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"1\"}))\n\nnumber_of_paths_via_s02 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"2\" or r.node_02 == \"2\" or r.node_03 == \"2\" or r.node_04 == \"2\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"2\"}))\n\nnumber_of_paths_via_s03 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"3\" or r.node_02 == \"3\" or r.node_03 == \"3\" or r.node_04 == \"3\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"3\"}))\n\nnumber_of_paths_via_s04 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"4\" or r.node_02 == \"4\" or r.node_03 == \"4\" or r.node_04 == \"4\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"4\"}))\n\nnumber_of_paths_via_s11 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"11\" or r.node_02 == \"11\" or r.node_03 == \"11\" or r.node_04 == \"11\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"11\"}))\n\nnumber_of_paths_via_s12 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"12\" or r.node_02 == \"12\" or r.node_03 == \"12\" or r.node_04 == \"12\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"12\"}))\n\nnumber_of_paths_via_s13 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"13\" or r.node_02 == \"13\" or r.node_03 == \"13\" or r.node_04 == \"13\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"13\"}))\n\nnumber_of_paths_via_s14 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"14\" or r.node_02 == \"14\" or r.node_03 == \"14\" or r.node_04 == \"14\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"14\"}))\n\nnumber_of_paths_via_s15 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"15\" or r.node_02 == \"15\" or r.node_03 == \"15\" or r.node_04 == \"15\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"15\"}))\n\nnumber_of_paths_via_s16 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"16\" or r.node_02 == \"16\" or r.node_03 == \"16\" or r.node_04 == \"16\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"16\"}))\n\nnumber_of_paths_via_s17 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"17\" or r.node_02 == \"17\" or r.node_03 == \"17\" or r.node_04 == \"17\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"17\"}))\n\nnumber_of_paths_via_s18 = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> limit(n: 1)\n  |> map(fn: (r) => ({ r with is_via_switch: if r.node_01 == \"18\" or r.node_02 == \"18\" or r.node_03 == \"18\" or r.node_04 == \"18\" then true else false}))\n  |> filter(fn: (r) => r[\"is_via_switch\"] == true)\n  |> group()\n  |> count()\n  |> rename(columns: {_value: \"switch_total_path_count\"})\n  |> map(fn: (r) => ({ r with switch_id: \"18\"}))\n\n\nnumber_of_paths_per_switch = union(\n  tables: [\n    number_of_paths_via_s01,\n    number_of_paths_via_s02,\n    number_of_paths_via_s03,\n    number_of_paths_via_s04,\n    number_of_paths_via_s11,\n    number_of_paths_via_s12,\n    number_of_paths_via_s13,\n    number_of_paths_via_s14,\n    number_of_paths_via_s15,\n    number_of_paths_via_s16,\n    number_of_paths_via_s17,\n    number_of_paths_via_s18,\n  ]\n)\n\nmain = from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"aggregator\"] == \"4\")\n  |> filter(fn: (r) => r[\"flags\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"node_01\", \"node_02\", \"node_03\", \"node_04\"])\n  |> map(fn: (r) => ({ r with path: r.node_01 + \"-\" + r.node_02 + \"-\" + r.node_03 + \"-\" + r.node_04}))\n  |> keep(columns: [\"_time\", \"path\", \"_value\", \"auxil_data_node_id\"])\n  |> truncateTimeColumn(unit: 1s)\n  |> map(fn: (r) => ({ r with timestamp: r._time }))\n  |> group(columns: [\"path\"])\n  |> aggregateWindow(every: inf, fn: last)\n  |> group(columns: [\"auxil_data_node_id\"])\n  |> aggregateWindow(every: inf, fn: count)\n  |> drop(columns: [\"_time\", \"_start\", \"_stop\"])\n  |> filter(fn: (r) => r[\"_value\"] != 0 and r[\"auxil_data_node_id\"] != \"0\")\n  |> rename(columns: {_value: \"switch_discovered_path_count\"})\n  |> group()\n  |> sort(desc: true)\n\njoin.inner(\n    left: main,\n    right: number_of_paths_per_switch,\n    on: (l, r) => l.auxil_data_node_id == r.switch_id,\n    as: (l, r) => ({l with switch_total_path_count: r.switch_total_path_count}),\n)",
      "refId": "A"
     }
    ],
@@ -442,7 +442,56 @@
         "id": "mappings",
         "value": [
          {
-          "options": "{ \"1\": {\"index\": 1, \"text\": \"s01\" },\"2\": {\"index\": 2, \"text\": \"s02\" },\"3\": {\"index\": 3, \"text\": \"s03\" },\"4\": {\"index\": 4, \"text\": \"s04\" },\"11\": {\"index\": 5, \"text\": \"s11\" },\"12\": {\"index\": 6, \"text\": \"s12\" },\"13\": {\"index\": 7, \"text\": \"s13\" },\"14\": {\"index\": 8, \"text\": \"s14\" },\"15\": {\"index\": 9, \"text\": \"s15\" },\"16\": {\"index\": 10, \"text\": \"s16\" },\"17\": {\"index\": 11, \"text\": \"s17\" },\"18\": {\"index\": 12, \"text\": \"s18\" }\n}",
+          "options": {
+           "1": {
+            "index": 0,
+            "text": "s01"
+           },
+           "2": {
+            "index": 1,
+            "text": "s02"
+           },
+           "3": {
+            "index": 2,
+            "text": "s03"
+           },
+           "4": {
+            "index": 3,
+            "text": "s04"
+           },
+           "11": {
+            "index": 4,
+            "text": "s11"
+           },
+           "12": {
+            "index": 5,
+            "text": "s12"
+           },
+           "13": {
+            "index": 6,
+            "text": "s13"
+           },
+           "14": {
+            "index": 7,
+            "text": "s14"
+           },
+           "15": {
+            "index": 8,
+            "text": "s15"
+           },
+           "16": {
+            "index": 9,
+            "text": "s16"
+           },
+           "17": {
+            "index": 10,
+            "text": "s17"
+           },
+           "18": {
+            "index": 11,
+            "text": "s18"
+           }
+          },
           "type": "value"
          }
         ]
@@ -548,7 +597,56 @@
         "id": "mappings",
         "value": [
          {
-          "options": "{ \"1\": {\"index\": 1, \"text\": \"s01\" },\"2\": {\"index\": 2, \"text\": \"s02\" },\"3\": {\"index\": 3, \"text\": \"s03\" },\"4\": {\"index\": 4, \"text\": \"s04\" },\"11\": {\"index\": 5, \"text\": \"s11\" },\"12\": {\"index\": 6, \"text\": \"s12\" },\"13\": {\"index\": 7, \"text\": \"s13\" },\"14\": {\"index\": 8, \"text\": \"s14\" },\"15\": {\"index\": 9, \"text\": \"s15\" },\"16\": {\"index\": 10, \"text\": \"s16\" },\"17\": {\"index\": 11, \"text\": \"s17\" },\"18\": {\"index\": 12, \"text\": \"s18\" }\n}",
+          "options": {
+           "1": {
+            "index": 0,
+            "text": "s01"
+           },
+           "2": {
+            "index": 1,
+            "text": "s02"
+           },
+           "3": {
+            "index": 2,
+            "text": "s03"
+           },
+           "4": {
+            "index": 3,
+            "text": "s04"
+           },
+           "11": {
+            "index": 4,
+            "text": "s11"
+           },
+           "12": {
+            "index": 5,
+            "text": "s12"
+           },
+           "13": {
+            "index": 6,
+            "text": "s13"
+           },
+           "14": {
+            "index": 7,
+            "text": "s14"
+           },
+           "15": {
+            "index": 8,
+            "text": "s15"
+           },
+           "16": {
+            "index": 9,
+            "text": "s16"
+           },
+           "17": {
+            "index": 10,
+            "text": "s17"
+           },
+           "18": {
+            "index": 11,
+            "text": "s18"
+           }
+          },
           "type": "value"
          }
         ]

@@ -61,7 +61,7 @@ def insert_mapping_at_index(data, rendered, index):
     # replace the mapping of the dashboard with the give index
     data["panels"][index]["fieldConfig"]["overrides"][0]["properties"][0]["value"][0][
         "options"
-    ] = rendered
+    ] = json.loads(rendered)
     return data
 
 

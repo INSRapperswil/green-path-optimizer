@@ -1,3 +1,3 @@
-{ {% for switch_name, switch_details in switches.items() %}{% if loop.last %}"{{ switch_details.ioam.node_id }}": {"index": {{ loop.index }}, "text": "{{ switch_name }}" }
-{% else %}"{{ switch_details.ioam.node_id }}": {"index": {{ loop.index }}, "text": "{{ switch_name }}" },{% endif %}
+{ {% for switch_name, switch_details in switches.items() %}{% if loop.last %}"{{ switch_details.ioam.node_id }}": {"index": {{ loop.index - 1 }}, "text": "{{ switch_name }}" }
+{% else %}"{{ switch_details.ioam.node_id }}": {"index": {{ loop.index - 1 }}, "text": "{{ switch_name }}" },{% endif %}
 {% endfor %}}
