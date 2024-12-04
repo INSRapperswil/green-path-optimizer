@@ -2,236 +2,125 @@
 p4info: network/p4/build/main.p4.p4info.txt
 bmv2_json: network/p4/build/main.json
 paths:
-  # routes from h01
-  - from: h01
-    to: h02
-    via: [s11, s01, s02, s12]
-    return_route: true
-  - from: h01
-    to: h03
-    via: [s11, s02, s12]
-    return_route: true
-  - from: h01
-    to: h04
-    via: [s11, s02, s13]
-    return_route: true
-  - from: h01
-    to: h05
-    via: [s11, s02, s13]
-    return_route: true
-  - from: h01
-    to: h06
-    via: [s11, s02, s14]
-    return_route: true
-  - from: h01
-    to: h07
-    via: [s11, s02, s03, s15]
-    return_route: true
-  - from: h01
-    to: h08
-    via: [s11, s01, s04, s16]
-    return_route: true
-  - from: h01
-    to: h09
-    via: [s11, s01, s17]
-    return_route: true
-  - from: h01
-    to: h10
-    via: [s11, s01, s17]
-    return_route: true
-  - from: h01
-    to: h11
-    via: [s11, s01, s18]
-    return_route: true
-  # routes from h02
-  - from: h02
-    to: h03
-    via: [s12]
-    return_route: true
-  - from: h02
-    to: h04
-    via: [s12, s02, s13]
-    return_route: true
-  - from: h02
-    to: h05
-    via: [s12, s02, s13]
-    return_route: true
-  - from: h02
-    to: h06
-    via: [s12, s02, s14]
-    return_route: true
-  - from: h02
-    to: h07
-    via: [s12, s02, s03, s15]
-    return_route: true
-  - from: h02
-    to: h08
-    via: [s12, s01, s04, s16]
-    return_route: true
-  - from: h02
-    to: h09
-    via: [s12, s01, s17]
-    return_route: true
-  - from: h02
-    to: h10
-    via: [s12, s01, s17]
-    return_route: true
-  - from: h02
-    to: h11
-    via: [s12, s01, s18]
-    return_route: true
-  # routes from h03
-  - from: h03
-    to: h04
-    via: [s12, s02, s13]
-    return_route: true
-  - from: h03
-    to: h05
-    via: [s12, s02, s13]
-    return_route: true
-  - from: h03
-    to: h06
-    via: [s12, s02, s14]
-    return_route: true
-  - from: h03
-    to: h07
-    via: [s12, s02, s03, s15]
-    return_route: true
-  - from: h03
-    to: h08
-    via: [s12, s01, s04, s16]
-    return_route: true
-  - from: h03
-    to: h09
-    via: [s12, s01, s17]
-    return_route: true
-  - from: h03
-    to: h10
-    via: [s12, s01, s17]
-    return_route: true
-  - from: h03
-    to: h11
-    via: [s12, s01, s18]
-    return_route: true
-  # routes from h04
-  - from: h04
-    to: h05
-    via: [s13]
-    return_route: true
-  - from: h04
-    to: h06
-    via: [s13, s03, s14]
-    return_route: true
-  - from: h04
-    to: h07
-    via: [s13, s03, s15]
-    return_route: true
-  - from: h04
-    to: h08
-    via: [s13, s03, s16]
-    return_route: true
-  - from: h04
-    to: h09
-    via: [s13, s03, s04, s17]
-    return_route: true
-  - from: h04
-    to: h10
-    via: [s13, s03, s04, s17]
-    return_route: true
-  - from: h04
-    to: h11
-    via: [s13, s03, s04, s18]
-    return_route: true
-  # routes from h05
-  - from: h05
-    to: h06
-    via: [s13, s03, s14]
-    return_route: true
-  - from: h05
-    to: h07
-    via: [s13, s03, s15]
-    return_route: true
-  - from: h05
-    to: h08
-    via: [s13, s03, s04, s16]
-    return_route: true
-  - from: h05
-    to: h09
-    via: [s13, s03, s04, s17]
-    return_route: true
-  - from: h05
-    to: h10
-    via: [s13, s03, s04, s17]
-    return_route: true
-  - from: h05
-    to: h11
-    via: [s13, s03, s04, s18]
-    return_route: true
-  # routes from h06
-  - from: h06
-    to: h07
-    via: [s14, s03, s15]
-    return_route: true
-  - from: h06
-    to: h08
-    via: [s14, s03, s16]
-    return_route: true
-  - from: h06
-    to: h09
-    via: [s14, s03, s04, s17]
-    return_route: true
-  - from: h06
-    to: h10
-    via: [s14, s03, s04, s17]
-    return_route: true
-  - from: h06
-    to: h11
-    via: [s14, s03, s04, s18]
-    return_route: true
-  # routes from h07
-  - from: h07
-    to: h08
-    via: [s15, s03, s16]
-    return_route: true
-  - from: h07
-    to: h09
-    via: [s15, s04, s17]
-    return_route: true
-  - from: h07
-    to: h10
-    via: [s15, s04, s17]
-    return_route: true
-  - from: h07
-    to: h11
-    via: [s15, s04, s18]
-    return_route: true
-  # routes from h08
-  - from: h08
-    to: h09
-    via: [s16, s04, s17]
-    return_route: true
-  - from: h08
-    to: h10
-    via: [s16, s04, s17]
-    return_route: true
-  - from: h08
-    to: h11
-    via: [s16, s04, s18]
-    return_route: true
-  # routes from h09
-  - from: h09
-    to: h10
-    via: [s17]
-    return_route: true
-  - from: h09
-    to: h11
-    via: [s17, s01, s18]
-    return_route: true
-  # routes from h10
-  - from: h10
-    to: h11
-    via: [s17, s01, s18]
-    return_route: true
+  # routes from s11
+  - ingress: s11
+    egress: s12
+    via: [s01]
+    symmetric: true
+  - ingress: s11
+    egress: s13
+    via: [s01, s03]
+    symmetric: true
+  - ingress: s11
+    egress: s14
+    via: [s02]
+    symmetric: true
+  - ingress: s11
+    egress: s15
+    via: [s01, s03]
+    symmetric: true
+  - ingress: s11
+    egress: s16
+    via: [s01, s04]
+    symmetric: true
+  - ingress: s11
+    egress: s17
+    via: [s01]
+    symmetric: true
+  - ingress: s11
+    egress: s18
+    via: [s01]
+    symmetric: true
+  # routes from s12
+  - ingress: s12
+    egress: s13
+    via: [s02]
+    symmetric: true
+  - ingress: s12
+    egress: s14
+    via: [s02]
+    symmetric: true
+  - ingress: s12
+    egress: s15
+    via: [s02, s03]
+    symmetric: true
+  - ingress: s12
+    egress: s16
+    via: [s01, s04]
+    symmetric: true
+  - ingress: s12
+    egress: s17
+    via: [s01]
+    symmetric: true
+  - ingress: s12
+    egress: s18
+    via: [s01]
+    symmetric: true
+  # routes from s13
+  - ingress: s13
+    egress: s14
+    via: [s03]
+    symmetric: true
+  - ingress: s13
+    egress: s15
+    via: [s03]
+    symmetric: true
+  - ingress: s13
+    egress: s16
+    via: [s03]
+    symmetric: true
+  - ingress: s13
+    egress: s17
+    via: [s03, s04]
+    symmetric: true
+  - ingress: s13
+    egress: s18
+    via: [s03, s04]
+    symmetric: true
+    # routes from s14
+  - ingress: s14
+    egress: s15
+    via: [s03]
+    symmetric: true
+  - ingress: s14
+    egress: s16
+    via: [s03]
+    symmetric: true
+  - ingress: s14
+    egress: s17
+    via: [s03, s04]
+    symmetric: true
+  - ingress: s14
+    egress: s18
+    via: [s03, s04]
+    symmetric: true
+    # routes from s15
+  - ingress: s15
+    egress: s16
+    via: [s04]
+    symmetric: true
+  - ingress: s15
+    egress: s17
+    via: [s04]
+    symmetric: true
+  - ingress: s15
+    egress: s18
+    via: [s04]
+    symmetric: true
+    # routes from s16
+  - ingress: s16
+    egress: s17
+    via: [s04]
+    symmetric: true
+  - ingress: s16
+    egress: s18
+    via: [s04]
+    symmetric: true
+    # routes from s16
+  - ingress: s17
+    egress: s18
+    via: [s04]
+    symmetric: true
 hosts:
   h01:
     ipv4:
@@ -428,7 +317,7 @@ switches:
     mac: 08:CC:00:00:00:02
     hei:
       - data_param: 255
-        value: 2000
+        value: 200000
     ioam:
       namespace_id: 10
       node_id: 2

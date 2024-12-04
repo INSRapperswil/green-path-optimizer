@@ -2,30 +2,18 @@
 p4info: network/p4/build/main.p4.p4info.txt
 bmv2_json: network/p4/build/main.json
 paths:
-  - from: h1
-    to: h2
-    via: [s1, s3, s4]
-    return_route: true
-  - from: h1
-    to: h3
-    via: [s1, s3, s4]
-    return_route: true
-  - from: h1
-    to: h4
-    via: [s1, s2, s4, s5, s6]
-    return_route: true
-  - from: h2
-    to: h3
-    via: [s4]
-    return_route: true
-  - from: h2
-    to: h4
-    via: [s4, s5, s6]
-    return_route: true
-  - from: h3
-    to: h4
-    via: [s4, s5, s6]
-    return_route: true
+  - ingress: s1
+    egress: s4
+    via: [s3]
+    symmetric: true
+  - ingress: s1
+    egress: s6
+    via: [s3, s4, s5]
+    symmetric: true
+  - ingress: s4
+    egress: s6
+    via: [s5]
+    symmetric: true
 hosts:
   h1:
     ipv4:

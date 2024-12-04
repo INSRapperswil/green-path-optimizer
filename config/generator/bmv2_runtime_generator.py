@@ -1,31 +1,40 @@
 import logging
 
 
-def get_next_hop(switch, switch_list):
-    for i, s in enumerate(switch_list):
+def get_next_hop(switch, path):
+    complete_path = [path["ingress"]] + path["via"] + [path["egress"]]
+    for i, s in enumerate(complete_path):
         if s == switch:
-            return switch_list[i + 1]
+            return complete_path[i + 1]
 
 
-def get_egress_port(switches, switch_name, path, is_last_hop):
+def get_egress_port(switches, switch_name, host_name, path, is_last_hop):
     neighbor = None
 
     if is_last_hop:
-        neighbor = path["to"]
+        neighbor = host_name
     else:
-        neighbor = get_next_hop(switch_name, path["via"])
+        neighbor = get_next_hop(switch_name, path)
 
     for port_number, port_details in switches[switch_name]["ports"].items():
         if port_details["neighbor"] == neighbor:
             return port_number
 
 
-def get_ip_table_entry(resources, switch_name, path, ip_version):
+def get_connected_hosts(switch_name, resources):
+    connected_hosts = []
+    for _, port_details in resources["switches"][switch_name]["ports"].items():
+        if port_details["neighbor"].startswith("h"):
+            connected_hosts.append(port_details["neighbor"])
+    return connected_hosts
+
+
+def get_ip_table_entry(resources, switch_name, host_name, path, ip_version):
     logging.info(
         "Adding IPv%s configuration for path from %s to %s to switch %s",
         ip_version,
-        path["from"],
-        path["to"],
+        path["ingress"],
+        path["egress"],
         switch_name,
     )
 
@@ -36,7 +45,7 @@ def get_ip_table_entry(resources, switch_name, path, ip_version):
         "mac": None,
         "route_type": None,
     }
-    host_details = resources["hosts"][path["to"]]
+    host_details = resources["hosts"][host_name]
     switch_details = resources["switches"][switch_name]
 
     # Return in case no configuration is available for specified IP version
@@ -44,27 +53,18 @@ def get_ip_table_entry(resources, switch_name, path, ip_version):
         logging.warning(
             "No IPv%s configuration available for destination host %s",
             ip_version,
-            path["to"],
-        )
-        return None
-
-    if path["to"] in switch_details["tables"][f"ipv{ip_version}_forwarding"]:
-        logging.warning(
-            "Switch %s already has an IPv%s route to %s -> not adding an additional route",
-            switch_name,
-            ip_version,
-            path["to"],
+            host_name,
         )
         return None
 
     # Check if switch is last hop
     is_last_hop = False
-    if switch_name == path["via"][-1]:
+    if switch_name == path["egress"]:
         logging.info(
             "Switch %s is the last hop in path from %s to %s",
             switch_name,
-            path["from"],
-            path["to"],
+            path["ingress"],
+            path["egress"],
         )
         is_last_hop = True
 
@@ -77,28 +77,74 @@ def get_ip_table_entry(resources, switch_name, path, ip_version):
     else:
         table_entry["ip"] = host_details[f"ipv{ip_version}"]["net"]
         table_entry["prefix_len"] = host_details[f"ipv{ip_version}"]["prefix_len"]
-        table_entry["mac"] = resources["switches"][
-            get_next_hop(switch_name, path["via"])
-        ]["mac"]
+        table_entry["mac"] = resources["switches"][get_next_hop(switch_name, path)][
+            "mac"
+        ]
         table_entry["route_type"] = 1
 
     table_entry["port"] = get_egress_port(
-        resources["switches"], switch_name, path, is_last_hop
+        resources["switches"], switch_name, host_name, path, is_last_hop
     )
+
+    # Check if switch already has a an entry for the destination via the specific port
+    if host_name in switch_details["tables"][f"ipv{ip_version}_forwarding"]:
+        port_existing_entry = switch_details["tables"][f"ipv{ip_version}_forwarding"][
+            host_name
+        ]["port"]
+        if port_existing_entry == table_entry["port"]:
+            logging.info(
+                "Switch %s already has an IPv%s route to %s and the egress ports match (existing entry port: %s / new entry port: %s) -- no problem ahead",
+                switch_name,
+                ip_version,
+                host_name,
+                port_existing_entry,
+                table_entry["port"],
+            )
+        else:
+            logging.warning(
+                "Switch %s already has an IPv%s route to %s and the egress ports do not match (existing entry port: %s / new entry port: %s) -- ignoring new entry",
+                switch_name,
+                ip_version,
+                host_name,
+                port_existing_entry,
+                table_entry["port"],
+            )
+        return None
+
     return table_entry
+
+
+def configure_path_on_switch(path, resources, switch_name, ip_version, switch_details):
+    for host in get_connected_hosts(path["egress"], resources):
+        table_entry = get_ip_table_entry(resources, switch_name, host, path, ip_version)
+        if table_entry:
+            switch_details["tables"][f"ipv{ip_version}_forwarding"][host] = table_entry
+
+
+def reverse_path(path):
+    reversed_path = {}
+    reversed_path["ingress"] = path["egress"]
+    reversed_path["egress"] = path["ingress"]
+    reversed_path["via"] = list(reversed(path["via"]))
+    return reversed_path
 
 
 def set_ip_forwarding_table_data(resources, switch_name, ip_version):
     logging.info(
         "Setting IPv%s forwarding table data of switch: %s", ip_version, switch_name
     )
+
     for path in resources["paths"]:
-        if switch_name not in path["via"]:
+        if (
+            path["ingress"] != switch_name
+            and path["egress"] != switch_name
+            and switch_name not in path["via"]
+        ):
             logging.info(
                 "Switch %s is not in path from %s to %s",
                 switch_name,
-                path["from"],
-                path["to"],
+                path["ingress"],
+                path["egress"],
             )
             continue
 
@@ -109,34 +155,19 @@ def set_ip_forwarding_table_data(resources, switch_name, ip_version):
         if f"ipv{ip_version}_forwarding" not in switch_details["tables"]:
             switch_details["tables"][f"ipv{ip_version}_forwarding"] = {}
 
-        table_entry = get_ip_table_entry(resources, switch_name, path, ip_version)
-        if table_entry:
-            switch_details["tables"][f"ipv{ip_version}_forwarding"][
-                path["to"]
-            ] = table_entry
-
-        if "return_route" in path and path["return_route"]:
+        configure_path_on_switch(
+            path, resources, switch_name, ip_version, switch_details
+        )
+        if "symmetric" in path and path["symmetric"]:
+            configure_path_on_switch(
+                reverse_path(path), resources, switch_name, ip_version, switch_details
+            )
             logging.info(
                 "Path from %s to %s via %s is symmetric creating table entry for reversed direction",
-                path["from"],
-                path["to"],
+                path["ingress"],
+                path["egress"],
                 switch_name,
             )
-            reversed_path = {}
-            reversed_path["from"] = path["to"]
-            reversed_path["to"] = path["from"]
-            reversed_path["via"] = path["via"].copy()
-            reversed_path["via"].reverse()
-
-            table_entry = get_ip_table_entry(
-                resources, switch_name, reversed_path, ip_version
-            )
-            if table_entry:
-                switch_details["tables"][f"ipv{ip_version}_forwarding"][
-                    reversed_path["to"]
-                ] = table_entry
-            else:
-                continue
     return resources
 
 

@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import yaml
 from jinja2 import Environment, FileSystemLoader
+from sys import stdout
 
 import bmv2_runtime_generator as brg
 import mininet_topology_generator as mtg
@@ -234,7 +235,7 @@ def create_grafana(resources):
             "file_name": "hop_statistics.json",
             "id": 8,
             "func": gfc.query_insert,
-            "template": "relative-efficient-hop-discovery.j2",
+            "template": "relative-inefficient-hop-discovery.j2",
         },
     ]
     gfc.compile_j2(
@@ -256,6 +257,13 @@ def main():
         format="%(asctime)s - %(levelname)s - %(message)s",
         filename=f"{args.log_dir}/{log_filename}",
     )
+    root = logging.getLogger()
+    root.setLevel(logging.DEBUG)
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    stdout_handler = logging.StreamHandler(stdout)
+    stdout_handler.setLevel(logging.WARNING)
+    stdout_handler.setFormatter(formatter)
+    root.addHandler(stdout_handler)
 
     # Load resources file
     with open(args.resources, "r") as file:
