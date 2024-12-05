@@ -50,8 +50,6 @@ On the Monitoring side there is a **Telegraf, Influx, Grafana (TIG) Stack** whic
 #### Efficiency Indication
 
 Efficiency indication is a critical aspect of this project.
-To be able to collaborate on this project one should have a basic understanding of how the energy efficiency data collection is implemented conceptionally.
-
 The following efficiency indicators where introduced:
 
 - **Hop Efficiency Indicator (HEI):** Is an arbitrary number indicating the efficiency of a hop. There can be several HEI values at the same time, which cover different aspects of a hop's energy efficiency.
@@ -67,26 +65,26 @@ Some of the identfied challenges are:
 
 1. Collection and processing of inband network telemetry data at line rate
 1. Increased packet size as a result of inband network telemetry
-1. Aggregation of collected data within the network so that the data is ready to act on as no further computation is requried to obtain the path metric
+1. Aggregation of collected data within the network so that the data is ready to act on and no further computation is requried to obtain the path metric
 1. Mapping of energy metrics to comparable values
 1. Flexibility in regards to environmental factors 
-1. Awareness about the path a specific path metric belongs to
+1. Knowledge about the path a specific path metric belongs to
 
 The challenges where adressed as follows:
 
-1. To ensure data can be processed at line rate the efficiency data is collected outside of the data plane. It is then exposed to the data plane via lookup table comparable to the tables of the forwarding information base (FIB). Additionally the aggregation which happens inside the data plane avoids using complex arithmetical operations.
-1. The mitigation of the increased packet size due to INT goes hand in hand with the challenge/requirement to aggregate the data in transit which reduces volume of network telemetry data present in packet headers.
+1. To ensure data can be processed at line rate the efficiency data is collected outside of the data plane. It is supposed to be exposed to the data plane via a lookup table comparable to the tables of the forwarding information base (FIB). Additionally the aggregation which happens inside the data plane avoids using complex arithmetical operations.
+1. The mitigation of the increased packet size due to INT goes hand in hand with the challenge/requirement to aggregate the data in transit which reduces the volume of network telemetry data present in packet headers.
 1. To aggregate the efficiency data in transit the [IOAM Aggregation Trace Option](https://datatracker.ietf.org/doc/html/draft-cxx-ippm-ioamaggr-02) is used.
 1. As shown in figure (todo reference) one or more energy metrics are mapped to a hop metric. With a consistent energy metric to hop metric configuration on all nodes the hop metrics of the same type will be comparable.
 1. The energy metric mapping as shown in figure (todo reference) can be setup as required but needs to be consistent throughout the same IOAM domain. In case energy metrics shall also be exchanged between autonomous systems (AS) with e.g. BGP in future some common configurations need to be standardized.
-1. To determine to which path a specific path metric belongs the [Pre-allocated IOAM Trace Option](https://datatracker.ietf.org/doc/html/rfc9197) is used in combination to the [IOAM Aggregation Trace Option](https://datatracker.ietf.org/doc/html/draft-cxx-ippm-ioamaggr-02).
+1. To determine to which path a specific path metric belongs the [Pre-allocated IOAM Trace Option](https://datatracker.ietf.org/doc/html/rfc9197) is used in combination with the [IOAM Aggregation Trace Option](https://datatracker.ietf.org/doc/html/draft-cxx-ippm-ioamaggr-02).
 
 ##### Proposed Solution
 
 The proposed solution depicted in the figure below  works as follows:
 1. Maps one or more energy metrics to a hop metric.
 This process is carried out periodically on each node outside of its data plane.
-1. The determined hop metrics are then stored in lookup tables in the data plane similar to the FIB.
+1. The determined hop metrics are then stored in lookup tables accessible by the data plane similar to the FIB.
 1. The data plane then continously reads the hop metrics from the lookup tables during the forwarding operation of IP packets.
     1. In case of an **ingress node:** Relevant header fields are added and initialized with the **hop metric** retrieved from the lookup tables.
     1. In case of a **transit node:** The header fields are updated/aggregated with the **hop metric** retrieved from the lookup tables.
