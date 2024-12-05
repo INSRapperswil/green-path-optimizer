@@ -1,4 +1,4 @@
-# green-path-optimizer
+# green-path-optimizer [@OST](https://www.ost.ch/en/)
 
 Is an application framework with the following components:
 
@@ -96,6 +96,45 @@ Notice that the energy metrics and the mappings chosen in the figure below are e
 
 
 #### Network Telemetry (IOAM)
+
+To store the efficiency data as inband network telemetry data the IOAM protocol is used.
+The following sections show how the telemetry data is included in an IPv6 packet.
+
+##### IPv6 Hop-by-Hop Option Extension Header
+
+An ingress node pushes a Hop-by-Hop extension header and initializes the IOAM option header fields contained.
+
+An IPv6 packet carrying network telemetry data looks as shown in the packet capture below. 
+
+![IPv6 Hop by Hop Options Extension Header](assets/figures/wireshark_ipv6_header.png)
+
+##### IOAM Pre-allocated Trace Option
+
+The first IOAM Option carried inside the Hop-by-Hop Option extension header is used to trace the path the packet traversed.
+
+Besides other fields it contains a list of nodes in the order traversed with the corresponding node id and hop limit on that specific node.
+
+In the figure below:
+
+- The packet traversed the nodes 1-2-4
+- The node list has free space to trace one more node
+
+Refer to [RFC9197](https://datatracker.ietf.org/doc/html/rfc9197) for more information about individual header fields.
+
+![IOAM Pre-allocated Trace Option Header Format](assets/figures/wireshark_ioam_trace.png)
+
+##### IOAM Aggregation Option
+
+The second IOAM Option carried inside the Hop-by-Hop Option extension header is used to store the aggregated energy efficiency data of all nodes on the path.
+
+In the figure below:
+ - The HEI with ID *255* is being collected
+ - The *SUM* aggregator is used
+ - The PEI is *70120*
+
+Refer to [draft-cxx-ippm-ioamaggr-02](https://datatracker.ietf.org/doc/html/draft-cxx-ippm-ioamaggr-02) for more information about individual header fields.
+
+![IOAM Aggregation Trace Option Header Format](assets/figures/wireshark_ioam_aggr.png)
 
 #### Export Mechanism (IPFIX)
 
