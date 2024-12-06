@@ -177,6 +177,56 @@ The raw export is implemented in such a way that it always exports the first pac
 
 #### Dashboard
 
+The Grafana dashboards visualize the time series data present in InfluxDB.
+The purpose of this dashboards are that a human can interpret with little mental effort how the network as a whole, indivdual paths, indivual nodes and individual flows perform in the context of the sustainability metrics.
+It is also helpful to see how the metrics change over time.
+**During the hackathon these dashaboards will be very helpful to see if the optimizer application actually increases the efficiency of the network.**
+
+##### Simulation Network Statistics
+
+This dashboard contains general information about the simulation network such as:
+
+- Aggregator Usage for percentage of packets (MIN, MAX, SUM)
+- Number of packets per flow distribution
+- Number of packets per receiver time series
+- IOAM Aggregation Option error statistics
+
+The purpose of this dashboard is mainly the debugging of issues with the network as a whole.
+
+##### Flow Statistics
+
+This dashboard contains information about the efficiency of individual flows.
+The data displayed in this dashboard was exported via IPFIX with the **aggregated export** mechanism.
+Information contained is:
+
+- A last 5min average time series which displays how the efficiency of flows change over time
+- A heatmap to indicate the efficiency of flows between each host
+- Some other time series and distributions about flow effieciencies
+
+##### Hop Statistics
+
+This dashboard contains information about the efficiency of individual hops.
+The data displayed in this dashboard was exported via IPFIX with the **raw export** mechanism and includes only data of packets which used *MIN* or *MAX* aggregation.
+Information contained is:
+
+- An absolute and relative voting about which routers are the most efficient and most inefficient respectively
+- Most efficient hop discovery per path
+- Most inefficient hop discover per path
+
+##### Path Statistics
+
+This dashboard contains information about the efficiency of individual paths.
+The data displayed in this dashboard was exported via IPFIX with the **raw export** mechanism and includes only data of packets which used *SUM*.
+Information contained is:
+
+- A last 5min average time series which displays how the efficiency of paths change over time
+- A PEI distribution
+- A mapping of which path is being used between which end hosts
+- A mapping of PEI value to each discovered path
+- A time series which shows how the efficiency of a specific path changes over time
+
+This dashboard could be completed with a heat map which shows the path efficiency between hops similar to the heat map in the flow statistics dashboard.
+
 ## Project Objectives During Hackathon
 
 The primary goal is to demonstrate that energy-efficient traffic routing can be achieved using our collected data, while also identifying any gaps in the current dataset that would be crucial for further optimizations.
