@@ -24,8 +24,15 @@ Is an application framework for simulating a proof-of-concept environment that d
   - Trigger configuration update to actually implement the proposed optimization in the network.
 - **Validator** which is to be developed after the hackathon and validates the optimiser's configuration changes to e.g. prevent data from being sent through bottlenecks or certain paths from being overprovisioned.
 
+## Contents
 
-## Introduction
+- [Project Overview](#project-overview)
+- [Project Objectives During Hackathon](#project-objectives-during-hackathon)
+- [Getting Started](#getting-started)
+- [Related Work](#related-work)
+
+
+## Project Overview
 
 Over the past year, my colleagues and I (Ramon) have delved into the field of sustainable networking, focusing on the critical challenge of improving energy efficiency in computer networks.
 Our initial research revealed a significant gap: **optimizing network energy efficiency through traffic engineering methods is extremely difficult due to the lack of visibility into the energy efficiency of network paths.**
@@ -40,7 +47,7 @@ Our proof-of-concept (PoC) implementation already includes several key capabilit
 
 While this provides a strong foundation, our next goal is to act on the collected data by proposing actual improvements to network configuration. This includes the development of the *green-path-optimizer* application and running simulations across different topologies to verify the applicability in various use cases.
 
-### Overview
+### Proof-of-Concept Environment
 
 The figure below illustrates our proof of concept in a simplified network environment.
 
@@ -170,14 +177,7 @@ The raw export is implemented in such a way that it always exports the first pac
 
 #### Dashboard
 
-### Related Work
-
-- **IEEE Publication:** [Towards Sustainable Networking: Unveiling Energy Efficiency Through Hop and Path Efficiency Indicators in Computer Networks](https://ieeexplore.ieee.org/document/10588907)
-- **Internet - Draft:** [Aggregation Trace Option for In-situ Operations, Administration, and Maintenance IOAM](https://datatracker.ietf.org/doc/html/draft-cxx-ippm-ioamaggr-02)
-- **Internet - Draft:** [Challenges and Opportunities in Management for Green Networking](https://datatracker.ietf.org/doc/draft-irtf-nmrg-green-ps/03/)
-- **RFC - Proposed Standard:** [Data Fields for In Situ Operations, Administration, and Maintenance (IOAM)](https://datatracker.ietf.org/doc/html/rfc9197)
-
-## Project Objectives During the Hackathon
+## Project Objectives During Hackathon
 
 The primary goal is to demonstrate that energy-efficient traffic routing can be achieved using our collected data, while also identifying any gaps in the current dataset that would be crucial for further optimizations.
 
@@ -191,3 +191,12 @@ This includes the following work items:
   - Interpretation of improvements and what is needed to apply it in practice
   - Validation of the suggested improvements also regarding throughput / bottlenecks etc.
   - **Conception of efficiency discovery mechanism of all paths of a given length in an arbitrary topology.**
+
+## Getting Started
+
+## Related Work
+
+- **IEEE Publication:** [Towards Sustainable Networking: Unveiling Energy Efficiency Through Hop and Path Efficiency Indicators in Computer Networks](https://ieeexplore.ieee.org/document/10588907)
+- **Internet - Draft:** [Aggregation Trace Option for In-situ Operations, Administration, and Maintenance IOAM](https://datatracker.ietf.org/doc/html/draft-cxx-ippm-ioamaggr-02)
+- **Internet - Draft:** [Challenges and Opportunities in Management for Green Networking](https://datatracker.ietf.org/doc/draft-irtf-nmrg-green-ps/03/)
+- **RFC - Proposed Standard:** [Data Fields for In Situ Operations, Administration, and Maintenance (IOAM)](https://datatracker.ietf.org/doc/html/rfc9197)
