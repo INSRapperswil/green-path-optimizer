@@ -1,6 +1,8 @@
 # green-path-optimizer [@OST](https://www.ost.ch/en/)
 
-Is an application framework with the following components:
+Is an application framework for simulating a proof-of-concept environment that demonstrates an approach to gaining transparency on the environmental costs of network paths and optimising the flow of data within that network to reduce the carbon footprint caused by its operation.
+
+**Currently** it contains the following components: 
 
 - **Network** based on BMv2 software switches capable of:
   - Collecting inband network telemetry (INT) data regarding energy efficiency of network paths using the IOAM protocol
@@ -13,10 +15,14 @@ Is an application framework with the following components:
   - Parsing of IOAM raw export IPFIX messages ([Telegraf](https://www.influxdata.com/time-series-platform/telegraf/))
   - Persistent storage of efficiency data ([InfluxDB](https://www.influxdata.com/))
   - Visualization of efficiency data ([Grafana](https://grafana.com/))
+
+**In near futre** it will also contain the following components:
+
 - **Optimizer** to be developed at [RIPE NCC Green Tech Hackathon](https://labs.ripe.net/author/becha/announcing-the-green-tech-hackathon/) which is capable of:
   - Analyzing the given time series data stored in InfluxDB
   - Proposing configuration changes to route traffic over the most efficient paths between every possible ingress and egress router
   - Trigger configuration update to actually implement the proposed optimization in the network.
+- **Validator** which is to be developed after the hackathon and validates the optimiser's configuration changes to e.g. prevent data from being sent through bottlenecks or certain paths from being overprovisioned.
 
 
 ## Introduction
