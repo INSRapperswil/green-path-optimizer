@@ -1,4 +1,4 @@
-.PHONY: build run config buld-network run-network run-monitoring stop-monitoring clean-monitoring
+.PHONY: build prepare config run run-debug stop clean setup-env generate-config update-config clean-config build-network run-network run-network-debug stop-network clean-network run-monitoring stop-monitoring clean-monitoring
 
 # Reset this variable to chose the topology which should be deployed
 RESOURCE_FILE = ${CONFIG_GEN_DIR}/resources/large_network.yaml
