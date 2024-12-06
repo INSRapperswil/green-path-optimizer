@@ -50,7 +50,7 @@ On the Monitoring side there is a **Telegraf, Influx, Grafana (TIG) Stack** whic
 #### Efficiency Indication
 
 Efficiency indication is a critical aspect of this project.
-The following efficiency indicators where introduced:
+The following efficiency indicators were introduced:
 
 - **Hop Efficiency Indicator (HEI):** Is an arbitrary number indicating the efficiency of a hop. There can be several HEI values at the same time, which cover different aspects of a hop's energy efficiency.
 - **Link Efficiency Indicator (LEI):** Is a dedicated value to indicate the efficiency of an interface.
@@ -137,6 +137,30 @@ Refer to [draft-cxx-ippm-ioamaggr-02](https://datatracker.ietf.org/doc/html/draf
 ![IOAM Aggregation Trace Option Header Format](assets/figures/wireshark_ioam_aggr.png)
 
 #### Export Mechanism (IPFIX)
+
+On egress routers the collected path metrics stored inside the IPv6 packet as network telemetry data is exported with IPFIX as standardized in [RFC7011](https://www.rfc-editor.org/rfc/rfc7011).
+As already stated earlier the BMv2 software switches are used in the PoC network environment.
+By default the BMv2 switches are not capable of exporting data via IPFIX.
+A fork with the corresponding IPFIX implementation is available [here](https://github.com/ramobis/behavioral-model).
+The implementation can be found in the `externs` directory.
+
+There are two different export mechanisms which fulfill different needs.
+
+##### Aggregated Export
+
+The aggregated export is used to make **flow statistics** available to a network operator emphasizing the capability of the generation of a heat map containing endpoint to endpoint network efficiency information.
+
+As part of the aggregated export data is grouped by flow and IOAM aggregator.
+The network telemetry data of all packets within the same group is then aggregated using the IOAM aggregator specified and exported within a single IPFIX message.
+
+##### Raw Export
+
+The raw export is used to make **path statistics** available to a network operator emphasizing the identification possibilities of inefficient paths and nodes within a network.
+
+With this export mechanism the complete IPv6 header including all extension headers is exported.
+That means that not only the efficiency metric is going to be available but also the corresponding path information the metric belongs to.
+
+The raw export is implemented in such a way that it always exports the first packet of a flow and then every nth packet based on the configured sampling rate per flow.
 
 #### Dashboard
 
