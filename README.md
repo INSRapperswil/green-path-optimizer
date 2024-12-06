@@ -270,9 +270,57 @@ The installation would be easy though and it should run out of the box in case y
 
 #### Configuration Utilities
 
+The configuration generator and the configuration updater are both written in Python and are managed in a single virtual environment with the package manager [uv](https://docs.astral.sh/uv/).
 
+The installation of the dependencies is a two step procedure:
+
+1. Verify that you have [uv](https://docs.astral.sh/uv/) installed on you local system.
+If not follow the [Getting Started](https://docs.astral.sh/uv/) guide.
+2. Once [uv](https://docs.astral.sh/uv/) is installed open a terminal and change to the repository root directory and use the command `uv sync`.
+
+Done! All dependencies are installed.
 
 ### Usage
+
+To use the tools and components installed previously you will most likely be using the `make` command to execute the predefined targets.
+
+#### Network Environment
+
+As already mentioned I will provide two systems which operate the network environment.
+So you may skip this section.
+
+To run the network there are two different `make` targets available.
+
+- `run:` Will spool up the network environment and the monitoring system after building the project and generating the configurations.
+- `run-debug:` Will do the same as `run` but additionally the BMv2 switches will write verbose log files and packet capture files.
+This mode should only be used in case further investigation
+
+To run the network environment only you may use the following targets.
+
+- `run-network:`
+- `run-network-debug:`
+
+#### Monitoring Environment
+
+As already mentioned I will provide two systems which operate the monitoring environment.
+So you may skip this section.
+
+If the network environment was already started with the `make run` command the monitoring environment is already started.
+
+Otherwise the following `make` target can be used.
+
+- `run-monitoring:` This will bootstrap the TIG stack based on the docker compose file.
+
+
+#### Configuration Utilities
+
+To run the configuration utilities the following `make` targets are available.
+
+- `config:` Executes the `generate-config` and then the `update-config` target.
+- `generate-config:` Regenerates all configuration files based on the resource file specified in the Makefile.
+This task is automatically executed as part of the `run` target.
+- `update-config:` Pushes the generated configurations to the BMv2 software switches.
+Make sure to select the correct inventory in the `config.yaml` file inside the config updater.
 
 ## Related Work
 

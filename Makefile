@@ -53,7 +53,7 @@ config: generate-config update-config
 
 run: prepare build generate-config run-monitoring run-network
 
-run-debug: prepare build generate-config run-monitoring run-network-verbose
+run-debug: prepare build generate-config run-monitoring run-network-debug
 
 prepare: setup-env
 
@@ -91,7 +91,7 @@ run-network: build generate-config
 	mkdir -p $(P4_LOG_DIR)
 	sudo python3 $(RUN_NETWORK_SCRIPT) -t $(CONFIG_GEN_OUT_DIR)/topology.json $(run_args) -l $(P4_LOG_DIR)
 
-run-network-verbose: build generate-config
+run-network-debug: build generate-config
 	mkdir -p $(P4_PCAP_DIR) $(P4_LOG_DIR)
 	sudo python3 $(RUN_NETWORK_SCRIPT) -t $(CONFIG_GEN_OUT_DIR)/topology.json $(run_args) -l $(P4_LOG_DIR) -p $(P4_PCAP_DIR) --bmv2-log-console
 
