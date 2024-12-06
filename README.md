@@ -129,7 +129,7 @@ Besides other fields it contains a list of nodes in the order traversed with the
 
 In the figure below:
 
-- The packet traversed the nodes 1-2-4
+- The packet traversed the nodes 1-3-4
 - The node list has free space to trace one more node
 
 Refer to [RFC9197](https://datatracker.ietf.org/doc/html/rfc9197) for more information about individual header fields.
@@ -143,7 +143,7 @@ The second IOAM Option carried inside the Hop-by-Hop Option extension header is 
 In the figure below:
  - The HEI with ID *255* is being collected
  - The *SUM* aggregator is used
- - The PEI is *70120*
+ - The PEI is *80120*
 
 Refer to [draft-cxx-ippm-ioamaggr-02](https://datatracker.ietf.org/doc/html/draft-cxx-ippm-ioamaggr-02) for more information about individual header fields.
 
