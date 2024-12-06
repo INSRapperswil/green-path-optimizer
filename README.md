@@ -244,6 +244,36 @@ This includes the following work items:
 
 ## Getting Started
 
+### Installation
+
+#### Network Environment
+
+To collaborate in the hackathon **you won't need to run the network environment on your PC.**
+I will bring two devices where we can run two instances of the network environment which should be enough for our purposes.
+
+If you would like to install it though you will need the following software components:
+
+- Mininet
+- P4 Compiler (p4c)
+- BMv2 (You will need to compile our [fork](https://github.com/ramobis/behavioral-model) from source as we had to do a little tweak in the main source code which was not contributed upstream)
+- BMv2 IPFIX Extension (You will also need to compile it from source and you find it in the `externs` folder in our [fork](https://github.com/ramobis/behavioral-model) and do not forget to set to correct path to the shared object file in the Makefile of this repository)
+
+I tested the setup on Ubuntu 22.04 and 22.10 where it works fine but I was unable to set it up on other versions of Ubuntu.
+The P4 tooling and dependencies seem to be quite picky about the underlying OS.
+
+#### Monitoring Environment
+
+To collaborate in the hackathon **you won't need to run the monitoring environment on your PC.**
+It will run on the same system as the network environemnt.
+
+The installation would be easy though and it should run out of the box in case you have docker installed on your system.
+
+#### Configuration Utilities
+
+
+
+### Usage
+
 ## Related Work
 
 - **IEEE Publication:** [Towards Sustainable Networking: Unveiling Energy Efficiency Through Hop and Path Efficiency Indicators in Computer Networks](https://ieeexplore.ieee.org/document/10588907)
