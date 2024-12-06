@@ -49,13 +49,17 @@ export
 
 build: build-network
 
+prepare: setup-env
+
 config: generate-config update-config
 
 run: prepare build generate-config run-monitoring run-network
 
 run-debug: prepare build generate-config run-monitoring run-network-debug
 
-prepare: setup-env
+stop: stop-network stop-monitoring
+
+clean: clean-network clean-monitoring clean-config
 
 ### prepare tasks ###
 
@@ -81,6 +85,10 @@ generate-config:
 update-config:
 	uv run ${CONFIG_UPDATE_DIR}/updater.py
 
+clean-config:
+	rm -rf ${CONFIG_LOG_DIR} ${CONFIG_GEN_OUT_DIR} ${CONFIG_UPDATE_CHKSUM_FILE}
+
+
 ### network tasks ###
 
 build-network:
@@ -98,6 +106,10 @@ run-network-debug: build generate-config
 stop-network:
 	sudo mn -c
 
+clean-network: stop-network
+	rm -rf ${P4_LOG_DIR} ${P4_BUILD_DIR} ${P4_PCAP_DIR}
+
+
 ### monitor tasks ###
 
 run-monitoring: build generate-config
@@ -106,11 +118,6 @@ run-monitoring: build generate-config
 stop-monitoring:
 	sudo docker compose -f monitoring/docker-compose.yaml down
 
-stop: stop-network stop-monitoring
-
-
-clean: stop
-	rm -rf ${P4_LOG_DIR} ${P4_BUILD_DIR} ${P4_PCAP_DIR}
-	rm -rf ${CONFIG_LOG_DIR} ${CONFIG_GEN_OUT_DIR} ${CONFIG_UPDATE_CHKSUM_FILE}
+clean-monitoring: stop-monitoring
 	rm -rf ${GRAFANA_DATASOURCE_DIR} ${INFLUX_SCRIPT_DIR}
 	sudo docker volume prune -a
