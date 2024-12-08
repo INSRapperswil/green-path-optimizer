@@ -24,7 +24,9 @@ The green-path-optimizer is a framework for simulating a proof-of-concept enviro
   - Collection of IPFIX messages ([Telegraf](https://www.influxdata.com/time-series-platform/telegraf/))
   - Parsing of IOAM raw export IPFIX messages ([Telegraf](https://www.influxdata.com/time-series-platform/telegraf/))
   - Persistent storage of efficiency data ([InfluxDB](https://www.influxdata.com/))
-  - Visualization of efficiency data ([Grafana](https://grafana.com/))
+  - Visualization of efficiency data ([Grafana](https://grafana.com/)). Two example graphs are:
+    - [Heatmap](./assets/figures/grafana_matrix.png) showing endpoint to endpoint flow efficiency
+    - [Timeseries graph](./assets/figures/grafana_path_statistics.png) showing the efficiency of paths over time
 
 **In near future** it will also contain the following components:
 
