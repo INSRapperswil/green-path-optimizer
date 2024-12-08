@@ -1,0 +1,60 @@
+s01:
+  port: 50051
+  data:
+    device_id: 0
+    runtime_file_name: "s01-runtime.json"
+s02:
+  port: 50052
+  data:
+    device_id: 1
+    runtime_file_name: "s02-runtime.json"
+s03:
+  port: 50053
+  data:
+    device_id: 2
+    runtime_file_name: "s03-runtime.json"
+s04:
+  port: 50054
+  data:
+    device_id: 3
+    runtime_file_name: "s04-runtime.json"
+s11:
+  port: 50055
+  data:
+    device_id: 4
+    runtime_file_name: "s11-runtime.json"
+s12:
+  port: 50056
+  data:
+    device_id: 5
+    runtime_file_name: "s12-runtime.json"
+s13:
+  port: 50057
+  data:
+    device_id: 6
+    runtime_file_name: "s13-runtime.json"
+s14:
+  port: 50058
+  data:
+    device_id: 7
+    runtime_file_name: "s14-runtime.json"
+s15:
+  port: 50059
+  data:
+    device_id: 8
+    runtime_file_name: "s15-runtime.json"
+s16:
+  port: 50060
+  data:
+    device_id: 9
+    runtime_file_name: "s16-runtime.json"
+s17:
+  port: 50061
+  data:
+    device_id: 10
+    runtime_file_name: "s17-runtime.json"
+s18:
+  port: 50062
+  data:
+    device_id: 11
+    runtime_file_name: "s18-runtime.json"

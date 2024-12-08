@@ -1,0 +1,483 @@
+pkg_info {
+  arch: "v1model"
+}
+tables {
+  preamble {
+    id: 37375156
+    name: "MyIngress.ipv4_lpm"
+    alias: "ipv4_lpm"
+  }
+  match_fields {
+    id: 1
+    name: "hdr.ipv4.dstAddr"
+    bitwidth: 32
+    match_type: LPM
+  }
+  action_refs {
+    id: 28792405
+  }
+  action_refs {
+    id: 25652968
+  }
+  size: 1024
+}
+tables {
+  preamble {
+    id: 47351917
+    name: "MyIngress.ipv6_lpm"
+    alias: "ipv6_lpm"
+  }
+  match_fields {
+    id: 1
+    name: "hdr.ipv6.dstAddr"
+    bitwidth: 128
+    match_type: LPM
+  }
+  action_refs {
+    id: 24925451
+  }
+  action_refs {
+    id: 25652968
+  }
+  size: 1024
+}
+tables {
+  preamble {
+    id: 49043370
+    name: "MyEgress.process_ioam_init.ioam_namespace_id"
+    alias: "ioam_namespace_id"
+  }
+  match_fields {
+    id: 1
+    name: "hdr.ethernet.srcAddr"
+    bitwidth: 48
+    match_type: EXACT
+  }
+  action_refs {
+    id: 22570920
+  }
+  action_refs {
+    id: 20715239
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1
+}
+tables {
+  preamble {
+    id: 38536698
+    name: "MyEgress.process_ioam_init.ioam_node_id"
+    alias: "ioam_node_id"
+  }
+  match_fields {
+    id: 1
+    name: "hdr.ethernet.srcAddr"
+    bitwidth: 48
+    match_type: EXACT
+  }
+  action_refs {
+    id: 21271535
+  }
+  action_refs {
+    id: 20715239
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1
+}
+tables {
+  preamble {
+    id: 45671057
+    name: "MyEgress.process_ioam_init.ioam_aggr_data_param"
+    alias: "ioam_aggr_data_param"
+  }
+  match_fields {
+    id: 1
+    name: "hdr.ethernet.srcAddr"
+    bitwidth: 48
+    match_type: EXACT
+  }
+  action_refs {
+    id: 20436353
+  }
+  action_refs {
+    id: 20715239
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1
+}
+tables {
+  preamble {
+    id: 37599099
+    name: "MyEgress.process_ioam_init.ioam_aggr_aggregator"
+    alias: "ioam_aggr_aggregator"
+  }
+  match_fields {
+    id: 1
+    name: "meta.ioamAggrMeta.aggregator_selector"
+    bitwidth: 2
+    match_type: EXACT
+  }
+  action_refs {
+    id: 28737395
+  }
+  action_refs {
+    id: 28973069
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 4
+}
+tables {
+  preamble {
+    id: 44522120
+    name: "MyEgress.process_ioam_init.ipv6_reverse_lookup"
+    alias: "ipv6_reverse_lookup"
+  }
+  match_fields {
+    id: 1
+    name: "hdr.ipv6.srcAddr"
+    bitwidth: 128
+    match_type: LPM
+  }
+  action_refs {
+    id: 19529859
+  }
+  action_refs {
+    id: 24948127
+  }
+  size: 1024
+}
+tables {
+  preamble {
+    id: 50034314
+    name: "MyEgress.process_efficiency_indicator.get_hop_efficiency_indicator"
+    alias: "get_hop_efficiency_indicator"
+  }
+  match_fields {
+    id: 1
+    name: "hdr.ioam_a_ioam_aggregation.dataParam"
+    bitwidth: 24
+    match_type: EXACT
+  }
+  action_refs {
+    id: 18448723
+  }
+  action_refs {
+    id: 19472622
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 10
+}
+tables {
+  preamble {
+    id: 39906422
+    name: "MyEgress.process_efficiency_indicator.get_ingress_link_efficiency_indicator"
+    alias: "get_ingress_link_efficiency_indicator"
+  }
+  match_fields {
+    id: 1
+    name: "standard_metadata.ingress_port"
+    bitwidth: 9
+    match_type: EXACT
+  }
+  action_refs {
+    id: 18448723
+  }
+  action_refs {
+    id: 21483467
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 10
+}
+tables {
+  preamble {
+    id: 39414331
+    name: "MyEgress.process_efficiency_indicator.get_egress_link_efficiency_indicator"
+    alias: "get_egress_link_efficiency_indicator"
+  }
+  match_fields {
+    id: 1
+    name: "standard_metadata.egress_port"
+    bitwidth: 9
+    match_type: EXACT
+  }
+  action_refs {
+    id: 18448723
+  }
+  action_refs {
+    id: 21483467
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 10
+}
+actions {
+  preamble {
+    id: 25652968
+    name: "MyIngress.drop"
+    alias: "drop"
+  }
+}
+actions {
+  preamble {
+    id: 28792405
+    name: "MyIngress.ipv4_forward"
+    alias: "ipv4_forward"
+  }
+  params {
+    id: 1
+    name: "mac"
+    bitwidth: 48
+  }
+  params {
+    id: 2
+    name: "port"
+    bitwidth: 9
+  }
+  params {
+    id: 3
+    name: "route_type"
+    bitwidth: 8
+  }
+}
+actions {
+  preamble {
+    id: 24925451
+    name: "MyIngress.ipv6_forward"
+    alias: "ipv6_forward"
+  }
+  params {
+    id: 1
+    name: "mac"
+    bitwidth: 48
+  }
+  params {
+    id: 2
+    name: "port"
+    bitwidth: 9
+  }
+  params {
+    id: 3
+    name: "route_type"
+    bitwidth: 8
+  }
+}
+actions {
+  preamble {
+    id: 21257015
+    name: "NoAction"
+    alias: "NoAction"
+    annotations: "@noWarn(\"unused\")"
+  }
+}
+actions {
+  preamble {
+    id: 22524524
+    name: "MyEgress.process_ioam_init.ioam_init_metadata"
+    alias: "ioam_init_metadata"
+  }
+}
+actions {
+  preamble {
+    id: 20715239
+    name: "MyEgress.process_ioam_init.indicate_other_error"
+    alias: "process_ioam_init.indicate_other_error"
+  }
+}
+actions {
+  preamble {
+    id: 22570920
+    name: "MyEgress.process_ioam_init.ioam_get_namespace_id"
+    alias: "ioam_get_namespace_id"
+  }
+  params {
+    id: 1
+    name: "id"
+    bitwidth: 16
+  }
+}
+actions {
+  preamble {
+    id: 21271535
+    name: "MyEgress.process_ioam_init.ioam_get_node_id"
+    alias: "ioam_get_node_id"
+  }
+  params {
+    id: 1
+    name: "id"
+    bitwidth: 24
+  }
+}
+actions {
+  preamble {
+    id: 20436353
+    name: "MyEgress.process_ioam_init.ioam_aggr_get_data_param"
+    alias: "ioam_aggr_get_data_param"
+  }
+  params {
+    id: 1
+    name: "data_param"
+    bitwidth: 24
+  }
+}
+actions {
+  preamble {
+    id: 29987912
+    name: "MyEgress.process_ioam_init.init_ioam_aggregator_selector"
+    alias: "init_ioam_aggregator_selector"
+  }
+}
+actions {
+  preamble {
+    id: 26479960
+    name: "MyEgress.process_ioam_init.init_ipv6_ext_hop_by_hop"
+    alias: "init_ipv6_ext_hop_by_hop"
+  }
+}
+actions {
+  preamble {
+    id: 26792470
+    name: "MyEgress.process_ioam_init.ioam_trace_push"
+    alias: "ioam_trace_push"
+  }
+}
+actions {
+  preamble {
+    id: 32181489
+    name: "MyEgress.process_ioam_init.ioam_aggr_push"
+    alias: "ioam_aggr_push"
+  }
+}
+actions {
+  preamble {
+    id: 28737395
+    name: "MyEgress.process_ioam_init.ioam_aggr_set_aggregator"
+    alias: "ioam_aggr_set_aggregator"
+  }
+  params {
+    id: 1
+    name: "aggregator"
+    bitwidth: 8
+  }
+}
+actions {
+  preamble {
+    id: 28973069
+    name: "MyEgress.process_ioam_init.ioam_aggr_fallback_default_aggregator"
+    alias: "ioam_aggr_fallback_default_aggregator"
+  }
+}
+actions {
+  preamble {
+    id: 19529859
+    name: "MyEgress.process_ioam_init.set_reverse_route_type"
+    alias: "set_reverse_route_type"
+  }
+  params {
+    id: 1
+    name: "route_type"
+    bitwidth: 8
+  }
+}
+actions {
+  preamble {
+    id: 24948127
+    name: "MyEgress.process_ioam_init.set_default_reverse_route_type"
+    alias: "set_default_reverse_route_type"
+  }
+}
+actions {
+  preamble {
+    id: 18990791
+    name: "MyEgress.process_ioam_tracing.ioam_trace_node"
+    alias: "ioam_trace_node"
+  }
+}
+actions {
+  preamble {
+    id: 18448723
+    name: "MyEgress.process_efficiency_indicator.add_indicator_to_aggregate"
+    alias: "add_indicator_to_aggregate"
+  }
+  params {
+    id: 1
+    name: "indicator_value"
+    bitwidth: 32
+  }
+}
+actions {
+  preamble {
+    id: 19472622
+    name: "MyEgress.process_efficiency_indicator.indicate_data_param_error"
+    alias: "indicate_data_param_error"
+  }
+}
+actions {
+  preamble {
+    id: 21483467
+    name: "MyEgress.process_efficiency_indicator.indicate_other_error"
+    alias: "process_efficiency_indicator.indicate_other_error"
+  }
+}
+actions {
+  preamble {
+    id: 22954795
+    name: "MyEgress.process_ioam_aggregation.set_flag"
+    alias: "set_flag"
+  }
+}
+actions {
+  preamble {
+    id: 24329730
+    name: "MyEgress.process_ioam_aggregation.ioam_aggr_sum"
+    alias: "ioam_aggr_sum"
+  }
+}
+actions {
+  preamble {
+    id: 20895758
+    name: "MyEgress.process_ioam_aggregation.ioam_aggr_min"
+    alias: "ioam_aggr_min"
+  }
+}
+actions {
+  preamble {
+    id: 31294466
+    name: "MyEgress.process_ioam_aggregation.ioam_aggr_max"
+    alias: "ioam_aggr_max"
+  }
+}
+actions {
+  preamble {
+    id: 30719293
+    name: "MyEgress.process_ipfix_export.perform_ipfix_export"
+    alias: "perform_ipfix_export"
+  }
+}
+type_info {
+}

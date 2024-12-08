@@ -1,0 +1,18 @@
+[project]
+name = "green-path-optimizer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "nornir-rich>=0.2.0",
+    "nornir>=3.4.1",
+    "p4>=0.1.5",
+    "p4runtime>=1.4.1",
+    "typer>=0.14.0",
+    "protobuf<=3.20.1",
+    "setuptools>=75.6.0",
+    "influxdb-client>=1.48.0",
+    "pyyaml>=6.0.2",
+    "jinja2>=3.1.4",
+]

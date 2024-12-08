@@ -1,0 +1,9 @@
+---
+data: {
+  repository_root: "/home/boss/git/green-path-optimizer",
+  log_dir: "config/logs/",
+  bmv2_config_path: "config/generator/out/",
+  checksum_file: "config/updater/checksums.json",
+  mininet_host: 127.0.0.1
+}
+...

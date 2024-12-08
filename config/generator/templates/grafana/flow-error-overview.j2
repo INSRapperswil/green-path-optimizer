@@ -1,0 +1,18 @@
+from(bucket: "raw_data_export")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "netflow")
+  |> filter(fn: (r) => r["flags"] != "0")
+  |> filter(fn: (r) => r["_field"] == "aggregate")
+  |> group(columns: ["flow_label", "source_ipv6", "destination_ipv6"])
+  |> map(fn: (r) => ({ r with path: r.node_01 + "-" + r.node_02 + "-" + r.node_03 + "-" + r.node_04}))
+  |> keep(columns: ["_time", "flow_label", "source_ipv6", "destination_ipv6", "flags", "aggregator", "auxil_data_node_id", "namespace_id", "path"])
+  |> group()
+
+{% for host_name, host_details in hosts.items() %}
+{% if loop.last %}
+  |> map(fn: (r) => ({ r with source_ipv6: if r.source_ipv6 == "{{ host_details.ipv6.ip }}" then "{{ host_name }}" else r.source_ipv6 }))
+  |> map(fn: (r) => ({ r with destination_ipv6: if r.destination_ipv6 == "{{ host_details.ipv6.ip }}" then "{{ host_name }}" else r.destination_ipv6 })){% else %}
+  |> map(fn: (r) => ({ r with source_ipv6: if r.source_ipv6 == "{{ host_details.ipv6.ip }}" then "{{ host_name }}" else r.source_ipv6 }))
+  |> map(fn: (r) => ({ r with destination_ipv6: if r.destination_ipv6 == "{{ host_details.ipv6.ip }}" then "{{ host_name }}" else r.destination_ipv6 }))
+
+{% endif %}{% endfor %}

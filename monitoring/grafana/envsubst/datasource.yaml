@@ -1,0 +1,19 @@
+apiVersion: 1
+
+deleteDatasources:
+  - name: influxdb
+    orgId: 1
+
+datasources:
+  - name: influxdb
+    type: influxdb
+    access: proxy
+    orgId: 1
+    url: ${INFLUXDB_INIT_URL}
+    jsonData:
+      version: Flux
+      organization: ${INFLUXDB_ORG}
+      defaultBucket: network_energy_efficiency_data
+      tlsSkipVerify: true
+    secureJsonData:
+      token: ${INFLUXDB_TOKEN}

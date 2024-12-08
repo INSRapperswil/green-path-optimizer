@@ -1,0 +1,4 @@
+[{% for host_name, host_details in hosts.items() %}
+{% if loop.last %}{"id": "renameByRegex", "options": {"regex" : "({{ host_details.ipv6.ip }})", "renamePattern": "{{ host_name }}"}}
+{% else %}{"id": "renameByRegex", "options": {"regex" : "({{ host_details.ipv6.ip }})", "renamePattern": "{{ host_name }}"}},
+{% endif %}{% endfor %}]

@@ -1,0 +1,676 @@
+---
+p4info: network/p4/build/main.p4.p4info.txt
+bmv2_json: network/p4/build/main.json
+paths:
+  # routes from s11
+  - ingress: s11
+    egress: s12
+    via: [s01]
+    symmetric: true
+  - ingress: s11
+    egress: s13
+    via: [s01, s03]
+    symmetric: true
+  - ingress: s11
+    egress: s14
+    via: [s02]
+    symmetric: true
+  - ingress: s11
+    egress: s15
+    via: [s01, s03]
+    symmetric: true
+  - ingress: s11
+    egress: s16
+    via: [s01, s04]
+    symmetric: true
+  - ingress: s11
+    egress: s17
+    via: [s01]
+    symmetric: true
+  - ingress: s11
+    egress: s18
+    via: [s01]
+    symmetric: true
+  # routes from s12
+  - ingress: s12
+    egress: s13
+    via: [s02]
+    symmetric: true
+  - ingress: s12
+    egress: s14
+    via: [s02]
+    symmetric: true
+  - ingress: s12
+    egress: s15
+    via: [s02, s03]
+    symmetric: true
+  - ingress: s12
+    egress: s16
+    via: [s01, s04]
+    symmetric: true
+  - ingress: s12
+    egress: s17
+    via: [s01]
+    symmetric: true
+  - ingress: s12
+    egress: s18
+    via: [s01]
+    symmetric: true
+  # routes from s13
+  - ingress: s13
+    egress: s14
+    via: [s03]
+    symmetric: true
+  - ingress: s13
+    egress: s15
+    via: [s03]
+    symmetric: true
+  - ingress: s13
+    egress: s16
+    via: [s03]
+    symmetric: true
+  - ingress: s13
+    egress: s17
+    via: [s03, s04]
+    symmetric: true
+  - ingress: s13
+    egress: s18
+    via: [s03, s04]
+    symmetric: true
+    # routes from s14
+  - ingress: s14
+    egress: s15
+    via: [s03]
+    symmetric: true
+  - ingress: s14
+    egress: s16
+    via: [s03]
+    symmetric: true
+  - ingress: s14
+    egress: s17
+    via: [s03, s04]
+    symmetric: true
+  - ingress: s14
+    egress: s18
+    via: [s03, s04]
+    symmetric: true
+    # routes from s15
+  - ingress: s15
+    egress: s16
+    via: [s04]
+    symmetric: true
+  - ingress: s15
+    egress: s17
+    via: [s04]
+    symmetric: true
+  - ingress: s15
+    egress: s18
+    via: [s04]
+    symmetric: true
+    # routes from s16
+  - ingress: s16
+    egress: s17
+    via: [s04]
+    symmetric: true
+  - ingress: s16
+    egress: s18
+    via: [s04]
+    symmetric: true
+    # routes from s16
+  - ingress: s17
+    egress: s18
+    via: [s04]
+    symmetric: true
+hosts:
+  h01:
+    ipv4:
+      ip: 146.185.64.10
+      net: 146.185.64.0
+      prefix_len: 19
+    ipv6:
+      ip: 2a04:f340::a
+      net: "2a04:f340::"
+      prefix_len: 29
+    mac: 08:FF:00:00:00:01
+    commands:
+      - "route add default gw 146.185.64.1 dev eth0"
+      - "arp -i eth0 -s 146.185.64.1 08:EE:00:00:00:11"
+      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h01' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+  h02:
+    ipv4:
+      ip: 31.24.8.10
+      net: 31.24.8.0
+      prefix_len: 21
+    ipv6:
+      ip: 2a00:10c0::a
+      net: "2a00:10c0::"
+      prefix_len: 32
+    mac: 08:FF:00:00:00:02
+    commands:
+      - "route add default gw 31.24.8.1 dev eth0"
+      - "arp -i eth0 -s 31.24.8.1 08:EE:00:00:00:12"
+      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h02' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+  h03:
+    ipv4:
+      ip: 31.207.52.10
+      net: 31.207.52.0
+      prefix_len: 22
+    ipv6:
+      ip: 2001:67c:470::a
+      net: "2001:67c:470::"
+      prefix_len: 48
+    mac: 08:FF:00:00:00:03
+    commands:
+      - "route add default gw 31.207.52.1 dev eth0"
+      - "arp -i eth0 -s 31.207.52.1 08:EE:00:00:00:12"
+      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h03' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+  h04:
+    ipv4:
+      ip: 31.132.8.10
+      net: 31.132.8.0
+      prefix_len: 22
+    ipv6:
+      ip: 2a00:c38::a
+      net: "2a00:c38::"
+      prefix_len: 32
+    mac: 08:FF:00:00:00:04
+    commands:
+      - "route add default gw 31.132.8.1 dev eth0"
+      - "arp -i eth0 -s 31.132.8.1 08:EE:00:00:00:13"
+      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h04' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+  h05:
+    ipv4:
+      ip: 23.56.98.10
+      net: 23.56.98.0
+      prefix_len: 24
+    ipv6:
+      ip: 2a02:2d8::a
+      net: "2a02:2d8::"
+      prefix_len: 32
+    mac: 08:FF:00:00:00:05
+    commands:
+      - "route add default gw 23.56.98.1 dev eth0"
+      - "arp -i eth0 -s 23.56.98.1 08:EE:00:00:00:13"
+      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h05' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+  h06:
+    ipv4:
+      ip: 45.61.192.10
+      net: 45.61.192.0
+      prefix_len: 21
+    ipv6:
+      ip: 2607:5d00::a
+      net: "2607:5d00::"
+      prefix_len: 48
+    mac: 08:FF:00:00:00:06
+    commands:
+      - "route add default gw 45.61.192.1 dev eth0"
+      - "arp -i eth0 -s 45.61.192.1 08:EE:00:00:00:14"
+      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h06' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+  h07:
+    ipv4:
+      ip: 37.46.144.10
+      net: 37.46.144.0
+      prefix_len: 22
+    ipv6:
+      ip: 2a05:ff80::a
+      net: "2a05:ff80::"
+      prefix_len: 29
+    mac: 08:FF:00:00:00:07
+    commands:
+      - "route add default gw 37.46.144.1 dev eth0"
+      - "arp -i eth0 -s 37.46.144.1 08:EE:00:00:00:15"
+      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h07' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+  h08:
+    ipv4:
+      ip: 31.207.60.10
+      net: 31.207.60.0
+      prefix_len: 22
+    ipv6:
+      ip: 2a0a:de00::a
+      net: "2a0a:de00::"
+      prefix_len: 29
+    mac: 08:FF:00:00:00:08
+    commands:
+      - "route add default gw 31.207.60.1 dev eth0"
+      - "arp -i eth0 -s 31.207.60.1 08:EE:00:00:00:16"
+      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h08' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+  h09:
+    ipv4:
+      ip: 37.1.224.10
+      net: 37.1.224.0
+      prefix_len: 22
+    ipv6:
+      ip: 2001:678:274::a
+      net: "2001:678:274::"
+      prefix_len: 48
+    mac: 08:FF:00:00:00:09
+    commands:
+      - "route add default gw 37.1.224.1 dev eth0"
+      - "arp -i eth0 -s 37.1.224.1 08:EE:00:00:00:17"
+      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h09' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+  h10:
+    ipv4:
+      ip: 46.14.0.10
+      net: 46.14.0.0
+      prefix_len: 16
+    ipv6:
+      ip: 2001:678:e0::a
+      net: "2001:678:e0::"
+      prefix_len: 48
+    mac: 08:FF:00:00:00:10
+    commands:
+      - "route add default gw 46.14.0.1 dev eth0"
+      - "arp -i eth0 -s 46.14.0.1 08:EE:00:00:00:17"
+      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h10' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+  h11:
+    ipv4:
+      ip: 31.10.128.10
+      net: 31.10.128.0
+      prefix_len: 24
+    ipv6:
+      ip: 2001:678:7f0::a
+      net: "2001:678:7f0::"
+      prefix_len: 48
+    mac: 08:FF:00:00:00:11
+    commands:
+      - "route add default gw 31.10.128.1 dev eth0"
+      - "arp -i eth0 -s 31.10.128.1 08:EE:00:00:00:18"
+      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h11' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+switches:
+  s01:
+    mac: 08:CC:00:00:00:01
+    hei:
+      - data_param: 255
+        value: 1000
+    ioam:
+      namespace_id: 10
+      node_id: 1
+      aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
+        - 1 # selected if last two bits of payload size are [00]
+        - 2 # selected if last two bits of payload size are [01]
+        - 1 # selected if last two bits of payload size are [10]
+        - 4 # selected if last two bits of payload size are [11]
+      data_param: 255
+    ports:
+      1:
+        neighbor: s02
+        lei: 10
+      2:
+        neighbor: s03
+        lei: 20
+      3:
+        neighbor: s04
+        lei: 30
+      4:
+        neighbor: s17
+        lei: 40
+      5:
+        neighbor: s18
+        lei: 50
+      6:
+        neighbor: s11
+        lei: 60
+      7:
+        neighbor: s12
+        lei: 70
+  s02:
+    mac: 08:CC:00:00:00:02
+    hei:
+      - data_param: 255
+        value: 2000
+    ioam:
+      namespace_id: 10
+      node_id: 2
+      aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
+        - 1 # selected if last two bits of payload size are [00]
+        - 2 # selected if last two bits of payload size are [01]
+        - 1 # selected if last two bits of payload size are [10]
+        - 4 # selected if last two bits of payload size are [11]
+      data_param: 255
+    ports:
+      1:
+        neighbor: s01
+        lei: 10
+      2:
+        neighbor: s04
+        lei: 20
+      3:
+        neighbor: s03
+        lei: 30
+      4:
+        neighbor: s14
+        lei: 40
+      5:
+        neighbor: s13
+        lei: 50
+      6:
+        neighbor: s12
+        lei: 60
+      7:
+        neighbor: s11
+        lei: 70
+  s03:
+    mac: 08:CC:00:00:00:03
+    hei:
+      - data_param: 255
+        value: 30000
+    ioam:
+      namespace_id: 10
+      node_id: 3
+      aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
+        - 1 # selected if last two bits of payload size are [00]
+        - 2 # selected if last two bits of payload size are [01]
+        - 1 # selected if last two bits of payload size are [10]
+        - 4 # selected if last two bits of payload size are [11]
+      data_param: 255
+    ports:
+      1:
+        neighbor: s02
+        lei: 10
+      2:
+        neighbor: s01
+        lei: 20
+      3:
+        neighbor: s04
+        lei: 30
+      4:
+        neighbor: s16
+        lei: 40
+      5:
+        neighbor: s15
+        lei: 50
+      6:
+        neighbor: s14
+        lei: 60
+      7:
+        neighbor: s13
+        lei: 70
+  s04:
+    mac: 08:CC:00:00:00:04
+    hei:
+      - data_param: 255
+        value: 4000
+    ioam:
+      namespace_id: 10
+      node_id: 4
+      aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
+        - 1 # selected if last two bits of payload size are [00]
+        - 2 # selected if last two bits of payload size are [01]
+        - 1 # selected if last two bits of payload size are [10]
+        - 4 # selected if last two bits of payload size are [11]
+      data_param: 255
+    ports:
+      1:
+        neighbor: s01
+        lei: 10
+      2:
+        neighbor: s02
+        lei: 20
+      3:
+        neighbor: s03
+        lei: 30
+      4:
+        neighbor: s15
+        lei: 40
+      5:
+        neighbor: s16
+        lei: 50
+      6:
+        neighbor: s17
+        lei: 60
+      7:
+        neighbor: s18
+        lei: 70
+  s11:
+    mac: 08:EE:00:00:00:11
+    hei:
+      - data_param: 255
+        value: 11000
+    ioam:
+      namespace_id: 10
+      node_id: 11
+      aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
+        - 1 # selected if last two bits of payload size are [00]
+        - 2 # selected if last two bits of payload size are [01]
+        - 1 # selected if last two bits of payload size are [10]
+        - 4 # selected if last two bits of payload size are [11]
+      data_param: 255
+    ports:
+      1:
+        neighbor: s01
+        lei: 10
+      2:
+        neighbor: s02
+        lei: 20
+      3:
+        neighbor: h01
+        lei: 30
+  s12:
+    mac: 08:EE:00:00:00:12
+    hei:
+      - data_param: 255
+        value: 12000
+    ioam:
+      namespace_id: 10
+      node_id: 12
+      aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
+        - 1 # selected if last two bits of payload size are [00]
+        - 2 # selected if last two bits of payload size are [01]
+        - 1 # selected if last two bits of payload size are [10]
+        - 4 # selected if last two bits of payload size are [11]
+      data_param: 255
+    ports:
+      1:
+        neighbor: s01
+        lei: 10
+      2:
+        neighbor: s02
+        lei: 20
+      3:
+        neighbor: h02
+        lei: 30
+      4:
+        neighbor: h03
+        lei: 40
+  s13:
+    mac: 08:EE:00:00:00:13
+    hei:
+      - data_param: 255
+        value: 13000
+    ioam:
+      namespace_id: 10
+      node_id: 13
+      aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
+        - 1 # selected if last two bits of payload size are [00]
+        - 2 # selected if last two bits of payload size are [01]
+        - 1 # selected if last two bits of payload size are [10]
+        - 4 # selected if last two bits of payload size are [11]
+      data_param: 255
+    ports:
+      1:
+        neighbor: s02
+        lei: 10
+      2:
+        neighbor: s03
+        lei: 20
+      3:
+        neighbor: h05
+        lei: 30
+      4:
+        neighbor: h04
+        lei: 40
+  s14:
+    mac: 08:EE:00:00:00:14
+    hei:
+      - data_param: 255
+        value: 14000
+    ioam:
+      namespace_id: 10
+      node_id: 14
+      aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
+        - 1 # selected if last two bits of payload size are [00]
+        - 2 # selected if last two bits of payload size are [01]
+        - 1 # selected if last two bits of payload size are [10]
+        - 4 # selected if last two bits of payload size are [11]
+      data_param: 255
+    ports:
+      1:
+        neighbor: s02
+        lei: 10
+      2:
+        neighbor: s03
+        lei: 20
+      3:
+        neighbor: h06
+        lei: 30
+  s15:
+    mac: 08:EE:00:00:00:15
+    hei:
+      - data_param: 255
+        value: 15000
+    ioam:
+      namespace_id: 10
+      node_id: 15
+      aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
+        - 1 # selected if last two bits of payload size are [00]
+        - 2 # selected if last two bits of payload size are [01]
+        - 1 # selected if last two bits of payload size are [10]
+        - 4 # selected if last two bits of payload size are [11]
+      data_param: 255
+    ports:
+      1:
+        neighbor: s04
+        lei: 10
+      2:
+        neighbor: s03
+        lei: 20
+      3:
+        neighbor: h07
+        lei: 30
+  s16:
+    mac: 08:EE:00:00:00:16
+    hei:
+      - data_param: 255
+        value: 16000
+    ioam:
+      namespace_id: 10
+      node_id: 16
+      aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
+        - 1 # selected if last two bits of payload size are [00]
+        - 2 # selected if last two bits of payload size are [01]
+        - 1 # selected if last two bits of payload size are [10]
+        - 4 # selected if last two bits of payload size are [11]
+      data_param: 255
+    ports:
+      1:
+        neighbor: s04
+        lei: 10
+      2:
+        neighbor: s03
+        lei: 20
+      3:
+        neighbor: h08
+        lei: 30
+  s17:
+    mac: 08:EE:00:00:00:17
+    hei:
+      - data_param: 255
+        value: 17000
+    ioam:
+      namespace_id: 10
+      node_id: 17
+      aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
+        - 1 # selected if last two bits of payload size are [00]
+        - 2 # selected if last two bits of payload size are [01]
+        - 1 # selected if last two bits of payload size are [10]
+        - 4 # selected if last two bits of payload size are [11]
+      data_param: 255
+    ports:
+      1:
+        neighbor: s01
+        lei: 10
+      2:
+        neighbor: s04
+        lei: 20
+      3:
+        neighbor: h09
+        lei: 30
+      4:
+        neighbor: h10
+        lei: 40
+  s18:
+    mac: 08:EE:00:00:00:18
+    hei:
+      - data_param: 255
+        value: 1
+    ioam:
+      namespace_id: 10
+      node_id: 18
+      aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
+        - 1 # selected if last two bits of payload size are [00]
+        - 2 # selected if last two bits of payload size are [01]
+        - 1 # selected if last two bits of payload size are [10]
+        - 4 # selected if last two bits of payload size are [11]
+      data_param: 255
+    ports:
+      1:
+        neighbor: s01
+        lei: 10
+      2:
+        neighbor: s04
+        lei: 20
+      3:
+        neighbor: h11
+        lei: 30
+tables:
+  ipv4_forwarding:
+    name: MyIngress.ipv4_lpm
+    action_name: MyIngress.ipv4_forward
+    default_action: MyIngress.drop
+    match_key: hdr.ipv4.dstAddr
+  ipv6_forwarding:
+    name: MyIngress.ipv6_lpm
+    action_name: MyIngress.ipv6_forward
+    default_action: MyIngress.drop
+    match_key: hdr.ipv6.dstAddr
+  ipv6_reverse_lookup:
+    name: MyEgress.process_ioam_init.ipv6_reverse_lookup
+    action_name: MyEgress.process_ioam_init.set_reverse_route_type
+    match_key: hdr.ipv6.srcAddr
+    default_action: MyEgress.process_ioam_init.set_default_reverse_route_type
+  hei:
+    name: MyEgress.process_efficiency_indicator.get_hop_efficiency_indicator
+    action_name: MyEgress.process_efficiency_indicator.add_indicator_to_aggregate
+    default_action: MyEgress.process_efficiency_indicator.indicate_data_param_error
+    match_key: hdr.ioam_a_ioam_aggregation.dataParam
+  ingress_lei:
+    name: MyEgress.process_efficiency_indicator.get_ingress_link_efficiency_indicator
+    action_name: MyEgress.process_efficiency_indicator.add_indicator_to_aggregate
+    default_action: MyEgress.process_efficiency_indicator.indicate_other_error
+    match_key: standard_metadata.ingress_port
+  egress_lei:
+    name: MyEgress.process_efficiency_indicator.get_egress_link_efficiency_indicator
+    action_name: MyEgress.process_efficiency_indicator.add_indicator_to_aggregate
+    default_action: MyEgress.process_efficiency_indicator.indicate_other_error
+    match_key: standard_metadata.egress_port
+  ioam_aggr_data_param:
+    name: MyEgress.process_ioam_init.ioam_aggr_data_param
+    action_name: MyEgress.process_ioam_init.ioam_aggr_get_data_param
+    match_key: hdr.ethernet.srcAddr
+    default_action: MyEgress.process_ioam_init.indicate_other_error
+  ioam_namespace_id:
+    name: MyEgress.process_ioam_init.ioam_namespace_id
+    action_name: MyEgress.process_ioam_init.ioam_get_namespace_id
+    match_key: hdr.ethernet.srcAddr
+    default_action: MyEgress.process_ioam_init.indicate_other_error
+  ioam_node_id:
+    name: MyEgress.process_ioam_init.ioam_node_id
+    action_name: MyEgress.process_ioam_init.ioam_get_node_id
+    match_key: hdr.ethernet.srcAddr
+    default_action: MyEgress.process_ioam_init.indicate_other_error
+  ioam_aggr_aggregator:
+    name: MyEgress.process_ioam_init.ioam_aggr_aggregator
+    action_name: MyEgress.process_ioam_init.ioam_aggr_set_aggregator
+    match_key: meta.ioamAggrMeta.aggregator_selector
+    default_action: MyEgress.process_ioam_init.ioam_aggr_fallback_default_aggregator
+...

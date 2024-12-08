@@ -1,0 +1,29 @@
+{
+    "hosts": {
+        {% for host_name, host_details in hosts.items() %}
+        "{{ host_name }}": {"ip": "{{ host_details.ipv4.ip }}/{{ host_details.ipv4.prefix_len }}", "mac": "{{ host_details.mac }}"
+            {% if host_details.commands %}, "commands":[
+                {% for command in host_details.commands %}
+                  "{{ command }}"{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ]
+        }
+            {% else %}}{% endif %}
+            {% if not loop.last %},{% endif %}
+        {% endfor %}
+    },
+    "switches": {
+        {% for switch in switches %}
+          "{{ switch }}": { "runtime_json" : "{{ out_dir }}/{{ switch }}-runtime.json" }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    },
+    "links": [
+    {% for link in links %}
+      {% if link.remote.port %}
+      ["{{ link.local.name }}-p{{ link.local.port }}", "{{ link.remote.name }}-p{{ link.remote.port }}"]{% if not loop.last %},{% endif %}
+      {% else %}
+      ["{{ link.local.name }}-p{{ link.local.port }}", "{{ link.remote.name }}"]{% if not loop.last %},{% endif %}
+      {% endif %}
+    {% endfor %}
+    ]
+}

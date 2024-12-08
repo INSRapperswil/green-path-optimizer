@@ -1,0 +1,1310 @@
+{
+ "annotations": {
+  "list": [
+   {
+    "builtIn": 1,
+    "datasource": {
+     "type": "grafana",
+     "uid": "-- Grafana --"
+    },
+    "enable": true,
+    "hide": true,
+    "iconColor": "rgba(0, 211, 255, 1)",
+    "name": "Annotations & Alerts",
+    "type": "dashboard"
+   }
+  ]
+ },
+ "editable": true,
+ "fiscalYearStartMonth": 0,
+ "graphTooltip": 0,
+ "id": 4,
+ "links": [],
+ "panels": [
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "palette-classic"
+     },
+     "custom": {
+      "hideFrom": {
+       "legend": false,
+       "tooltip": false,
+       "viz": false
+      }
+     },
+     "mappings": [],
+     "unit": "none"
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 11,
+    "w": 7,
+    "x": 0,
+    "y": 0
+   },
+   "id": 3,
+   "options": {
+    "displayLabels": [
+     "percent"
+    ],
+    "legend": {
+     "calcs": [],
+     "displayMode": "table",
+     "placement": "bottom",
+     "showLegend": true,
+     "values": [
+      "percent",
+      "value"
+     ]
+    },
+    "pieType": "pie",
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "tooltip": {
+     "mode": "single",
+     "sort": "none"
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"in_packets\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x01\" or r[\"type_5052\"] == \"0x02\" or r[\"type_5052\"] == \"0x04\")\n  |> group(columns: [\"type_5052\"])\n  |> aggregateWindow(every: inf, fn: sum)\n  |> filter(fn: (r) => r[\"_value\"] != 0)",
+     "refId": "A"
+    }
+   ],
+   "title": "Aggregator Used for Percentage of Packets",
+   "transformations": [
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(0x01)",
+      "renamePattern": "SUM"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(0x02)",
+      "renamePattern": "MIN"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(0x04)",
+      "renamePattern": "MAX"
+     }
+    }
+   ],
+   "type": "piechart"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "palette-classic"
+     },
+     "custom": {
+      "fillOpacity": 80,
+      "gradientMode": "none",
+      "hideFrom": {
+       "legend": false,
+       "tooltip": false,
+       "viz": false
+      },
+      "lineWidth": 1
+     },
+     "displayName": "Number of flows with the corresponding amount of packets",
+     "fieldMinMax": false,
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green",
+        "value": null
+       },
+       {
+        "color": "red",
+        "value": 80
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 11,
+    "w": 17,
+    "x": 7,
+    "y": 0
+   },
+   "id": 4,
+   "options": {
+    "legend": {
+     "calcs": [],
+     "displayMode": "list",
+     "placement": "bottom",
+     "showLegend": true
+    }
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"flow_label\", \"src\"])\n  |> aggregateWindow(every: inf, fn: sum)\n  |> group()\n  |> filter(fn: (r) => r[\"_value\"] != 0)\n  |> unique(column: \"flow_label\")",
+     "refId": "A"
+    }
+   ],
+   "title": "Number of Packets per Flow Distribution",
+   "type": "histogram"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "palette-classic"
+     },
+     "custom": {
+      "axisBorderShow": false,
+      "axisCenteredZero": false,
+      "axisColorMode": "text",
+      "axisLabel": "",
+      "axisPlacement": "auto",
+      "barAlignment": 0,
+      "drawStyle": "line",
+      "fillOpacity": 25,
+      "gradientMode": "none",
+      "hideFrom": {
+       "legend": false,
+       "tooltip": false,
+       "viz": false
+      },
+      "insertNulls": false,
+      "lineInterpolation": "linear",
+      "lineWidth": 1,
+      "pointSize": 5,
+      "scaleDistribution": {
+       "type": "linear"
+      },
+      "showPoints": "auto",
+      "spanNulls": false,
+      "stacking": {
+       "group": "A",
+       "mode": "normal"
+      },
+      "thresholdsStyle": {
+       "mode": "off"
+      }
+     },
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green",
+        "value": null
+       },
+       {
+        "color": "red",
+        "value": 80
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 16,
+    "w": 24,
+    "x": 0,
+    "y": 11
+   },
+   "id": 2,
+   "options": {
+    "legend": {
+     "calcs": [
+      "lastNotNull",
+      "mean"
+     ],
+     "displayMode": "table",
+     "placement": "bottom",
+     "showLegend": true,
+     "sortBy": "Name",
+     "sortDesc": false
+    },
+    "tooltip": {
+     "mode": "single",
+     "sort": "none"
+    }
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"dst\"])\n  |> aggregateWindow(every: 5m, fn: sum)",
+     "refId": "A"
+    }
+   ],
+   "title": "Number of Packets by Destination (Last 5min Average)",
+   "transformations": [
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a04:f340::a)",
+      "renamePattern": "h01"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a00:10c0::a)",
+      "renamePattern": "h02"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2001:67c:470::a)",
+      "renamePattern": "h03"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a00:c38::a)",
+      "renamePattern": "h04"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a02:2d8::a)",
+      "renamePattern": "h05"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2607:5d00::a)",
+      "renamePattern": "h06"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a05:ff80::a)",
+      "renamePattern": "h07"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2a0a:de00::a)",
+      "renamePattern": "h08"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2001:678:274::a)",
+      "renamePattern": "h09"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2001:678:e0::a)",
+      "renamePattern": "h10"
+     }
+    },
+    {
+     "id": "renameByRegex",
+     "options": {
+      "regex": "(2001:678:7f0::a)",
+      "renamePattern": "h11"
+     }
+    }
+   ],
+   "type": "timeseries"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "thresholds"
+     },
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "#aaaaaa",
+        "value": null
+       },
+       {
+        "color": "red",
+        "value": 1
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 7,
+    "w": 7,
+    "x": 0,
+    "y": 27
+   },
+   "id": 5,
+   "options": {
+    "colorMode": "value",
+    "graphMode": "area",
+    "justifyMode": "auto",
+    "orientation": "auto",
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "showPercentChange": false,
+    "textMode": "auto",
+    "wideLayout": true
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] != \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\")\n  |> keep(columns: [\"_time\", \"flow_label\", \"type_5052\", \"type_5053\"])\n  |> group(columns: [\"flow_label\", \"src\", \"dst\"])\n  |> map(fn: (r) => ({ r with _value: int(v: r.type_5053) }))\n  |> aggregateWindow(every: inf, fn: sum)\n  |> drop(columns: [\"flow_label\"])\n  |> aggregateWindow(every: inf, fn: sum)\n  |> filter(fn: (r) => r[\"_value\"] != 0)",
+     "refId": "A"
+    }
+   ],
+   "title": "Number of Packets with Unsupported Aggregators",
+   "type": "stat"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "thresholds"
+     },
+     "custom": {
+      "align": "auto",
+      "cellOptions": {
+       "type": "auto"
+      },
+      "filterable": true,
+      "inspect": false
+     },
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green",
+        "value": null
+       },
+       {
+        "color": "red",
+        "value": 80
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 7,
+    "w": 17,
+    "x": 7,
+    "y": 27
+   },
+   "id": 10,
+   "options": {
+    "cellHeight": "sm",
+    "footer": {
+     "countRows": false,
+     "fields": "",
+     "reducer": [
+      "sum"
+     ],
+     "show": false
+    },
+    "showHeader": true,
+    "sortBy": [
+     {
+      "desc": false,
+      "displayName": "Flow Label"
+     }
+    ]
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] != \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\")\n  |> keep(columns: [\"_time\", \"flow_label\", \"src\", \"dst\", \"type_5052\", \"type_5053\"])\n  |> map(fn: (r) => ({ r with _value: int(v: r.type_5053) }))\n  |> group(columns: [\"flow_label\"])\n  |> truncateTimeColumn(unit: 1s)\n  |> map(fn: (r) => ({ r with timestamp: r._time }))\n  |> group(columns: [\"flow_label\", \"src\", \"dst\", \"timestamp\"])\n  |> aggregateWindow(every: inf, fn: sum)\n  |> drop(columns: [\"_time\", \"_start\", \"_stop\", \"type_5053\"])\n  |> filter(fn: (r) => r[\"_value\"] != 0)\n  |> group()\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a04:f340::a\" then \"h01\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a04:f340::a\" then \"h01\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:10c0::a\" then \"h02\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:10c0::a\" then \"h02\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:67c:470::a\" then \"h03\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:67c:470::a\" then \"h03\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:c38::a\" then \"h04\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:c38::a\" then \"h04\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a02:2d8::a\" then \"h05\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a02:2d8::a\" then \"h05\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2607:5d00::a\" then \"h06\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2607:5d00::a\" then \"h06\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a05:ff80::a\" then \"h07\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a05:ff80::a\" then \"h07\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a0a:de00::a\" then \"h08\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a0a:de00::a\" then \"h08\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:274::a\" then \"h09\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:274::a\" then \"h09\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:e0::a\" then \"h10\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:e0::a\" then \"h10\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:7f0::a\" then \"h11\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:7f0::a\" then \"h11\" else r.dst }))",
+     "refId": "A"
+    }
+   ],
+   "title": "Number of Packets per Flow with Unsupported Aggregators",
+   "transformations": [
+    {
+     "id": "organize",
+     "options": {
+      "excludeByName": {},
+      "includeByName": {},
+      "indexByName": {
+       "_value": 4,
+       "dst": 3,
+       "flow_label": 1,
+       "src": 2,
+       "timestamp": 0
+      },
+      "renameByName": {
+       "_time": "Timestamp",
+       "_value": "Number of Packets",
+       "dst": "Destination Host",
+       "flow_label": "Flow Label",
+       "src": "Source Host",
+       "timestamp": "Timestamp",
+       "type_5052": "Unsupported Aggregator"
+      }
+     }
+    }
+   ],
+   "type": "table"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "thresholds"
+     },
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "#aaaaaa",
+        "value": null
+       },
+       {
+        "color": "red",
+        "value": 1
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 7,
+    "w": 7,
+    "x": 0,
+    "y": 34
+   },
+   "id": 7,
+   "options": {
+    "colorMode": "value",
+    "graphMode": "area",
+    "justifyMode": "auto",
+    "orientation": "auto",
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "showPercentChange": false,
+    "textMode": "auto",
+    "wideLayout": true
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5054\"] != \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\")\n  |> keep(columns: [\"_time\", \"flow_label\", \"type_5052\", \"type_5054\"])\n  |> group(columns: [\"flow_label\", \"src\", \"dst\"])\n  |> map(fn: (r) => ({ r with _value: int(v: r.type_5054) }))\n  |> aggregateWindow(every: inf, fn: sum)\n  |> drop(columns: [\"flow_label\"])\n  |> aggregateWindow(every: inf, fn: sum)\n  |> filter(fn: (r) => r[\"_value\"] != 0)",
+     "refId": "A"
+    }
+   ],
+   "title": "Number of Packets with Unsupported Data Parameter",
+   "type": "stat"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "thresholds"
+     },
+     "custom": {
+      "align": "auto",
+      "cellOptions": {
+       "type": "auto"
+      },
+      "filterable": true,
+      "inspect": false
+     },
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green",
+        "value": null
+       },
+       {
+        "color": "red",
+        "value": 80
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 7,
+    "w": 17,
+    "x": 7,
+    "y": 34
+   },
+   "id": 11,
+   "options": {
+    "cellHeight": "sm",
+    "footer": {
+     "countRows": false,
+     "fields": "",
+     "reducer": [
+      "sum"
+     ],
+     "show": false
+    },
+    "showHeader": true,
+    "sortBy": [
+     {
+      "desc": true,
+      "displayName": "Flow Label"
+     }
+    ]
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5054\"] != \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\")\n  |> keep(columns: [\"_time\", \"flow_label\", \"src\", \"dst\", \"type_5052\", \"type_5054\"])\n  |> map(fn: (r) => ({ r with _value: int(v: r.type_5054) }))\n  |> group(columns: [\"flow_label\"])\n  |> truncateTimeColumn(unit: 1s)\n  |> map(fn: (r) => ({ r with timestamp: r._time }))\n  |> group(columns: [\"flow_label\", \"src\", \"dst\", \"timestamp\"])\n  |> aggregateWindow(every: inf, fn: sum)\n  |> drop(columns: [\"_time\", \"_start\", \"_stop\"])\n  |> filter(fn: (r) => r[\"_value\"] != 0)\n  |> group()\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a04:f340::a\" then \"h01\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a04:f340::a\" then \"h01\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:10c0::a\" then \"h02\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:10c0::a\" then \"h02\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:67c:470::a\" then \"h03\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:67c:470::a\" then \"h03\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:c38::a\" then \"h04\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:c38::a\" then \"h04\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a02:2d8::a\" then \"h05\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a02:2d8::a\" then \"h05\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2607:5d00::a\" then \"h06\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2607:5d00::a\" then \"h06\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a05:ff80::a\" then \"h07\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a05:ff80::a\" then \"h07\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a0a:de00::a\" then \"h08\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a0a:de00::a\" then \"h08\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:274::a\" then \"h09\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:274::a\" then \"h09\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:e0::a\" then \"h10\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:e0::a\" then \"h10\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:7f0::a\" then \"h11\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:7f0::a\" then \"h11\" else r.dst }))",
+     "refId": "A"
+    }
+   ],
+   "title": "Number of Packets per Flow with Unsupported Data Parameter",
+   "transformations": [
+    {
+     "id": "organize",
+     "options": {
+      "excludeByName": {},
+      "includeByName": {},
+      "indexByName": {
+       "_value": 4,
+       "dst": 3,
+       "flow_label": 1,
+       "src": 2,
+       "timestamp": 0
+      },
+      "renameByName": {
+       "_time": "Timestamp",
+       "_value": "Number of Packets",
+       "dst": "Destination Host",
+       "flow_label": "Flow Label",
+       "src": "Source Host",
+       "timestamp": "Timestamp"
+      }
+     }
+    }
+   ],
+   "type": "table"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "thresholds"
+     },
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "#aaaaaa",
+        "value": null
+       },
+       {
+        "color": "red",
+        "value": 1
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 7,
+    "w": 7,
+    "x": 0,
+    "y": 41
+   },
+   "id": 6,
+   "options": {
+    "colorMode": "value",
+    "graphMode": "area",
+    "justifyMode": "auto",
+    "orientation": "auto",
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "showPercentChange": false,
+    "textMode": "auto",
+    "wideLayout": true
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5055\"] != \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\")\n  |> keep(columns: [\"_time\", \"flow_label\", \"type_5052\", \"type_5055\"])\n  |> group(columns: [\"flow_label\", \"src\", \"dst\"])\n  |> map(fn: (r) => ({ r with _value: int(v: r.type_5055) }))\n  |> aggregateWindow(every: inf, fn: sum)\n  |> drop(columns: [\"flow_label\"])\n  |> aggregateWindow(every: inf, fn: sum)\n  |> filter(fn: (r) => r[\"_value\"] != 0)",
+     "refId": "A"
+    }
+   ],
+   "title": "Number of Packets with Unsupported Namespace",
+   "type": "stat"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "thresholds"
+     },
+     "custom": {
+      "align": "auto",
+      "cellOptions": {
+       "type": "auto"
+      },
+      "filterable": true,
+      "inspect": false
+     },
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green",
+        "value": null
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 7,
+    "w": 17,
+    "x": 7,
+    "y": 41
+   },
+   "id": 9,
+   "options": {
+    "cellHeight": "sm",
+    "footer": {
+     "countRows": false,
+     "fields": "",
+     "reducer": [
+      "sum"
+     ],
+     "show": false
+    },
+    "showHeader": true,
+    "sortBy": [
+     {
+      "desc": false,
+      "displayName": "Source Host"
+     }
+    ]
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5055\"] != \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\")\n  |> keep(columns: [\"_time\", \"flow_label\", \"src\", \"dst\", \"type_5052\", \"type_5055\"])\n  |> map(fn: (r) => ({ r with _value: int(v: r.type_5055) }))\n  |> group(columns: [\"flow_label\"])\n  |> truncateTimeColumn(unit: 1s)\n  |> map(fn: (r) => ({ r with timestamp: r._time }))\n  |> group(columns: [\"flow_label\", \"src\", \"dst\", \"timestamp\"])\n  |> aggregateWindow(every: inf, fn: sum)\n  |> drop(columns: [\"_time\", \"_start\", \"_stop\"])\n  |> filter(fn: (r) => r[\"_value\"] != 0)\n  |> group()\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a04:f340::a\" then \"h01\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a04:f340::a\" then \"h01\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:10c0::a\" then \"h02\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:10c0::a\" then \"h02\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:67c:470::a\" then \"h03\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:67c:470::a\" then \"h03\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:c38::a\" then \"h04\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:c38::a\" then \"h04\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a02:2d8::a\" then \"h05\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a02:2d8::a\" then \"h05\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2607:5d00::a\" then \"h06\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2607:5d00::a\" then \"h06\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a05:ff80::a\" then \"h07\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a05:ff80::a\" then \"h07\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a0a:de00::a\" then \"h08\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a0a:de00::a\" then \"h08\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:274::a\" then \"h09\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:274::a\" then \"h09\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:e0::a\" then \"h10\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:e0::a\" then \"h10\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:7f0::a\" then \"h11\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:7f0::a\" then \"h11\" else r.dst }))",
+     "refId": "A"
+    }
+   ],
+   "title": "Number of Packets per Flow with Unsupported Namespace",
+   "transformations": [
+    {
+     "id": "organize",
+     "options": {
+      "excludeByName": {},
+      "includeByName": {},
+      "indexByName": {
+       "_value": 4,
+       "dst": 3,
+       "flow_label": 1,
+       "src": 2,
+       "timestamp": 0
+      },
+      "renameByName": {
+       "_time": "Timestamp",
+       "_value": "Number of Packets",
+       "dst": "Destination Host",
+       "flow_label": "Flow Label",
+       "src": "Source Host",
+       "timestamp": "Timestamp"
+      }
+     }
+    }
+   ],
+   "type": "table"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "thresholds"
+     },
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "#aaaaaa",
+        "value": null
+       },
+       {
+        "color": "red",
+        "value": 1
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 7,
+    "w": 7,
+    "x": 0,
+    "y": 48
+   },
+   "id": 8,
+   "options": {
+    "colorMode": "value",
+    "graphMode": "area",
+    "justifyMode": "auto",
+    "orientation": "auto",
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "showPercentChange": false,
+    "textMode": "auto",
+    "wideLayout": true
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5056\"] != \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\")\n  |> keep(columns: [\"_time\", \"flow_label\", \"type_5052\", \"type_5056\"])\n  |> group(columns: [\"flow_label\", \"src\", \"dst\"])\n  |> map(fn: (r) => ({ r with _value: int(v: r.type_5056) }))\n  |> aggregateWindow(every: inf, fn: sum)\n  |> drop(columns: [\"flow_label\"])\n  |> aggregateWindow(every: inf, fn: sum)\n  |> filter(fn: (r) => r[\"_value\"] != 0)",
+     "refId": "A"
+    }
+   ],
+   "title": "Number of Packets with Other Errors",
+   "type": "stat"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "thresholds"
+     },
+     "custom": {
+      "align": "auto",
+      "cellOptions": {
+       "type": "auto"
+      },
+      "filterable": true,
+      "inspect": false
+     },
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green",
+        "value": null
+       },
+       {
+        "color": "red",
+        "value": 80
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 7,
+    "w": 17,
+    "x": 7,
+    "y": 48
+   },
+   "id": 12,
+   "options": {
+    "cellHeight": "sm",
+    "footer": {
+     "countRows": false,
+     "fields": "",
+     "reducer": [
+      "sum"
+     ],
+     "show": false
+    },
+    "showHeader": true
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5056\"] != \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\")\n  |> keep(columns: [\"_time\", \"flow_label\", \"src\", \"dst\", \"type_5052\", \"type_5056\"])\n  |> map(fn: (r) => ({ r with _value: int(v: r.type_5056) }))\n  |> group(columns: [\"flow_label\"])\n  |> truncateTimeColumn(unit: 1s)\n  |> map(fn: (r) => ({ r with timestamp: r._time }))\n  |> group(columns: [\"flow_label\", \"src\", \"dst\", \"timestamp\"])\n  |> aggregateWindow(every: inf, fn: sum)\n  |> drop(columns: [\"_time\", \"_start\", \"_stop\"])\n  |> filter(fn: (r) => r[\"_value\"] != 0)\n  |> group()\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a04:f340::a\" then \"h01\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a04:f340::a\" then \"h01\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:10c0::a\" then \"h02\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:10c0::a\" then \"h02\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:67c:470::a\" then \"h03\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:67c:470::a\" then \"h03\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:c38::a\" then \"h04\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:c38::a\" then \"h04\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a02:2d8::a\" then \"h05\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a02:2d8::a\" then \"h05\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2607:5d00::a\" then \"h06\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2607:5d00::a\" then \"h06\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a05:ff80::a\" then \"h07\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a05:ff80::a\" then \"h07\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a0a:de00::a\" then \"h08\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a0a:de00::a\" then \"h08\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:274::a\" then \"h09\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:274::a\" then \"h09\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:e0::a\" then \"h10\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:e0::a\" then \"h10\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:7f0::a\" then \"h11\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:7f0::a\" then \"h11\" else r.dst }))",
+     "refId": "A"
+    }
+   ],
+   "title": "Number of Packet per Flow with Other Errors",
+   "transformations": [
+    {
+     "id": "organize",
+     "options": {
+      "excludeByName": {},
+      "includeByName": {},
+      "indexByName": {
+       "_value": 4,
+       "dst": 3,
+       "flow_label": 1,
+       "src": 2,
+       "timestamp": 0
+      },
+      "renameByName": {
+       "_time": "Timestamp",
+       "_value": "Number of Packets",
+       "dst": "Destination Host",
+       "flow_label": "Flow Label",
+       "src": "Source Host",
+       "timestamp": "Timestamp"
+      }
+     }
+    }
+   ],
+   "type": "table"
+  },
+  {
+   "datasource": {
+    "type": "influxdb",
+    "uid": "P3C6603E967DC8568"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "thresholds"
+     },
+     "custom": {
+      "align": "auto",
+      "cellOptions": {
+       "type": "auto"
+      },
+      "filterable": true,
+      "inspect": false
+     },
+     "mappings": [],
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "#aaaaaa",
+        "value": null
+       }
+      ]
+     }
+    },
+    "overrides": [
+     {
+      "matcher": {
+       "id": "byName",
+       "options": "Error Flags"
+      },
+      "properties": [
+       {
+        "id": "mappings",
+        "value": [
+         {
+          "options": {
+           "1": {
+            "index": 0,
+            "text": "Unsupported Aggregator"
+           },
+           "2": {
+            "index": 1,
+            "text": "Unsupported Data Parameter"
+           },
+           "3": {
+            "index": 2,
+            "text": "Unsupported Aggregator | Unsupported Data Parameter"
+           },
+           "4": {
+            "index": 3,
+            "text": "Unsupported Namespace"
+           },
+           "5": {
+            "index": 4,
+            "text": "Unsupported Aggregator | Unsupported Namespace"
+           },
+           "6": {
+            "index": 5,
+            "text": "Unsupported Data Parameter | Unsupported Namespace"
+           },
+           "7": {
+            "index": 6,
+            "text": "Unsupported Aggregator | Unsupported Data Parameter | Unsupported Namespace"
+           },
+           "8": {
+            "index": 7,
+            "text": "Other Error"
+           },
+           "9": {
+            "index": 8,
+            "text": "Unsupported Aggregator | Other Error"
+           },
+           "10": {
+            "index": 9,
+            "text": "Unsupported Data Parameter | Other Error"
+           },
+           "11": {
+            "index": 10,
+            "text": "Unsupported Aggregator | Unsupported Data Parameter | Other Error"
+           },
+           "12": {
+            "index": 11,
+            "text": "Unsupported Namespace | Other Error"
+           },
+           "13": {
+            "index": 12,
+            "text": "Unsupported Aggregator | Unsupported Namespace | Other Error"
+           },
+           "14": {
+            "index": 13,
+            "text": "Unsupported Data Parameter | Unsupported Namespace | Other Error"
+           },
+           "15": {
+            "index": 14,
+            "text": "Unsupported Aggregator | Unsupported Data Parameter | Unsupported Namespace | Other Error"
+           }
+          },
+          "type": "value"
+         }
+        ]
+       },
+       {
+        "id": "custom.width",
+        "value": 414
+       }
+      ]
+     },
+     {
+      "matcher": {
+       "id": "byName",
+       "options": "Error Node"
+      },
+      "properties": [
+       {
+        "id": "custom.width",
+        "value": 116
+       }
+      ]
+     },
+     {
+      "matcher": {
+       "id": "byName",
+       "options": "Aggregator"
+      },
+      "properties": [
+       {
+        "id": "custom.width",
+        "value": 118
+       }
+      ]
+     },
+     {
+      "matcher": {
+       "id": "byName",
+       "options": "Flow Label"
+      },
+      "properties": [
+       {
+        "id": "custom.width",
+        "value": 126
+       }
+      ]
+     },
+     {
+      "matcher": {
+       "id": "byName",
+       "options": "Path"
+      },
+      "properties": [
+       {
+        "id": "custom.width",
+        "value": 115
+       }
+      ]
+     },
+     {
+      "matcher": {
+       "id": "byName",
+       "options": "Namespace ID"
+      },
+      "properties": [
+       {
+        "id": "custom.width",
+        "value": 134
+       }
+      ]
+     },
+     {
+      "matcher": {
+       "id": "byName",
+       "options": "Destination Host"
+      },
+      "properties": [
+       {
+        "id": "custom.width",
+        "value": 153
+       }
+      ]
+     },
+     {
+      "matcher": {
+       "id": "byName",
+       "options": "Source Host"
+      },
+      "properties": [
+       {
+        "id": "custom.width",
+        "value": 132
+       }
+      ]
+     },
+     {
+      "matcher": {
+       "id": "byName",
+       "options": "Timestamp"
+      },
+      "properties": [
+       {
+        "id": "custom.width",
+        "value": 261
+       }
+      ]
+     }
+    ]
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 55
+   },
+   "id": 13,
+   "options": {
+    "cellHeight": "sm",
+    "footer": {
+     "countRows": false,
+     "fields": "",
+     "reducer": [
+      "sum"
+     ],
+     "show": false
+    },
+    "showHeader": true,
+    "sortBy": [
+     {
+      "desc": false,
+      "displayName": "Error Flags"
+     }
+    ]
+   },
+   "pluginVersion": "10.4.1",
+   "targets": [
+    {
+     "datasource": {
+      "type": "influxdb",
+      "uid": "P3C6603E967DC8568"
+     },
+     "query": "from(bucket: \"raw_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"flags\"] != \"0\")\n  |> filter(fn: (r) => r[\"_field\"] == \"aggregate\")\n  |> group(columns: [\"flow_label\", \"source_ipv6\", \"destination_ipv6\"])\n  |> map(fn: (r) => ({ r with path: r.node_01 + \"-\" + r.node_02 + \"-\" + r.node_03 + \"-\" + r.node_04}))\n  |> keep(columns: [\"_time\", \"flow_label\", \"source_ipv6\", \"destination_ipv6\", \"flags\", \"aggregator\", \"auxil_data_node_id\", \"namespace_id\", \"path\"])\n  |> group()\n\n  |> map(fn: (r) => ({ r with source_ipv6: if r.source_ipv6 == \"2a04:f340:0000:0000:0000:0000:0000:000a\" then \"h01\" else r.source_ipv6 }))\n  |> map(fn: (r) => ({ r with destination_ipv6: if r.destination_ipv6 == \"2a04:f340:0000:0000:0000:0000:0000:000a\" then \"h01\" else r.destination_ipv6 }))\n\n  |> map(fn: (r) => ({ r with source_ipv6: if r.source_ipv6 == \"2a00:10c0:0000:0000:0000:0000:0000:000a\" then \"h02\" else r.source_ipv6 }))\n  |> map(fn: (r) => ({ r with destination_ipv6: if r.destination_ipv6 == \"2a00:10c0:0000:0000:0000:0000:0000:000a\" then \"h02\" else r.destination_ipv6 }))\n\n  |> map(fn: (r) => ({ r with source_ipv6: if r.source_ipv6 == \"2001:067c:0470:0000:0000:0000:0000:000a\" then \"h03\" else r.source_ipv6 }))\n  |> map(fn: (r) => ({ r with destination_ipv6: if r.destination_ipv6 == \"2001:067c:0470:0000:0000:0000:0000:000a\" then \"h03\" else r.destination_ipv6 }))\n\n  |> map(fn: (r) => ({ r with source_ipv6: if r.source_ipv6 == \"2a00:0c38:0000:0000:0000:0000:0000:000a\" then \"h04\" else r.source_ipv6 }))\n  |> map(fn: (r) => ({ r with destination_ipv6: if r.destination_ipv6 == \"2a00:0c38:0000:0000:0000:0000:0000:000a\" then \"h04\" else r.destination_ipv6 }))\n\n  |> map(fn: (r) => ({ r with source_ipv6: if r.source_ipv6 == \"2a02:02d8:0000:0000:0000:0000:0000:000a\" then \"h05\" else r.source_ipv6 }))\n  |> map(fn: (r) => ({ r with destination_ipv6: if r.destination_ipv6 == \"2a02:02d8:0000:0000:0000:0000:0000:000a\" then \"h05\" else r.destination_ipv6 }))\n\n  |> map(fn: (r) => ({ r with source_ipv6: if r.source_ipv6 == \"2607:5d00:0000:0000:0000:0000:0000:000a\" then \"h06\" else r.source_ipv6 }))\n  |> map(fn: (r) => ({ r with destination_ipv6: if r.destination_ipv6 == \"2607:5d00:0000:0000:0000:0000:0000:000a\" then \"h06\" else r.destination_ipv6 }))\n\n  |> map(fn: (r) => ({ r with source_ipv6: if r.source_ipv6 == \"2a05:ff80:0000:0000:0000:0000:0000:000a\" then \"h07\" else r.source_ipv6 }))\n  |> map(fn: (r) => ({ r with destination_ipv6: if r.destination_ipv6 == \"2a05:ff80:0000:0000:0000:0000:0000:000a\" then \"h07\" else r.destination_ipv6 }))\n\n  |> map(fn: (r) => ({ r with source_ipv6: if r.source_ipv6 == \"2a0a:de00:0000:0000:0000:0000:0000:000a\" then \"h08\" else r.source_ipv6 }))\n  |> map(fn: (r) => ({ r with destination_ipv6: if r.destination_ipv6 == \"2a0a:de00:0000:0000:0000:0000:0000:000a\" then \"h08\" else r.destination_ipv6 }))\n\n  |> map(fn: (r) => ({ r with source_ipv6: if r.source_ipv6 == \"2001:0678:0274:0000:0000:0000:0000:000a\" then \"h09\" else r.source_ipv6 }))\n  |> map(fn: (r) => ({ r with destination_ipv6: if r.destination_ipv6 == \"2001:0678:0274:0000:0000:0000:0000:000a\" then \"h09\" else r.destination_ipv6 }))\n\n  |> map(fn: (r) => ({ r with source_ipv6: if r.source_ipv6 == \"2001:0678:00e0:0000:0000:0000:0000:000a\" then \"h10\" else r.source_ipv6 }))\n  |> map(fn: (r) => ({ r with destination_ipv6: if r.destination_ipv6 == \"2001:0678:00e0:0000:0000:0000:0000:000a\" then \"h10\" else r.destination_ipv6 }))\n\n  |> map(fn: (r) => ({ r with source_ipv6: if r.source_ipv6 == \"2001:0678:07f0:0000:0000:0000:0000:000a\" then \"h11\" else r.source_ipv6 }))\n  |> map(fn: (r) => ({ r with destination_ipv6: if r.destination_ipv6 == \"2001:0678:07f0:0000:0000:0000:0000:000a\" then \"h11\" else r.destination_ipv6 }))",
+     "refId": "A"
+    }
+   ],
+   "title": "Flow Error Overview",
+   "transformations": [
+    {
+     "id": "organize",
+     "options": {
+      "excludeByName": {},
+      "includeByName": {},
+      "indexByName": {
+       "_time": 0,
+       "aggregator": 7,
+       "auxil_data_node_id": 5,
+       "destination_ipv6": 3,
+       "flags": 6,
+       "flow_label": 1,
+       "namespace_id": 8,
+       "path": 4,
+       "source_ipv6": 2
+      },
+      "renameByName": {
+       "_time": "Timestamp",
+       "aggregator": "Aggregator",
+       "auxil_data_node_id": "Error Node",
+       "destination_ipv6": "Destination Host",
+       "flags": "Error Flags",
+       "flow_label": "Flow Label",
+       "namespace_id": "Namespace ID",
+       "path": "Path",
+       "source_ipv6": "Source Host",
+       "src": ""
+      }
+     }
+    }
+   ],
+   "type": "table"
+  }
+ ],
+ "refresh": "1m",
+ "schemaVersion": 39,
+ "tags": [],
+ "templating": {
+  "list": []
+ },
+ "time": {
+  "from": "now-1h",
+  "to": "now"
+ },
+ "timepicker": {
+  "refresh_intervals": [
+   "5s",
+   "10s",
+   "30s",
+   "1m",
+   "5m",
+   "15m",
+   "30m",
+   "1h",
+   "2h",
+   "1d"
+  ]
+ },
+ "timezone": "",
+ "title": "Simulation Network Statistics",
+ "uid": "adhgd0ci1m2o0c",
+ "version": 1,
+ "weekStart": "monday"
+}

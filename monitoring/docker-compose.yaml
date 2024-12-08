@@ -1,0 +1,79 @@
+services:
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      - TZ=Europe/Zurich
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+      - ./influx/entrypoint/:/docker-entrypoint-initdb.d
+    networks:
+      efficientNetwork:
+        ipv4_address: 192.168.100.10
+
+    restart: unless-stopped
+
+  telegraf:
+    image: telegraf:latest
+    container_name: telegraf
+    environment:
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
+      - DOCKER_INFLUXDB_INIT_ADMIN_ENABLE=${DOCKER_INFLUXDB_ADMIN_ENABLE:-true}
+      - DOCKER_INFLUXDB_INIT_URL=${INFLUXDB_INIT_URL}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    networks:
+      efficientNetwork:
+        ipv4_address: 192.168.100.20
+    ports:
+      - "4739:4739/udp"
+    depends_on:
+      - influxdb
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+    - "3000:3000"
+
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_INSTALL_PLUGINS=esnet-matrix-panel
+    volumes:
+    - grafana_data:/var/lib/grafana
+    - ./grafana/dashboards:/var/lib/grafana/dashboards
+    - ./grafana/provisioning:/etc/grafana/provisioning
+
+    networks:
+      efficientNetwork:
+        ipv4_address: 192.168.100.30
+
+    restart: unless-stopped
+
+    depends_on:
+      - influxdb
+
+networks:
+   efficientNetwork:
+     driver: bridge
+     ipam:
+       driver: default
+       config:
+         - subnet: 192.168.100.0/24
+           gateway: 192.168.100.1
+
+volumes:
+  influxdb_data:
+  grafana_data:
