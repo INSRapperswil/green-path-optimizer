@@ -89,7 +89,7 @@ Some of the identified challenges are:
 The challenges were adressed as follows:
 
 1. To ensure data can be processed at line rate, the efficiency data is collected outside the data plane. It is supposed to be exposed to the data plane via a lookup table (similar to the forwarding information base (FIB) tables). Additionally, the aggregation which happens inside the data plane avoids using complex arithmetical operations.
-1. The mitigation of the increased packet size due to INT goes hand in hand with the challenge/requirement to aggregate the data in transit which reduces the volume of network telemetry data present in packet headers. <!--REVIEW-->
+1. The mitigation of the increasing packet size due to INT goes hand in hand with the challenge/requirement that data must be aggregated in transit to retrieve the path metric directly. The aggregation in transit leads to constant header size no matter how many nodes are travered.
 1. To aggregate the efficiency data in transit, the [IOAM Aggregation Trace Option](https://datatracker.ietf.org/doc/html/draft-cxx-ippm-ioamaggr-02) is used.
 1. As shown in figure (todo reference) one or more energy metrics are mapped to a hop metric. With a consistent energy metric to hop metric configuration on all nodes, the hop metrics of the same type will be comparable.
 1. The energy metric mapping as shown in figure (todo reference) can be set up as required but needs to be consistent throughout the same IOAM domain. In case energy metrics shall also be exchanged between autonomous systems (AS) with e.g. BGP in future some common configurations need to be standardized.
@@ -165,7 +165,7 @@ There are two different export mechanisms which fulfill different needs.
 
 ##### Aggregated Export
 
-The aggregated export is used to make **flow statistics** available to a network operator, enabling the generation of a heat map containing endpoint to endpoint network efficiency information.<!--REVIEW-->
+The aggregated export is used to make **flow statistics** available to a network operator as it aggregates efficiency data stored in packets on a per flow basis.For example the data is used to generate a heat map containing endpoint to endpoint network efficiency information.
 
 Data is grouped by flow and IOAM aggregator.
 The network telemetry data of all packets within the same group is then aggregated using the IOAM aggregator specified and exported within a single IPFIX message.
@@ -189,7 +189,7 @@ It is also helpful to see how the metrics change over time.
 
 This dashboard contains general information about the simulation network such as:
 
-- Aggregator Usage for<!-- REVIEW --> percentage of packets (MIN, MAX, SUM)
+- Overview about which IOAM aggregator has been used (MIN, MAX, SUM) for a percentage of packets
 - Number of packets per flow distribution
 - Number of packets per receiver time series
 - IOAM Aggregation Option error statistics
@@ -212,9 +212,9 @@ This dashboard contains information about the efficiency of individual hops.
 The data displayed in this dashboard was exported via IPFIX with the **raw export** mechanism and includes only data of packets which used _MIN_ or _MAX_ aggregation.
 Information contained is:
 
-- An absolute and relative voting<!--REVIEW: voting?--> about which routers are the most efficient and most inefficient respectively
+- An absolut and relative discovery about how many times a router is the most efficient or most ineffcient on a specific path
 - Most efficient hop discovery per path
-- Most inefficient hop discover per path <!--REVIEW discovery as above? discovered maybe? What's the difference to the first line?-->
+- Most inefficient hop discovery per path
 
 ##### Path Statistics
 
