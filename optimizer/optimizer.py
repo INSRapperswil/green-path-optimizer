@@ -2,6 +2,7 @@ from influx.influx_data_getter import InfluxDataGetter
 from os import environ
 from pprint import pprint
 
+
 def is_env_file_loaded():
     return (
         "INFLUXDB_RAW_BUCKET" in environ
@@ -14,7 +15,9 @@ def is_env_file_loaded():
 
 def main():
     if not is_env_file_loaded():
-        raise RuntimeError("Unable to intialize InfluxDataGetter because environment variables are unavailable")
+        raise RuntimeError(
+            "Unable to intialize InfluxDataGetter because environment variables are unavailable"
+        )
     idg = InfluxDataGetter(
         environ.get("INFLUXDB_RAW_BUCKET"),
         environ.get("INFLUXDB_AGGREGATED_BUCKET"),
