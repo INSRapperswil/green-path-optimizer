@@ -234,18 +234,61 @@ This dashboard could be completed with a heat map which shows the path efficienc
 
 ## Project Objectives During Hackathon
 
-The primary goal is to demonstrate that energy-efficient traffic routing can be achieved using our collected data, while also identifying any gaps in the current dataset that would be crucial for further optimizations.
+### Overview
 
-This includes the following work items:
+The primary objective of this hackathon project is to demonstrate the feasibility of energy-efficient traffic routing using our collected network telemetry data. In addition, the project aims to identify gaps in the current dataset that could be crucial for further optimization efforts.
 
-- Analysis of given raw data in InfluxDB
-- **Development of green-path-optimizer application which suggests path updates to improve efficiency**
-- **Integration of the configuration-update-utility to actually deploy the improvements in the PoC network environment**
-- In case there is time:
-  - Parameter evaluation
-  - Interpretation of improvements and what is needed to apply it in practice
-  - Validation of the suggested improvements also regarding throughput / bottlenecks etc.
-  - **Conception of efficiency discovery mechanism of all paths of a given length in an arbitrary topology.**
+### Key Work Items
+
+#### 1. **Network Telemetry Data Analysis**
+
+Conduct an in-depth analysis of the raw data stored in InfluxDB to address key efficiency questions, such as:
+
+- Identifying the most inefficient hop on each path.
+- Determining paths that can be disabled during off-peak traffic periods and identifying alternative routes for rerouting traffic.
+- Calculating the number of redundant paths between specific ingress and egress routers.
+- Evaluating how many paths traverse through a particular node.
+
+This step involves creating queries that extract actionable insights and highlight inefficiencies in the current routing configuration.
+
+#### 2. **Development of the Green Path Optimizer**
+
+Design and prototype the _green-path-optimizer_ application, which provides path optimization suggestions to enhance network efficiency.
+
+- **Type:** Standalone application
+- **Input:** Current and historical path statistics
+- **Core Functionality:**
+  - Evaluate available paths for each ingress and egress router based on their efficiencies.
+  - Identify alternative paths either continuously, upon detecting efficiency drops, or when changes in node metrics occur.
+  - Suggest path updates where alternative routes offer sustained and measurable advantages while minimizing churn.
+
+> **Note:** The application does not need to be fully implemented for the hackathon and may include stubs to simulate functionality for demonstration purposes.
+
+#### 3. **Integration of Configuration Update Utility**
+
+Incorporate the configuration-update utility to apply the suggested routing improvements in the proof-of-concept (PoC) network environment. This involves:
+
+- Updating path definitions in the YAML configuration files.
+- Triggering configuration regeneration to produce updated forwarding tables for BMv2 software switches.
+- Deploying the updated configurations to BMv2 switches to enact traffic rerouting.
+- Validating the improvements via monitoring dashboards, where increased network efficiency should be observable after the new configurations are applied.
+
+#### 4. **Additional Fields of Investigation (Time Permitting)**
+
+If time allows, the following supplementary investigations may be pursued:
+
+- Evaluating parameters that influence routing efficiency.
+- Interpreting observed improvements and identifying steps required for practical implementation.
+- Validating the suggested optimizations with respect to throughput, bottlenecks, and overall network performance.
+- **Designing an efficiency discovery mechanism** to evaluate all paths of a given length within an arbitrary topology.
+
+### Expected Outcomes
+
+By the end of the hackathon, the project should:
+
+1. Provide a proof-of-concept demonstration of energy-efficient routing.
+2. Highlight areas where additional data or enhancements to the current dataset are needed.
+3. Lay the groundwork for a scalable solution to optimize traffic routing with minimal energy usage.
 
 ## Getting Started
 
