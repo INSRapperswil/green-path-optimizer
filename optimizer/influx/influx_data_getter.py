@@ -23,11 +23,10 @@ class InfluxDataGetter:
     def makeprovisionary_aggregate_results(self, api_response):
         # get all the data out of the InfluxTables and put it into a list to be used later
         results = []
-        x = 0
-        for table in api_response:
+        for i, table in enumerate(api_response):
             results.append([])
             for record in table.records:
-                results[x].append(
+                results[i].append(
                     {
                         record.get_field(): [
                             record.get_value(),
@@ -35,8 +34,6 @@ class InfluxDataGetter:
                         ]
                     }
                 )
-            x += 1
-
         return results
 
     def basic_aggregated_query(self, time):
@@ -73,16 +70,15 @@ class InfluxDataGetter:
     def makeprovisionary_raw_results(self, api_response):
         # get all the data from the Influx tables and make it easily usable for later steps
         results = []
-        x = 0
-        for table in api_response:
+        for i, table in enumerate(api_response):
             results.append([])
-            results[x].append(
+            results[i].append(
                 {
                     "flow_label": table.records[0].values.get("flow_label"),
                     "aggregator": table.records[0].values.get("aggregator"),
                 }
             )
-            results[x].append(
+            results[i].append(
                 {
                     "source_ipv6": table.records[0].values.get("source_ipv6"),
                     "destination_ipv6": table.records[0].values.get("destination_ipv6"),
@@ -92,7 +88,7 @@ class InfluxDataGetter:
                     ),
                 }
             )
-            results[x].append(
+            results[i].append(
                 {
                     "node1": table.records[0].values.get("node_01"),
                     "node2": table.records[0].values.get("node_02"),
@@ -101,8 +97,7 @@ class InfluxDataGetter:
                 }
             )
             for record in table.records:
-                results[x].append({record.get_field(): record.get_value()})
-            x += 1
+                results[i].append({record.get_field(): record.get_value()})
 
         return results
 
