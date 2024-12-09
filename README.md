@@ -14,7 +14,7 @@ The green-path-optimizer is a framework for simulating a proof-of-concept enviro
 
 **Currently** it contains the following components:
 
-- **Network** based on BMv2 software switches capable of:
+- **Network** based on [BMv2](https://github.com/p4lang/behavioral-model) software switches capable of:
   - Collecting inband network telemetry (INT) data regarding energy efficiency of network paths using the [IOAM](https://datatracker.ietf.org/doc/rfc9197/) protocol
   - Exporting the INT data using [IPFIX](https://datatracker.ietf.org/doc/html/rfc7011)
 - **Configuration** utilities capable of:
