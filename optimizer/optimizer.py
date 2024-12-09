@@ -13,7 +13,7 @@ def is_env_file_loaded():
 
 
 def main():
-    if not is_env_file_loaded:
+    if not is_env_file_loaded():
         raise RuntimeError("Unable to intialize InfluxDataGetter because environment variables are unavailable")
     idg = InfluxDataGetter(
         environ.get("INFLUXDB_RAW_BUCKET"),
