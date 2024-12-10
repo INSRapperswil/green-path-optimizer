@@ -25,8 +25,8 @@ def main():
         environ.get("INFLUXDB_TOKEN"),
         environ.get("INFLUXDB_INIT_URL"),
     )
-    result = idg.basic_raw_query_by_src_dst(10)
-    pprint(result)
+    idg.get_path_metrics(1733846800, 1733846920)
+    # pprint(result)
 
 
 if __name__ == "__main__":
