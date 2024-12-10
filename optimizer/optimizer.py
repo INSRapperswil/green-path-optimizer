@@ -1,6 +1,6 @@
 from influx.influx_data_getter import InfluxDataGetter
 from os import environ
-from pprint import pprint
+from time import time
 
 
 def is_env_file_loaded():
@@ -25,8 +25,8 @@ def main():
         environ.get("INFLUXDB_TOKEN"),
         environ.get("INFLUXDB_INIT_URL"),
     )
-    idg.get_path_metrics(1733846800, 1733846920)
-    # pprint(result)
+    current_time = int(time())
+    idg.get_efficiency_data(current_time - 30, current_time)
 
 
 if __name__ == "__main__":
