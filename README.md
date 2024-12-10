@@ -260,6 +260,7 @@ Design and prototype the _green-path-optimizer_ application, which provides path
 - **Core Functionality:**
   - Evaluate available paths for each ingress and egress router based on their efficiencies.
   - Identify alternative paths either continuously, upon detecting efficiency drops, or when changes in node metrics occur.
+  - Identify exceptionally bad performing routers which would make sense to isolate and only operate in case the traffic demands require it.
   - Suggest path updates where alternative routes offer sustained and measurable advantages while minimizing churn.
 
 > **Note:** The application does not need to be fully implemented for the hackathon and may include stubs to simulate functionality for demonstration purposes.
