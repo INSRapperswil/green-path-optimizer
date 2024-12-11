@@ -79,6 +79,17 @@ def main():
 
 
 def get_latest_aggregate(item: dict, data_param: int, aggregator: Aggregator):
+    """
+    Returns the aggregate value of the last entry of the given data param and aggregator
+
+    Args:
+        item (dict): The efficiency item to look for
+        data_param (int): The identifier of the data param to optimize for
+        aggregator (Aggregator): The aggregator to optimize for
+
+    Returns:
+        aggregate (int): The most recent aggregate value with given data param and aggregator
+    """
     _, value = list(item.items())[0] # Unpack the dictionary to access the inner structure
     latest_entry = value[data_param][-1]  # Get the last entry from the list under key data_param
     return latest_entry[aggregator]['aggregate']  # Extract the 'aggregate' value
@@ -106,6 +117,15 @@ def sort_efficiency_data(efficiency_data: dict, data_param: int, aggregator: Agg
 
 
 def generate_path_defintion(efficiency_data: dict) -> list:
+    """
+    Generates the path definitions in the format needed for the resource yaml file
+
+    Args:
+        efficiency_data (dict): The sorted ingress to egress to path mapping returned by the influx data getter
+
+    Returns:
+        path_definitions (list): A list of the most efficient path definitions in the format needed for the resource yaml file
+    """
     path_definitions = []
     for ingress, egress_dict in efficiency_data.items():
             for egress, paths in egress_dict.items():
@@ -132,6 +152,13 @@ def generate_path_defintion(efficiency_data: dict) -> list:
 
 
 def write_paths_to_resource_file(resource_file: str, paths: list):
+    """
+    Writes the given path definitions to the resource yaml file
+
+    Args:
+        resource_file(str): Path to the resource file containing the yaml definitions
+        paths (list): A list containing the most efficient paths
+    """
     with open(RESOURCE_FILE, 'r') as file:
         resources = yaml.safe_load(file)
     
