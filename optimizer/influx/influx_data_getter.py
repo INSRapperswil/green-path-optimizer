@@ -5,17 +5,16 @@ from pprint import pprint
 import influxdb_client
 import json
 from influxdb_client.client.flux_table import FluxStructureEncoder, TableList
+
 from enum import Enum
-from typing import Dict, List, TypedDict
+from typing import TypedDict
 
 
 class Aggregator(Enum):
-    """
-    Aggregator type identifier
-    """
     SUM = 1
     MIN = 2
     MAX = 4
+
 
 class EfficiencyData(TypedDict):
     """
