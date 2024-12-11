@@ -28,46 +28,8 @@ def main():
         environ.get("INFLUXDB_TOKEN"),
         environ.get("INFLUXDB_INIT_URL"),
     )
-    current_time = int(time())
+    # current_time = int(time())
     # efficiency_data = idg.get_efficiency_data(current_time - 30, current_time)
-    # efficiency_data = {
-    #     14: {
-    #         11: {
-    #             [
-    #                 (0, 14, 2, 11): {
-    #                     255: {
-    #                         [
-    #                             Aggregator.SUM: {
-    #                                 aggregate: 15000
-    #                                 time: 1733919990
-    #                             },
-    #                             Aggregator.SUM: {
-    #                                 aggregate: 12000
-    #                                 time: 1733919995
-    #                             },
-
-    #                         ]
-    #                     }
-    #                 },
-    #                 (0, 14, 3, 11): {
-    #                     255: {
-    #                          [
-    #                             Aggregator.SUM: {
-    #                                 aggregate: 8000
-    #                                 time: 1733919990
-    #                             },
-    #                             Aggregator.SUM: {
-    #                                 aggregate: 10000
-    #                                 time: 1733919995
-    #                             },
-
-    #                         ]
-    #                     }
-    #                 },
-    #             ]
-    #         }
-    #     }
-    # }
     efficiency_data = {
         14: {
             11: [
@@ -82,7 +44,7 @@ def main():
                             },
                             {
                                 Aggregator.SUM: {
-                                    "aggregate": 12000,
+                                    "aggregate": 20000,
                                     "time": 1733919995
                                 }
                             }
@@ -110,17 +72,17 @@ def main():
             ]
         }
     }
-    sorted_efficiency_data = sort_efficiency_data(efficiency_data, IOAM_DATA_PARAM, Aggregator.SUM)
+    sort_efficiency_data(efficiency_data, IOAM_DATA_PARAM, Aggregator.SUM)
+    pprint(efficiency_data)
 
 
-def get_latest_aggregate(item):
-    # Unpack the dictionary to access the inner structure
-    key, value = list(item.items())[0]
-    latest_entry = value[255][-1]  # Get the last entry from the list under key 255
-    return latest_entry[Aggregator.SUM]['aggregate']  # Extract the 'aggregate' value
+def get_latest_aggregate(item: dict, data_param: int, aggregator: Aggregator):
+    _, value = list(item.items())[0] # Unpack the dictionary to access the inner structure
+    latest_entry = value[data_param][-1]  # Get the last entry from the list under key data_param
+    return latest_entry[aggregator]['aggregate']  # Extract the 'aggregate' value
 
 
-def sort_efficiency_data(efficiency_data: dict, data_param: int, aggregator: Aggregator) -> dict:
+def sort_efficiency_data(efficiency_data: dict, data_param: int, aggregator: Aggregator):
         """
         Sorts the path list for each ingress and egress according to the given data_param and aggregator
 
@@ -138,9 +100,7 @@ def sort_efficiency_data(efficiency_data: dict, data_param: int, aggregator: Agg
 
         for ingress, egress_dict in efficiency_data.items():
             for egress, paths in egress_dict.items():
-                paths.sort(key=get_latest_aggregate)
-        
-        pprint(efficiency_data)
+                paths.sort(key=lambda item: get_latest_aggregate(item, data_param, aggregator))
 
 
 
