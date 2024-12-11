@@ -73,7 +73,8 @@ def main():
         }
     }
     sort_efficiency_data(efficiency_data, IOAM_DATA_PARAM, Aggregator.SUM)
-    pprint(efficiency_data)
+    path_definitions = generate_path_defintion(efficiency_data)
+    pprint(path_definitions)
 
 
 def get_latest_aggregate(item: dict, data_param: int, aggregator: Aggregator):
@@ -103,6 +104,30 @@ def sort_efficiency_data(efficiency_data: dict, data_param: int, aggregator: Agg
                 paths.sort(key=lambda item: get_latest_aggregate(item, data_param, aggregator))
 
 
+def generate_path_defintion(efficiency_data: dict) -> list:
+    path_definitions = []
+    for ingress, egress_dict in efficiency_data.items():
+            for egress, paths in egress_dict.items():
+                most_efficient_path = paths[0]
+                nodes = list(most_efficient_path.keys())[0]
+                path_snippet = {
+                    "ingress": None,
+                    "egress": None,
+                    "via": [],
+                    "symmetric": False
+                }
+                for node_id in nodes:
+                    if node_id == 0:
+                        continue
+                    node_name:str = f"s{node_id}"
+                    if path_snippet["ingress"] is None:
+                        path_snippet["ingress"] = node_name
+                    elif node_id == nodes[-1]:
+                        path_snippet["egress"] = node_name
+                    else:
+                        path_snippet["via"].append(node_name)
+                path_definitions.append(path_snippet)
+    return path_definitions
 
 if __name__ == "__main__":
     main()
