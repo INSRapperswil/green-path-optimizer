@@ -12,11 +12,11 @@ paths:
     symmetric: true
   - ingress: s11
     egress: s13
-    via: [s01, s02]
+    via: [s02]
     symmetric: true
   - ingress: s11
     egress: s14
-    via: [s01, s03]
+    via: [s02]
     symmetric: true
   - ingress: s11
     egress: s15
@@ -28,11 +28,11 @@ paths:
     symmetric: true
   - ingress: s11
     egress: s17
-    via: [s01, s04]
+    via: [s01]
     symmetric: true
   - ingress: s11
     egress: s18
-    via: [s01, s04]
+    via: [s01]
     symmetric: true
   # routes from s12
   - ingress: s12
@@ -41,7 +41,7 @@ paths:
     symmetric: true
   - ingress: s12
     egress: s14
-    via: [s02, s03]
+    via: [s02]
     symmetric: true
   - ingress: s12
     egress: s15
@@ -57,12 +57,12 @@ paths:
     symmetric: true
   - ingress: s12
     egress: s18
-    via: [s02, s04]
+    via: [s01]
     symmetric: true
   # routes from s13
   - ingress: s13
     egress: s14
-    via: [s03]
+    via: [s02]
     symmetric: true
   - ingress: s13
     egress: s15
@@ -70,11 +70,11 @@ paths:
     symmetric: true
   - ingress: s13
     egress: s16
-    via: [s02, s04]
+    via: [s03]
     symmetric: true
   - ingress: s13
     egress: s17
-    via: [s02, s04]
+    via: [s02, s01]
     symmetric: true
   - ingress: s13
     egress: s18
@@ -87,7 +87,7 @@ paths:
     symmetric: true
   - ingress: s14
     egress: s16
-    via: [s02, s04]
+    via: [s03]
     symmetric: true
   - ingress: s14
     egress: s17
@@ -100,7 +100,7 @@ paths:
     # routes from s15
   - ingress: s15
     egress: s16
-    via: [s04]
+    via: [s03]
     symmetric: true
   - ingress: s15
     egress: s17
@@ -122,7 +122,7 @@ paths:
     # routes from s16
   - ingress: s17
     egress: s18
-    via: [s04]
+    via: [s01]
     symmetric: true
 hosts:
   h01:
