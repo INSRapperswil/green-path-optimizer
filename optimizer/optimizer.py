@@ -2,9 +2,10 @@ from influx.influx_data_getter import InfluxDataGetter, Aggregator
 from os import environ
 from time import time
 from pprint import pprint
-
+import yaml
 
 IOAM_DATA_PARAM = 255
+RESOURCE_FILE = "config/generator/resources/large_network.yaml"
 
 def is_env_file_loaded():
     return (
@@ -74,7 +75,7 @@ def main():
     }
     sort_efficiency_data(efficiency_data, IOAM_DATA_PARAM, Aggregator.SUM)
     path_definitions = generate_path_defintion(efficiency_data)
-    pprint(path_definitions)
+    write_paths_to_resource_file(RESOURCE_FILE, path_definitions)
 
 
 def get_latest_aggregate(item: dict, data_param: int, aggregator: Aggregator):
@@ -128,6 +129,16 @@ def generate_path_defintion(efficiency_data: dict) -> list:
                         path_snippet["via"].append(node_name)
                 path_definitions.append(path_snippet)
     return path_definitions
+
+
+def write_paths_to_resource_file(resource_file: str, paths: list):
+    with open(RESOURCE_FILE, 'r') as file:
+        resources = yaml.safe_load(file)
+    
+    resources["paths"] = paths
+    
+    with open(RESOURCE_FILE, 'w') as file:
+        yaml.dump(resources, file)
 
 if __name__ == "__main__":
     main()
