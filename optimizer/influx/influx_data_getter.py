@@ -1,4 +1,6 @@
 from __future__ import annotations
+from datetime import datetime
+import pytz
 from pprint import pprint
 import influxdb_client
 import json
@@ -79,10 +81,14 @@ class InfluxDataGetter:
                 tmp_dict[source_node] = {}
                 tmp_dict[source_node][destination_node] = []
 
+                # format ISO 8601 to uix time format
+                datetime_obj = datetime.strptime(values["_time"], "%Y-%m-%dT%H:%M:%S.%f%z")
+                epoch_time = int(datetime_obj.timestamp())
+
                 efficiency_data = EfficiencyData = {
                     "aggregate_value": int(values["_value"]),
                     "node_id": int(values["auxil_data_node_id"]),
-                    "timestamp": 1231412} #todo: unix timestamp converter
+                    "timestamp": epoch_time} #todo: unix timestamp converter
 
                 # Append the new data to the list
                 tmp_dict[source_node][destination_node].append({
@@ -93,6 +99,8 @@ class InfluxDataGetter:
                     },
                 })
 
+                pprint(tmp_dict)
+
                 # Check if source_node exists in tmp_dict
                 if source_node not in efficiency_data:
                     tmp_dict[source_node] = {}
@@ -101,8 +109,10 @@ class InfluxDataGetter:
                 if destination_node not in tmp_dict[source_node]:
                     tmp_dict[source_node][destination_node] = []
 
-        # tmp_dict["source"] = "14"
+
+
         pprint(tmp_dict)
+        # tmp_dict["source"] = "14"
 
         # extracted = self.extract_efficiency_data(data)
 
