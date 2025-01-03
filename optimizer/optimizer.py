@@ -30,33 +30,56 @@ def main():
         environ.get("INFLUXDB_TOKEN"),
         environ.get("INFLUXDB_INIT_URL"),
     )
-    # current_time = int(time())
-    # efficiency_data = idg.get_efficiency_data(current_time - 30, current_time)
-    efficiency_data = {
-        14: {
-            11: [
-                {
-                    (0, 14, 2, 11): {
-                        255: [
-                            {Aggregator.SUM: {"aggregate": 15000, "time": 1733919990}},
-                            {Aggregator.SUM: {"aggregate": 20000, "time": 1733919995}},
-                        ]
-                    },
-                },
-                {
-                    (0, 14, 3, 11): {
-                        255: [
-                            {Aggregator.SUM: {"aggregate": 9000, "time": 1733919990}},
-                            {Aggregator.SUM: {"aggregate": 11000, "time": 1733919995}},
-                        ]
-                    },
-                },
-            ]
-        }
-    }
-    sort_efficiency_data(efficiency_data, IOAM_DATA_PARAM, Aggregator.SUM)
-    path_definitions = generate_path_defintion(efficiency_data)
-    write_paths_to_resource_file(RESOURCE_FILE, path_definitions)
+    current_time = int(time())
+    path_efficiency_entry = idg.get_path_efficiency_by_ingress(current_time - 120, current_time)
+    pprint(path_efficiency_entry)
+    # efficiency_data = {
+    #     14: {
+    #         11: [
+    #             {
+    #                 (0, 14, 2, 11): {
+    #                     255: [
+    #                         {Aggregator.SUM: {"aggregate": 15000, "time": 1733919990}},
+    #                         {Aggregator.SUM: {"aggregate": 20000, "time": 1733919995}},
+    #                     ]
+    #                 },
+    #             },
+    #             {
+    #                 (0, 14, 3, 11): {
+    #                     255: [
+    #                         {Aggregator.SUM: {"aggregate": 9000, "time": 1733919990}},
+    #                         {Aggregator.SUM: {"aggregate": 11000, "time": 1733919995}},
+    #                     ]
+    #                 },
+    #             },
+    #         ]
+    #     }
+    # }
+        # efficiency_data = {
+    #     14: {
+    #         11: [
+    #             {
+    #                 (0, 14, 2, 11): {
+    #                     255: {
+    #                         Aggregator.SUM: {"aggregate": 15000, "time": 1733919990}, {"aggregate": 20000, "time": 1733919995},
+    #                         Aggregator.MIN: {"aggregate": 20000, "time": 1733919995}},
+    #                     ]
+    #                 },
+    #             },
+    #             {
+    #                 (0, 14, 3, 11): {
+    #                     255: [
+    #                         {Aggregator.SUM: {"aggregate": 9000, "time": 1733919990}},
+    #                         {Aggregator.SUM: {"aggregate": 11000, "time": 1733919995}},
+    #                     ]
+    #                 },
+    #             },
+    #         ]
+    #     }
+    # }
+    # sort_efficiency_data(efficiency_data, IOAM_DATA_PARAM, Aggregator.SUM)
+    # path_definitions = generate_path_defintion(efficiency_data)
+    # write_paths_to_resource_file(RESOURCE_FILE, path_definitions)
 
 
 def get_latest_aggregate(item: dict, data_param: int, aggregator: Aggregator):
