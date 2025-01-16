@@ -5,7 +5,7 @@ from pprint import pprint
 import yaml
 
 IOAM_DATA_PARAM = 255
-RESOURCE_FILE = "config/generator/resources/large_network.yaml"
+RESOURCE_FILE = "config/generator/resources/large_network_temp.yaml"
 
 
 def is_env_file_loaded():
@@ -31,8 +31,9 @@ def main():
         environ.get("INFLUXDB_INIT_URL"),
     )
     current_time = int(time())
-    path_efficiency_entry = idg.get_path_efficiency_by_ingress(current_time - 120, current_time)
-    pprint(path_efficiency_entry)
+    efficiency_data = idg.get_path_efficiency_by_ingress(current_time - 4000, current_time)
+    pprint(efficiency_data)
+    # pprint(efficiency_data)
     # efficiency_data = {
     #     14: {
     #         11: [
@@ -55,7 +56,7 @@ def main():
     #         ]
     #     }
     # }
-        # efficiency_data = {
+    #     efficiency_data = {
     #     14: {
     #         11: [
     #             {
@@ -67,7 +68,7 @@ def main():
     #                 },
     #             },
     #             {
-    #                 (0, 14, 3, 11): {
+    #                 (0, 14, 3[data_param], 11): {
     #                     255: [
     #                         {Aggregator.SUM: {"aggregate": 9000, "time": 1733919990}},
     #                         {Aggregator.SUM: {"aggregate": 11000, "time": 1733919995}},
@@ -77,12 +78,12 @@ def main():
     #         ]
     #     }
     # }
-    # sort_efficiency_data(efficiency_data, IOAM_DATA_PARAM, Aggregator.SUM)
-    # path_definitions = generate_path_defintion(efficiency_data)
-    # write_paths_to_resource_file(RESOURCE_FILE, path_definitions)
+    sort_efficiency_data(efficiency_data, IOAM_DATA_PARAM, Aggregator.SUM)
+    path_definitions = generate_path_defintion(efficiency_data)
+    write_paths_to_resource_file(RESOURCE_FILE, path_definitions)
 
 
-def get_latest_aggregate(item: dict, data_param: int, aggregator: Aggregator):
+def get_aggregate(item: dict, data_param: int, aggregator: Aggregator):
     """
     Returns the aggregate value of the last entry of the given data param and aggregator
 
@@ -92,15 +93,14 @@ def get_latest_aggregate(item: dict, data_param: int, aggregator: Aggregator):
         aggregator (Aggregator): The aggregator to optimize for
 
     Returns:
-        aggregate (int): The most recent aggregate value with given data param and aggregator
+        aggregate (int): The aggregate value with given data param and aggregator
     """
-    _, value = list(item.items())[
-        0
-    ]  # Unpack the dictionary to access the inner structure
-    latest_entry = value[data_param][
-        -1
-    ]  # Get the last entry from the list under key data_param
-    return latest_entry[aggregator]["aggregate"]  # Extract the 'aggregate' value
+    data_param_dict = next(iter(item.values()))
+    if data_param not in data_param_dict:
+        return float("inf")
+    if aggregator not in data_param_dict[data_param]:
+        return float("inf")
+    return data_param_dict[data_param][aggregator]["aggregate"]
 
 
 def sort_efficiency_data(
@@ -119,12 +119,12 @@ def sort_efficiency_data(
     """
 
     if aggregator != Aggregator.SUM:
-        raise RuntimeError("The provided aggregator is not supported")
+        raise ValueError("The provided aggregator is not supported")
 
     for ingress, egress_dict in efficiency_data.items():
         for egress, paths in egress_dict.items():
             paths.sort(
-                key=lambda item: get_latest_aggregate(item, data_param, aggregator)
+                key=lambda item: get_aggregate(item, data_param, aggregator)
             )
 
 
@@ -143,7 +143,7 @@ def generate_path_defintion(efficiency_data: dict) -> list:
         for egress, paths in egress_dict.items():
             most_efficient_path = paths[0]
             nodes = list(most_efficient_path.keys())[0]
-            path_snippet = {
+            path = {
                 "ingress": None,
                 "egress": None,
                 "via": [],
@@ -153,13 +153,17 @@ def generate_path_defintion(efficiency_data: dict) -> list:
                 if node_id == 0:
                     continue
                 node_name: str = f"s{node_id}"
-                if path_snippet["ingress"] is None:
-                    path_snippet["ingress"] = node_name
+                if path["ingress"] is None:
+                    path["ingress"] = node_name
                 elif node_id == nodes[-1]:
-                    path_snippet["egress"] = node_name
+                    path["egress"] = node_name
                 else:
-                    path_snippet["via"].append(node_name)
-            path_definitions.append(path_snippet)
+                    path["via"].append(node_name)
+            if path["ingress"] is None:
+                raise ValueError("All node IDs are set to zero in given path")
+            if path["egress"] is None:
+                path["egress"] = path["ingress"]
+            path_definitions.append(path)
     return path_definitions
 
 

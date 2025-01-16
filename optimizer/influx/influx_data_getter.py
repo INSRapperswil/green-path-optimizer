@@ -143,8 +143,8 @@ class InfluxDataGetter:
         for raw_path_efficiency_entries in influx_data:
             path_efficiency_entries.append([entry["values"] for entry in raw_path_efficiency_entries])
         for path_entries in path_efficiency_entries:
-            ingress: str = get_ingress(path_entries[0])
-            egress: str = get_egress(path_entries[0])
+            ingress: int = get_ingress(path_entries[0])
+            egress: int = get_egress(path_entries[0])
 
             if ingress not in self.path_efficiency_dict:
                 self.path_efficiency_dict[ingress] = {}
@@ -168,8 +168,10 @@ class InfluxDataGetter:
                             break
 
                 for path_entry in path_entries:
-                    pprint(path_entry)
-                    self.path_efficiency_dict[ingress][egress][path_index][path_key][path_entry["aggregator"]] = {
+                    data_param: int = int(path_entry["ioam_data_param"])
+                    if data_param not in self.path_efficiency_dict[ingress][egress][path_index][path_key]:
+                        self.path_efficiency_dict[ingress][egress][path_index][path_key][data_param] = {}
+                    self.path_efficiency_dict[ingress][egress][path_index][path_key][data_param][get_aggregator(path_entry)] = {
                         "aggregate": path_entry["_value"]
                     }
 
@@ -179,10 +181,19 @@ def get_ingress(path_entry: dict) -> str:
     nodes = ["node_01", "node_02", "node_03", "node_04"]
     for node in nodes:
         if path_entry[node] != "0":
-            return path_entry[node]
+            return int(path_entry[node])
     
 def get_egress(path_entry: dict) -> str:
-    return path_entry["node_04"]
+    return int(path_entry["node_04"])
 
 def get_path_tuple(path_entry: dict) -> tuple:
-    return (path_entry["node_01"], path_entry["node_02"], path_entry["node_03"], path_entry["node_04"])
+    return (int(path_entry["node_01"]), int(path_entry["node_02"]), int(path_entry["node_03"]), int(path_entry["node_04"]))
+
+def get_aggregator(path_entry: dict) -> Aggregator:
+    match path_entry["aggregator"]:
+        case "1":
+            return Aggregator.SUM
+        case "2":
+            return Aggregator.MIN
+        case "4":
+            return Aggregator.MAX
