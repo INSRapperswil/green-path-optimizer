@@ -31,7 +31,9 @@ def main():
         environ.get("INFLUXDB_INIT_URL"),
     )
     current_time = int(time())
-    efficiency_data = idg.get_path_efficiency_by_ingress(current_time - 4000, current_time)
+    efficiency_data = idg.get_path_efficiency_by_ingress(
+        current_time - 4000, current_time
+    )
     pprint(efficiency_data)
     # pprint(efficiency_data)
     # efficiency_data = {
@@ -123,9 +125,7 @@ def sort_efficiency_data(
 
     for ingress, egress_dict in efficiency_data.items():
         for egress, paths in egress_dict.items():
-            paths.sort(
-                key=lambda item: get_aggregate(item, data_param, aggregator)
-            )
+            paths.sort(key=lambda item: get_aggregate(item, data_param, aggregator))
 
 
 def generate_path_defintion(efficiency_data: dict) -> list:
