@@ -1,4 +1,5 @@
-from influx.influx_data_getter import InfluxDataGetter, Aggregator
+from influx.influx_data_getter import InfluxDataGetter
+from influx.types import Aggregator
 from os import environ
 from time import time
 from pprint import pprint
@@ -32,54 +33,8 @@ def main():
     )
     current_time = int(time())
     efficiency_data = idg.get_path_efficiency_by_ingress(
-        current_time - 4000, current_time
+        current_time - 120, current_time, "median"
     )
-    pprint(efficiency_data)
-    # pprint(efficiency_data)
-    # efficiency_data = {
-    #     14: {
-    #         11: [
-    #             {
-    #                 (0, 14, 2, 11): {
-    #                     255: [
-    #                         {Aggregator.SUM: {"aggregate": 15000, "time": 1733919990}},
-    #                         {Aggregator.SUM: {"aggregate": 20000, "time": 1733919995}},
-    #                     ]
-    #                 },
-    #             },
-    #             {
-    #                 (0, 14, 3, 11): {
-    #                     255: [
-    #                         {Aggregator.SUM: {"aggregate": 9000, "time": 1733919990}},
-    #                         {Aggregator.SUM: {"aggregate": 11000, "time": 1733919995}},
-    #                     ]
-    #                 },
-    #             },
-    #         ]
-    #     }
-    # }
-    #     efficiency_data = {
-    #     14: {
-    #         11: [
-    #             {
-    #                 (0, 14, 2, 11): {
-    #                     255: {
-    #                         Aggregator.SUM: {"aggregate": 15000, "time": 1733919990}, {"aggregate": 20000, "time": 1733919995},
-    #                         Aggregator.MIN: {"aggregate": 20000, "time": 1733919995}},
-    #                     ]
-    #                 },
-    #             },
-    #             {
-    #                 (0, 14, 3[data_param], 11): {
-    #                     255: [
-    #                         {Aggregator.SUM: {"aggregate": 9000, "time": 1733919990}},
-    #                         {Aggregator.SUM: {"aggregate": 11000, "time": 1733919995}},
-    #                     ]
-    #                 },
-    #             },
-    #         ]
-    #     }
-    # }
     sort_efficiency_data(efficiency_data, IOAM_DATA_PARAM, Aggregator.SUM)
     path_definitions = generate_path_defintion(efficiency_data)
     write_paths_to_resource_file(RESOURCE_FILE, path_definitions)
