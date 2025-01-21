@@ -13,6 +13,7 @@ from .helpers import (
 import json
 import influxdb_client
 
+
 class InfluxDataGetter:
     def __init__(
         self: InfluxDataGetter,
@@ -36,7 +37,7 @@ class InfluxDataGetter:
 
         # initializing the API Client
         self.query_api: influxdb_client.QueryAPI = client.query_api()
-        
+
         self.path_efficiency_dict: dict = {}
         self.last_used_path_dict: dict = {}
         self.known_path_set: set = set()
@@ -48,9 +49,9 @@ class InfluxDataGetter:
         return [result["records"] for result in query_results]
 
     def get_path_efficiency_by_ingress(
-        self: InfluxDataGetter, start: int, stop: int, aggregation_type: str
+        self: InfluxDataGetter, start: int, stop: int, record_aggregator: str
     ) -> dict:
-        if aggregation_type == "median":
+        if record_aggregator == "median":
             query: str = f"""from(bucket: "{self.raw_bucket}")\n
             |> range(start: {start}, stop: {stop})\n
             |> filter(fn: (r) => r["_measurement"] == "netflow")\n
@@ -59,7 +60,7 @@ class InfluxDataGetter:
             |> group(columns: ["node_01", "node_02", "node_03", "node_04", "ioam_data_param", "aggregator"])\n
             |> median(column: "_value")\n
             """
-        elif aggregation_type == "last":
+        elif record_aggregator == "last":
             query: str = f"""from(bucket: "{self.raw_bucket}")\n
             |> range(start: {start}, stop: {stop})\n
             |> filter(fn: (r) => r["_measurement"] == "netflow")\n
@@ -68,16 +69,25 @@ class InfluxDataGetter:
             |> group(columns: ["node_01", "node_02", "node_03", "node_04", "ioam_data_param", "aggregator"])\n
             |> last(column: "_value")\n
             """
+        elif record_aggregator == "mean":
+            query: str = f"""from(bucket: "{self.raw_bucket}")\n
+            |> range(start: {start}, stop: {stop})\n
+            |> filter(fn: (r) => r["_measurement"] == "netflow")\n
+            |> filter(fn: (r) => r["flags"] == "0")\n
+            |> filter(fn: (r) => r["_field"] == "aggregate")\n
+            |> group(columns: ["node_01", "node_02", "node_03", "node_04", "ioam_data_param", "aggregator"])\n
+            |> mean(column: "_value")\n
+            """
         else:
-            raise ValueError("Unsupported aggregation type")
+            raise ValueError("Unsupported record aggregator")
 
         influx_raw_data: list[dict] = self.run_influx_query(query)
         path_entries = extract_path_entries_from_raw_data(influx_raw_data)
         self.insert_into_path_efficiency_dict(path_entries)
         return self.path_efficiency_dict
-    
+
     def get_last_used_paths_by_ingress(
-            self: InfluxDataGetter, start: int, stop: int
+        self: InfluxDataGetter, start: int, stop: int
     ) -> dict:
         query: str = f"""from(bucket: "{self.raw_bucket}")\n
         |> range(start: {start}, stop: {stop})\n
@@ -125,7 +135,9 @@ class InfluxDataGetter:
 
             data_param: int = int(entry["ioam_data_param"])
 
-            path_dict_entry = self.path_efficiency_dict[ingress][egress][path_index][path_key]
+            path_dict_entry = self.path_efficiency_dict[ingress][egress][path_index][
+                path_key
+            ]
 
             if data_param not in path_dict_entry:
                 path_dict_entry[data_param] = {}
@@ -133,7 +145,6 @@ class InfluxDataGetter:
             path_dict_entry[data_param][get_aggregator(entry)] = {
                 "aggregate": entry["_value"]
             }
-
 
     def insert_into_last_path_usage_dict(
         self: InfluxDataGetter, path_entries: list[dict]
@@ -144,7 +155,7 @@ class InfluxDataGetter:
             # skip path entry in case node list is empty
             if is_empty_node_list(path_key):
                 return
-        
+
             ingress: int = get_ingress(entry)
             egress: int = get_egress(entry)
 

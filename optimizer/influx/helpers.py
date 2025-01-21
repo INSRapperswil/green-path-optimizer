@@ -1,5 +1,6 @@
 from .types import Aggregator
 
+
 def get_ingress(path_entry: dict) -> str:
     nodes = ["node_01", "node_02", "node_03", "node_04"]
     for node in nodes:

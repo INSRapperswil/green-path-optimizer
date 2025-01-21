@@ -1,15 +1,101 @@
+import argparse
 from influx.influx_data_getter import InfluxDataGetter
 from influx.types import Aggregator
 from os import environ
 from time import time
-from pprint import pprint
 from rich import print
 import yaml
 
 IOAM_DATA_PARAM = 255
 AGGREGATOR = Aggregator.SUM
-RESOURCE_FILE = "config/generator/resources/large_network_temp.yaml"
 
+
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        help="Print path efficiency entries",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-q",
+        "--quiet",
+        help="Do not print any informative output",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-r",
+        "--resources",
+        help="Path to yaml resource definition",
+        type=str,
+    )
+    parser.add_argument(
+        "--record-aggregator",
+        help="Aggregation method to use to handle an arbitrary number of path entries (average/median/last)",
+        type=str,
+        default="last",
+    )
+    parser.add_argument(
+        "-d",
+        "--data_param",
+        help="IOAM Data Param to optimize for",
+        type=int,
+    )
+    parser.add_argument(
+        "-a",
+        "--aggregator",
+        help="IOAM aggregator to optimize for",
+        type=Aggregator,
+    )
+    parser.add_argument(
+        "-t",
+        "--time",
+        help="Number of seconds back from now to include the telemetry data",
+        type=int,
+        required=False,
+        default=600,
+    )
+    return parser.parse_args()
+
+def main():
+    args = get_args()
+    idg = get_influx_data_getter()
+
+    current_time = int(time())
+
+    path_efficiency_data = idg.get_path_efficiency_by_ingress(current_time - args.time, current_time, args.record_aggregator)
+
+    sort_path_efficiency_data(path_efficiency_data, IOAM_DATA_PARAM, AGGREGATOR)
+
+    if args.resources:
+        path_definitions = generate_path_defintion(path_efficiency_data)
+        write_paths_to_resource_file(args.resources, path_definitions)
+
+    if args.verbose:
+        print(path_efficiency_data)
+
+    if not args.quiet:
+        last_used_paths = idg.get_last_used_paths_by_ingress(
+            current_time - args.time, current_time
+        )
+        path_update_comparison_dict = generate_path_comparison_dict(
+            path_efficiency_data, last_used_paths
+        )
+        print_path_comparion_dict(path_update_comparison_dict)
+
+def get_influx_data_getter() -> InfluxDataGetter:
+    if not is_env_file_loaded():
+        raise RuntimeError(
+            "Unable to intialize InfluxDataGetter because environment variables are unavailable"
+        )
+    return InfluxDataGetter(
+        environ.get("INFLUXDB_RAW_BUCKET"),
+        environ.get("INFLUXDB_AGGREGATED_BUCKET"),
+        environ.get("INFLUXDB_ORG"),
+        environ.get("INFLUXDB_TOKEN"),
+        environ.get("INFLUXDB_INIT_URL"),
+    )
 
 def is_env_file_loaded():
     return (
@@ -19,37 +105,6 @@ def is_env_file_loaded():
         and "INFLUXDB_TOKEN" in environ
         and "INFLUXDB_INIT_URL" in environ
     )
-
-
-def main():
-    if not is_env_file_loaded():
-        raise RuntimeError(
-            "Unable to intialize InfluxDataGetter because environment variables are unavailable"
-        )
-    idg = InfluxDataGetter(
-        environ.get("INFLUXDB_RAW_BUCKET"),
-        environ.get("INFLUXDB_AGGREGATED_BUCKET"),
-        environ.get("INFLUXDB_ORG"),
-        environ.get("INFLUXDB_TOKEN"),
-        environ.get("INFLUXDB_INIT_URL"),
-    )
-    current_time = int(time())
-    path_efficiency_data = idg.get_path_efficiency_by_ingress(
-        current_time - 1000, current_time, "last"
-    )
-    # print(path_efficiency_data)
-    sort_path_efficiency_data(path_efficiency_data, IOAM_DATA_PARAM, AGGREGATOR)
-    path_definitions = generate_path_defintion(path_efficiency_data)
-    write_paths_to_resource_file(RESOURCE_FILE, path_definitions)
-
-    last_used_paths = idg.get_last_used_paths_by_ingress(
-        current_time - 1000, current_time
-    )
-    path_update_comparison_dict = generate_path_comparison_dict(
-        path_efficiency_data, last_used_paths
-    )
-    print_path_comparion_dict(path_update_comparison_dict)
-
 
 def get_aggregate(item: dict, data_param: int, aggregator: Aggregator):
     """
@@ -186,12 +241,12 @@ def write_paths_to_resource_file(resource_file: str, paths: list):
         resource_file(str): Path to the resource file containing the yaml definitions
         paths (list): A list containing the most efficient paths
     """
-    with open(RESOURCE_FILE, "r") as file:
+    with open(resource_file, "r") as file:
         resources = yaml.safe_load(file)
 
     resources["paths"] = paths
 
-    with open(RESOURCE_FILE, "w") as file:
+    with open(resource_file, "w") as file:
         yaml.dump(resources, file)
 
 
