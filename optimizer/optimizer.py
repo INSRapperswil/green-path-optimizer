@@ -7,6 +7,7 @@ from rich import print
 import yaml
 
 IOAM_DATA_PARAM = 255
+AGGREGATOR = Aggregator.SUM
 RESOURCE_FILE = "config/generator/resources/large_network_temp.yaml"
 
 
@@ -37,13 +38,16 @@ def main():
         current_time - 1000, current_time, "last"
     )
     # print(path_efficiency_data)
-    sort_path_efficiency_data(path_efficiency_data, IOAM_DATA_PARAM, Aggregator.SUM)
+    sort_path_efficiency_data(path_efficiency_data, IOAM_DATA_PARAM, AGGREGATOR)
     path_definitions = generate_path_defintion(path_efficiency_data)
     write_paths_to_resource_file(RESOURCE_FILE, path_definitions)
 
-    last_used_paths = idg.get_last_used_paths_by_ingress(current_time - 1000, current_time)
-    # pprint(path_efficiency_data)
-    path_update_comparison_dict = generate_path_comparison_dict(path_efficiency_data, last_used_paths)
+    last_used_paths = idg.get_last_used_paths_by_ingress(
+        current_time - 1000, current_time
+    )
+    path_update_comparison_dict = generate_path_comparison_dict(
+        path_efficiency_data, last_used_paths
+    )
     print_path_comparion_dict(path_update_comparison_dict)
 
 
@@ -90,18 +94,40 @@ def sort_path_efficiency_data(
             paths.sort(key=lambda item: get_aggregate(item, data_param, aggregator))
 
 
-def generate_path_comparison_dict(sorted_path_efficiency_data: dict, last_used_paths: dict) -> dict:
+def generate_path_comparison_dict(
+    sorted_path_efficiency_data: dict, last_used_paths: dict
+) -> dict:
     path_comparison_dict = {}
     for ingress, egress_dict in sorted_path_efficiency_data.items():
         path_comparison_dict[ingress] = {}
         for egress, paths in egress_dict.items():
+            new_path: dict = paths[0]
             path_comparison_dict[ingress][egress] = {
                 "current": None,
-                "new": list(paths[0].keys())[0]
+                "new": list(new_path.keys())[0],
+                "relative_performance_gain": 0,
             }
+            entry = path_comparison_dict[ingress][egress]
             if ingress in last_used_paths and egress in last_used_paths[ingress]:
-                path_comparison_dict[ingress][egress]["current"] = last_used_paths[ingress][egress]
+                entry["current"] = last_used_paths[ingress][egress]
+                # set relative performance gain
+                if entry["current"] != entry["new"]:
+                    current_path: dict = get_path_from_path_list(entry["current"], paths)
+                    new_aggregate = new_path[entry["new"]][IOAM_DATA_PARAM][AGGREGATOR]["aggregate"]
+                    current_aggregate = current_path[entry["current"]][IOAM_DATA_PARAM][AGGREGATOR]["aggregate"]
+                    entry["relative_performance_gain"] = get_relative_perfomance_gain(new_aggregate, current_aggregate)
+
     return path_comparison_dict
+
+
+def get_relative_perfomance_gain(new_path_value: int, current_path_value: int):
+    return 1 - (new_path_value / current_path_value)
+
+
+def get_path_from_path_list(path_key, path_list):
+    for path in path_list:
+        if list(path.keys())[0] == path_key:
+            return path
 
 
 def print_path_comparion_dict(comparison_dict: dict) -> None:
