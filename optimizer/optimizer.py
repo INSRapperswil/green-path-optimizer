@@ -15,74 +15,86 @@ def get_args():
     parser.add_argument(
         "-v",
         "--verbose",
-        help="Print path efficiency entries",
+        help="print path efficiency entries",
         action="store_true",
     )
     parser.add_argument(
         "-q",
         "--quiet",
-        help="Do not print any informative output",
+        help="suppress informative outptut",
         action="store_true",
     )
     parser.add_argument(
         "-r",
         "--resources",
-        help="Path to yaml resource definition",
+        help="path to yaml resource definition",
+        type=str,
+    )
+    parser.add_argument(
+        "-w",
+        "--write",
+        help="write path efficiency entries to given file",
         type=str,
     )
     parser.add_argument(
         "--record-aggregator",
-        help="Aggregation method to use to handle an arbitrary number of path entries (average/median/last)",
+        help="aggregation method to use to handle an arbitrary number of path entries (average/median/last)",
         type=str,
         default="last",
     )
     parser.add_argument(
         "-d",
-        "--data_param",
-        help="IOAM Data Param to optimize for",
+        "--data-param",
+        help="IOAM data param to optimize for",
         type=int,
+        default=255,
     )
     parser.add_argument(
         "-a",
         "--aggregator",
         help="IOAM aggregator to optimize for",
         type=Aggregator,
+        default=Aggregator.SUM,
     )
     parser.add_argument(
         "-t",
         "--time",
-        help="Number of seconds back from now to include the telemetry data",
+        help="number of seconds back from now to include the telemetry data",
         type=int,
         required=False,
         default=600,
     )
     return parser.parse_args()
 
+
 def main():
     args = get_args()
     idg = get_influx_data_getter()
-
     current_time = int(time())
-
-    path_efficiency_data = idg.get_path_efficiency_by_ingress(current_time - args.time, current_time, args.record_aggregator)
-
-    sort_path_efficiency_data(path_efficiency_data, IOAM_DATA_PARAM, AGGREGATOR)
+    path_efficiency_data = idg.get_path_efficiency_by_ingress(
+        current_time - args.time, current_time, args.record_aggregator
+    )
+    sort_path_efficiency_data(path_efficiency_data, args.data_param, args.aggregator)
+    last_used_paths = idg.get_last_used_paths_by_ingress(
+        current_time - args.time, current_time
+    )
+    path_update_comparison_dict = generate_path_comparison_dict(
+        path_efficiency_data, last_used_paths
+    )
 
     if args.resources:
-        path_definitions = generate_path_defintion(path_efficiency_data)
-        write_paths_to_resource_file(args.resources, path_definitions)
+        update_path_definitions(args.resources, path_update_comparison_dict)
 
     if args.verbose:
         print(path_efficiency_data)
 
+    if args.write:
+        with open(args.write, "w") as f:
+            print(path_efficiency_data, file=f)
+
     if not args.quiet:
-        last_used_paths = idg.get_last_used_paths_by_ingress(
-            current_time - args.time, current_time
-        )
-        path_update_comparison_dict = generate_path_comparison_dict(
-            path_efficiency_data, last_used_paths
-        )
         print_path_comparion_dict(path_update_comparison_dict)
+
 
 def get_influx_data_getter() -> InfluxDataGetter:
     if not is_env_file_loaded():
@@ -97,6 +109,7 @@ def get_influx_data_getter() -> InfluxDataGetter:
         environ.get("INFLUXDB_INIT_URL"),
     )
 
+
 def is_env_file_loaded():
     return (
         "INFLUXDB_RAW_BUCKET" in environ
@@ -105,6 +118,7 @@ def is_env_file_loaded():
         and "INFLUXDB_TOKEN" in environ
         and "INFLUXDB_INIT_URL" in environ
     )
+
 
 def get_aggregate(item: dict, data_param: int, aggregator: Aggregator):
     """
@@ -160,23 +174,30 @@ def generate_path_comparison_dict(
             path_comparison_dict[ingress][egress] = {
                 "current": None,
                 "new": list(new_path.keys())[0],
-                "relative_performance_gain": 0,
+                "relative_efficiency_gain": 0,
             }
             entry = path_comparison_dict[ingress][egress]
             if ingress in last_used_paths and egress in last_used_paths[ingress]:
                 entry["current"] = last_used_paths[ingress][egress]
-                # set relative performance gain
+                # set relative efficiency gain
                 if entry["current"] != entry["new"]:
-                    current_path: dict = get_path_from_path_list(entry["current"], paths)
-                    new_aggregate = new_path[entry["new"]][IOAM_DATA_PARAM][AGGREGATOR]["aggregate"]
-                    current_aggregate = current_path[entry["current"]][IOAM_DATA_PARAM][AGGREGATOR]["aggregate"]
-                    entry["relative_performance_gain"] = get_relative_perfomance_gain(new_aggregate, current_aggregate)
-
+                    current_path: dict = get_path_from_path_list(
+                        entry["current"], paths
+                    )
+                    new_aggregate = new_path[entry["new"]][IOAM_DATA_PARAM][AGGREGATOR][
+                        "aggregate"
+                    ]
+                    current_aggregate = current_path[entry["current"]][IOAM_DATA_PARAM][
+                        AGGREGATOR
+                    ]["aggregate"]
+                    entry["relative_efficiency_gain"] = get_relative_efficiency_gain(
+                        new_aggregate, current_aggregate
+                    )
     return path_comparison_dict
 
 
-def get_relative_perfomance_gain(new_path_value: int, current_path_value: int):
-    return 1 - (new_path_value / current_path_value)
+def get_relative_efficiency_gain(new_path_value: int, current_path_value: int):
+    return round(1 - (new_path_value / current_path_value), 2)
 
 
 def get_path_from_path_list(path_key, path_list):
@@ -186,68 +207,80 @@ def get_path_from_path_list(path_key, path_list):
 
 
 def print_path_comparion_dict(comparison_dict: dict) -> None:
+    num_path_efficiency_updates = 0
     for ingress, egress_dict in comparison_dict.items():
         for egress, path_comparison in egress_dict.items():
             if path_comparison["current"] is None:
                 print(f"[yellow]s{ingress} -> s{egress}:[/yellow] {path_comparison}")
-            elif path_comparison["current"] != path_comparison["new"]:
+            elif (
+                path_comparison["current"] != path_comparison["new"]
+                and path_comparison["relative_efficiency_gain"] > 0
+            ):
                 print(f"[green]s{ingress} -> s{egress}:[/green] {path_comparison}")
+                num_path_efficiency_updates+=1
+
+    print(f"The total number of efficiency path updates is: {num_path_efficiency_updates}")
 
 
-def generate_path_defintion(path_efficiency_data: dict) -> list:
-    """
-    Generates the path definitions in the format needed for the resource yaml file
-
-    Args:
-        path_efficiency_data (dict): The sorted ingress to egress to path mapping returned by the influx data getter
-
-    Returns:
-        path_definitions (list): A list of the most efficient path definitions in the format needed for the resource yaml file
-    """
-    path_definitions = []
-    for ingress, egress_dict in path_efficiency_data.items():
-        for egress, paths in egress_dict.items():
-            most_efficient_path = paths[0]
-            nodes = list(most_efficient_path.keys())[0]
-            path = {
-                "ingress": None,
-                "egress": None,
-                "via": [],
-                "symmetric": False,
-            }
-            for node_id in nodes:
-                if node_id == 0:
-                    continue
-                node_name: str = f"s{node_id}"
-                if path["ingress"] is None:
-                    path["ingress"] = node_name
-                elif node_id == nodes[-1]:
-                    path["egress"] = node_name
-                else:
-                    path["via"].append(node_name)
-            if path["ingress"] is None:
-                raise ValueError("All node IDs are set to zero in given path")
-            if path["egress"] is None:
-                path["egress"] = path["ingress"]
-            path_definitions.append(path)
-    return path_definitions
-
-
-def write_paths_to_resource_file(resource_file: str, paths: list):
-    """
-    Writes the given path definitions to the resource yaml file
-
-    Args:
-        resource_file(str): Path to the resource file containing the yaml definitions
-        paths (list): A list containing the most efficient paths
-    """
+def update_path_definitions(resource_file: str, path_comparison_dict: dict):
     with open(resource_file, "r") as file:
         resources = yaml.safe_load(file)
-
-    resources["paths"] = paths
-
+    paths = add_explicit_symmetric_routes(resources["paths"])
+    for ingress, egress_dict in path_comparison_dict.items():
+        for egress, path_update_information in egress_dict.items():
+            path_entry = find_path_entry(ingress, egress, paths)
+            if path_entry is None:
+                print(f"Unable to find path from s{ingress} to s{egress}... Skipping path...")
+                continue
+            path_entry["via"] = get_via_from_path_tuple(path_update_information["new"])
     with open(resource_file, "w") as file:
         yaml.dump(resources, file)
+
+
+def add_explicit_symmetric_routes(paths: list) -> list:
+    for path in paths:
+        if path["ingress"] == path["egress"]:
+            path["symmetric"] = False
+        elif path["symmetric"]:
+            entry = {
+                "ingress": path["egress"],
+                "egress": path["ingress"],
+                "via": list(reversed(path["via"])),
+                "symmetric": False
+            }
+            paths.append(entry)
+            path["symmetric"] = False
+    return paths
+
+
+def find_path_entry(ingress: int, egress: int, paths: list) -> dict:
+    for path in paths:
+        if path["ingress"] == f"s{ingress}" and path["egress"] == f"s{egress}":
+            return path
+
+def get_via_from_path_tuple(path: tuple) -> list:
+    via: list = []
+    for node in path:
+        if node == 0:
+            continue
+        if is_ingress(node, path):
+            continue
+        # if is egress
+        if node == path[-1]:
+            continue
+        else:
+            via.append(f"s{node}")
+    return via
+
+
+def is_ingress(node_id: int, path: tuple) -> bool:
+    for node in path:
+        if node == 0:
+            continue
+        if node == node_id:
+            return True
+        else:
+            return False
 
 
 if __name__ == "__main__":

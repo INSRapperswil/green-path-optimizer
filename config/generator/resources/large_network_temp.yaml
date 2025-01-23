@@ -179,24 +179,48 @@ hosts:
 p4info: network/p4/build/main.p4.p4info.txt
 paths:
 - egress: s12
+  ingress: s11
+  symmetric: false
+  via:
+  - s2
+- egress: s13
+  ingress: s11
+  symmetric: false
+  via:
+  - s1
+  - s3
+- egress: s14
+  ingress: s11
+  symmetric: false
+  via:
+  - s2
+- egress: s15
+  ingress: s11
+  symmetric: false
+  via:
+  - s1
+  - s4
+- egress: s16
+  ingress: s11
+  symmetric: false
+  via:
+  - s2
+  - s3
+- egress: s17
+  ingress: s11
+  symmetric: false
+  via:
+  - s1
+- egress: s18
+  ingress: s11
+  symmetric: false
+  via:
+  - s2
+  - s4
+- egress: s12
   ingress: s12
   symmetric: false
   via: []
-- egress: s11
-  ingress: s12
-  symmetric: false
-  via:
-  - s1
-- egress: s17
-  ingress: s12
-  symmetric: false
-  via:
-  - s1
-- egress: s18
-  ingress: s12
-  symmetric: false
-  via:
-  - s1
 - egress: s13
   ingress: s12
   symmetric: false
@@ -211,28 +235,28 @@ paths:
   ingress: s12
   symmetric: false
   via:
-  - s1
-  - s4
+  - s2
+  - s3
 - egress: s16
   ingress: s12
   symmetric: false
   via:
   - s1
   - s4
+- egress: s17
+  ingress: s12
+  symmetric: false
+  via:
+  - s1
+- egress: s18
+  ingress: s12
+  symmetric: false
+  via:
+  - s1
 - egress: s13
   ingress: s13
   symmetric: false
   via: []
-- egress: s11
-  ingress: s13
-  symmetric: false
-  via:
-  - s2
-- egress: s12
-  ingress: s13
-  symmetric: false
-  via:
-  - s2
 - egress: s14
   ingress: s13
   symmetric: false
@@ -259,165 +283,166 @@ paths:
   symmetric: false
   via:
   - s2
-  - s1
+  - s4
+- egress: s15
+  ingress: s14
+  symmetric: false
+  via:
+  - s3
+- egress: s16
+  ingress: s14
+  symmetric: false
+  via:
+  - s3
+- egress: s17
+  ingress: s14
+  symmetric: false
+  via:
+  - s3
+  - s4
+- egress: s18
+  ingress: s14
+  symmetric: false
+  via:
+  - s3
+  - s4
+- egress: s16
+  ingress: s15
+  symmetric: false
+  via:
+  - s4
+- egress: s17
+  ingress: s15
+  symmetric: false
+  via:
+  - s4
+- egress: s18
+  ingress: s15
+  symmetric: false
+  via:
+  - s3
+  - s4
+- egress: s17
+  ingress: s16
+  symmetric: false
+  via:
+  - s3
+  - s4
+- egress: s18
+  ingress: s16
+  symmetric: false
+  via:
+  - s4
 - egress: s17
   ingress: s17
   symmetric: false
   via: []
-- egress: s11
-  ingress: s17
-  symmetric: false
-  via:
-  - s1
-- egress: s12
-  ingress: s17
-  symmetric: false
-  via:
-  - s1
 - egress: s18
   ingress: s17
-  symmetric: false
-  via:
-  - s1
-- egress: s15
-  ingress: s17
-  symmetric: false
-  via:
-  - s4
-- egress: s16
-  ingress: s17
-  symmetric: false
-  via:
-  - s4
-- egress: s13
-  ingress: s17
-  symmetric: false
-  via:
-  - s1
-  - s2
-- egress: s14
-  ingress: s17
-  symmetric: false
-  via:
-  - s1
-  - s2
-- egress: s15
-  ingress: s3
-  symmetric: false
-  via: []
-- egress: s12
-  ingress: s11
-  symmetric: false
-  via:
-  - s1
-- egress: s17
-  ingress: s11
-  symmetric: false
-  via:
-  - s1
-- egress: s18
-  ingress: s11
-  symmetric: false
-  via:
-  - s1
-- egress: s13
-  ingress: s11
-  symmetric: false
-  via:
-  - s2
-- egress: s14
-  ingress: s11
-  symmetric: false
-  via:
-  - s2
-- egress: s15
-  ingress: s11
-  symmetric: false
-  via:
-  - s1
-  - s4
-- egress: s16
-  ingress: s11
-  symmetric: false
-  via:
-  - s1
-  - s4
-- egress: s11
-  ingress: s14
-  symmetric: false
-  via:
-  - s2
-- egress: s12
-  ingress: s14
-  symmetric: false
-  via:
-  - s2
-- egress: s13
-  ingress: s14
-  symmetric: false
-  via:
-  - s2
-- egress: s15
-  ingress: s14
-  symmetric: false
-  via:
-  - s3
-- egress: s16
-  ingress: s14
-  symmetric: false
-  via:
-  - s3
-- egress: s17
-  ingress: s14
-  symmetric: false
-  via:
-  - s2
-  - s1
-- egress: s18
-  ingress: s14
-  symmetric: false
-  via:
-  - s2
-  - s1
-- egress: s13
-  ingress: s15
-  symmetric: false
-  via:
-  - s3
-- egress: s14
-  ingress: s15
-  symmetric: false
-  via:
-  - s3
-- egress: s16
-  ingress: s15
-  symmetric: false
-  via:
-  - s4
-- egress: s17
-  ingress: s15
-  symmetric: false
-  via:
-  - s4
-- egress: s18
-  ingress: s15
   symmetric: false
   via:
   - s4
 - egress: s11
+  ingress: s12
+  symmetric: false
+  via:
+  - s1
+- egress: s11
+  ingress: s13
+  symmetric: false
+  via:
+  - s2
+- egress: s11
+  ingress: s14
+  symmetric: false
+  via:
+  - s3
+  - s1
+- egress: s11
   ingress: s15
   symmetric: false
   via:
-  - s4
+  - s3
   - s1
+- egress: s11
+  ingress: s16
+  symmetric: false
+  via:
+  - s3
+  - s1
+- egress: s11
+  ingress: s17
+  symmetric: false
+  via:
+  - s4
+  - s2
+- egress: s11
+  ingress: s18
+  symmetric: false
+  via:
+  - s1
+- egress: s12
+  ingress: s13
+  symmetric: false
+  via:
+  - s2
+- egress: s12
+  ingress: s14
+  symmetric: false
+  via:
+  - s2
 - egress: s12
   ingress: s15
   symmetric: false
   via:
   - s4
   - s1
+- egress: s12
+  ingress: s16
+  symmetric: false
+  via:
+  - s3
+  - s2
+- egress: s12
+  ingress: s17
+  symmetric: false
+  via:
+  - s1
+- egress: s12
+  ingress: s18
+  symmetric: false
+  via:
+  - s4
+  - s1
+- egress: s13
+  ingress: s14
+  symmetric: false
+  via:
+  - s2
+- egress: s13
+  ingress: s15
+  symmetric: false
+  via:
+  - s3
 - egress: s13
   ingress: s16
+  symmetric: false
+  via:
+  - s3
+- egress: s13
+  ingress: s17
+  symmetric: false
+  via:
+  - s1
+  - s3
+- egress: s13
+  ingress: s18
+  symmetric: false
+  via:
+  - s1
+  - s3
+- egress: s14
+  ingress: s15
   symmetric: false
   via:
   - s3
@@ -426,62 +451,8 @@ paths:
   symmetric: false
   via:
   - s3
-- egress: s15
-  ingress: s16
-  symmetric: false
-  via:
-  - s4
-- egress: s17
-  ingress: s16
-  symmetric: false
-  via:
-  - s3
-  - s4
-- egress: s18
-  ingress: s16
-  symmetric: false
-  via:
-  - s4
-- egress: s11
-  ingress: s16
-  symmetric: false
-  via:
-  - s4
-  - s1
-- egress: s12
-  ingress: s16
-  symmetric: false
-  via:
-  - s4
-  - s1
-- egress: s11
-  ingress: s18
-  symmetric: false
-  via:
-  - s1
-- egress: s12
-  ingress: s18
-  symmetric: false
-  via:
-  - s1
-- egress: s17
-  ingress: s18
-  symmetric: false
-  via:
-  - s1
-- egress: s15
-  ingress: s18
-  symmetric: false
-  via:
-  - s4
-- egress: s16
-  ingress: s18
-  symmetric: false
-  via:
-  - s1
-  - s4
-- egress: s13
-  ingress: s18
+- egress: s14
+  ingress: s17
   symmetric: false
   via:
   - s1
@@ -490,13 +461,44 @@ paths:
   ingress: s18
   symmetric: false
   via:
+  - s4
+  - s3
+- egress: s15
+  ingress: s16
+  symmetric: false
+  via:
+  - s4
+- egress: s15
+  ingress: s17
+  symmetric: false
+  via:
+  - s4
+- egress: s15
+  ingress: s18
+  symmetric: false
+  via:
   - s1
-  - s2
+  - s4
+- egress: s16
+  ingress: s17
+  symmetric: false
+  via:
+  - s4
+- egress: s16
+  ingress: s18
+  symmetric: false
+  via:
+  - s4
+- egress: s17
+  ingress: s18
+  symmetric: false
+  via:
+  - s1
 switches:
   s1:
     hei:
     - data_param: 255
-      value: 1000
+      value: 10000
     ioam:
       aggregators:
       - 1
@@ -509,25 +511,25 @@ switches:
     mac: 08:CC:00:00:00:01
     ports:
       1:
-        lei: 10
+        lei: 250
         neighbor: s2
       2:
-        lei: 20
+        lei: 500
         neighbor: s3
       3:
-        lei: 30
+        lei: 100
         neighbor: s4
       4:
-        lei: 40
+        lei: 200
         neighbor: s17
       5:
-        lei: 50
+        lei: 200
         neighbor: s18
       6:
-        lei: 60
+        lei: 200
         neighbor: s11
       7:
-        lei: 70
+        lei: 200
         neighbor: s12
   s11:
     hei:
@@ -545,13 +547,13 @@ switches:
     mac: 08:EE:00:00:00:11
     ports:
       1:
-        lei: 10
+        lei: 200
         neighbor: s1
       2:
-        lei: 20
+        lei: 200
         neighbor: s2
       3:
-        lei: 30
+        lei: 100
         neighbor: h01
   s12:
     hei:
@@ -569,16 +571,16 @@ switches:
     mac: 08:EE:00:00:00:12
     ports:
       1:
-        lei: 10
+        lei: 200
         neighbor: s1
       2:
-        lei: 20
+        lei: 200
         neighbor: s2
       3:
-        lei: 30
+        lei: 100
         neighbor: h02
       4:
-        lei: 40
+        lei: 100
         neighbor: h03
   s13:
     hei:
@@ -596,21 +598,21 @@ switches:
     mac: 08:EE:00:00:00:13
     ports:
       1:
-        lei: 10
+        lei: 200
         neighbor: s2
       2:
-        lei: 20
+        lei: 200
         neighbor: s3
       3:
-        lei: 30
+        lei: 100
         neighbor: h05
       4:
-        lei: 40
+        lei: 100
         neighbor: h04
   s14:
     hei:
     - data_param: 255
-      value: 14000
+      value: 24000
     ioam:
       aggregators:
       - 1
@@ -623,18 +625,18 @@ switches:
     mac: 08:EE:00:00:00:14
     ports:
       1:
-        lei: 10
+        lei: 200
         neighbor: s2
       2:
-        lei: 20
+        lei: 200
         neighbor: s3
       3:
-        lei: 30
+        lei: 100
         neighbor: h06
   s15:
     hei:
     - data_param: 255
-      value: 15000
+      value: 25000
     ioam:
       aggregators:
       - 1
@@ -647,18 +649,18 @@ switches:
     mac: 08:EE:00:00:00:15
     ports:
       1:
-        lei: 10
+        lei: 200
         neighbor: s4
       2:
-        lei: 20
+        lei: 200
         neighbor: s3
       3:
-        lei: 30
+        lei: 100
         neighbor: h07
   s16:
     hei:
     - data_param: 255
-      value: 16000
+      value: 26000
     ioam:
       aggregators:
       - 1
@@ -671,13 +673,13 @@ switches:
     mac: 08:EE:00:00:00:16
     ports:
       1:
-        lei: 10
+        lei: 200
         neighbor: s4
       2:
-        lei: 20
+        lei: 200
         neighbor: s3
       3:
-        lei: 30
+        lei: 100
         neighbor: h08
   s17:
     hei:
@@ -695,16 +697,16 @@ switches:
     mac: 08:EE:00:00:00:17
     ports:
       1:
-        lei: 10
+        lei: 200
         neighbor: s1
       2:
-        lei: 20
+        lei: 200
         neighbor: s4
       3:
-        lei: 30
+        lei: 100
         neighbor: h09
       4:
-        lei: 40
+        lei: 100
         neighbor: h10
   s18:
     hei:
@@ -722,18 +724,18 @@ switches:
     mac: 08:EE:00:00:00:18
     ports:
       1:
-        lei: 10
+        lei: 200
         neighbor: s1
       2:
-        lei: 20
+        lei: 200
         neighbor: s4
       3:
-        lei: 30
+        lei: 100
         neighbor: h11
   s2:
     hei:
     - data_param: 255
-      value: 2000
+      value: 25000
     ioam:
       aggregators:
       - 1
@@ -746,30 +748,30 @@ switches:
     mac: 08:CC:00:00:00:02
     ports:
       1:
-        lei: 10
+        lei: 250
         neighbor: s1
       2:
-        lei: 20
+        lei: 500
         neighbor: s4
       3:
-        lei: 30
+        lei: 100
         neighbor: s3
       4:
-        lei: 40
+        lei: 200
         neighbor: s14
       5:
-        lei: 50
+        lei: 200
         neighbor: s13
       6:
-        lei: 60
+        lei: 200
         neighbor: s12
       7:
-        lei: 70
+        lei: 200
         neighbor: s11
   s3:
     hei:
     - data_param: 255
-      value: 30000
+      value: 60000
     ioam:
       aggregators:
       - 1
@@ -782,30 +784,30 @@ switches:
     mac: 08:CC:00:00:00:03
     ports:
       1:
-        lei: 10
+        lei: 100
         neighbor: s2
       2:
-        lei: 20
+        lei: 500
         neighbor: s1
       3:
-        lei: 30
+        lei: 250
         neighbor: s4
       4:
-        lei: 40
+        lei: 200
         neighbor: s16
       5:
-        lei: 50
+        lei: 200
         neighbor: s15
       6:
-        lei: 60
+        lei: 200
         neighbor: s14
       7:
-        lei: 70
+        lei: 200
         neighbor: s13
   s4:
     hei:
     - data_param: 255
-      value: 4000
+      value: 20000
     ioam:
       aggregators:
       - 1
@@ -818,25 +820,25 @@ switches:
     mac: 08:CC:00:00:00:04
     ports:
       1:
-        lei: 10
+        lei: 100
         neighbor: s1
       2:
-        lei: 20
+        lei: 500
         neighbor: s2
       3:
-        lei: 30
+        lei: 250
         neighbor: s3
       4:
-        lei: 40
+        lei: 200
         neighbor: s15
       5:
-        lei: 50
+        lei: 200
         neighbor: s16
       6:
-        lei: 60
+        lei: 200
         neighbor: s17
       7:
-        lei: 70
+        lei: 200
         neighbor: s18
 tables:
   egress_lei:

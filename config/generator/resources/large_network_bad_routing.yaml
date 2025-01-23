@@ -1,5 +1,5 @@
-# east-west traffic via north
-# north-south traffic via west
+# east-west traffic via south
+# north-south traffic via east
 
 ---
 p4info: network/p4/build/main.p4.p4info.txt
@@ -8,121 +8,133 @@ paths:
   # routes from s11
   - ingress: s11
     egress: s12
-    via: [s01]
+    via: [s2]
     symmetric: true
   - ingress: s11
     egress: s13
-    via: [s02]
+    via: [s1, s3]
     symmetric: true
   - ingress: s11
     egress: s14
-    via: [s02]
+    via: [s1, s3]
     symmetric: true
   - ingress: s11
     egress: s15
-    via: [s01, s04]
+    via: [s2, s3]
     symmetric: true
   - ingress: s11
     egress: s16
-    via: [s01, s04]
+    via: [s2, s3]
     symmetric: true
   - ingress: s11
     egress: s17
-    via: [s01]
+    via: [s2, s4]
     symmetric: true
   - ingress: s11
     egress: s18
-    via: [s01]
+    via: [s2, s4]
     symmetric: true
   # routes from s12
   - ingress: s12
+    egress: s12
+    via: []
+    symmetric: false
+  - ingress: s12
     egress: s13
-    via: [s02]
+    via: [s2]
     symmetric: true
   - ingress: s12
     egress: s14
-    via: [s02]
+    via: [s2]
     symmetric: true
   - ingress: s12
     egress: s15
-    via: [s01, s04]
+    via: [s2, s3]
     symmetric: true
   - ingress: s12
     egress: s16
-    via: [s01, s04]
+    via: [s2, s3]
     symmetric: true
   - ingress: s12
     egress: s17
-    via: [s01]
+    via: [s2, s4]
     symmetric: true
   - ingress: s12
     egress: s18
-    via: [s01]
+    via: [s2, s4]
     symmetric: true
   # routes from s13
   - ingress: s13
+    egress: s13
+    via: []
+    symmetric: false
+  - ingress: s13
     egress: s14
-    via: [s02]
+    via: [s3]
     symmetric: true
   - ingress: s13
     egress: s15
-    via: [s03]
+    via: [s2, s3]
     symmetric: true
   - ingress: s13
     egress: s16
-    via: [s03]
+    via: [s2, s3]
     symmetric: true
   - ingress: s13
     egress: s17
-    via: [s02, s01]
+    via: [s3, s4]
     symmetric: true
   - ingress: s13
     egress: s18
-    via: [s02, s01]
+    via: [s3, s4]
     symmetric: true
     # routes from s14
   - ingress: s14
     egress: s15
-    via: [s03]
+    via: [s2, s3]
     symmetric: true
   - ingress: s14
     egress: s16
-    via: [s03]
+    via: [s2, s3]
     symmetric: true
   - ingress: s14
     egress: s17
-    via: [s02, s01]
+    via: [s3, s4]
     symmetric: true
   - ingress: s14
     egress: s18
-    via: [s02, s01]
+    via: [s3, s4]
     symmetric: true
     # routes from s15
   - ingress: s15
     egress: s16
-    via: [s03]
+    via: [s4]
     symmetric: true
   - ingress: s15
     egress: s17
-    via: [s04]
+    via: [s3, s1]
     symmetric: true
   - ingress: s15
     egress: s18
-    via: [s04]
+    via: [s3, s1]
     symmetric: true
     # routes from s16
   - ingress: s16
     egress: s17
-    via: [s04]
+    via: [s3, s1]
     symmetric: true
   - ingress: s16
     egress: s18
-    via: [s04]
+    via: [s3, s1]
     symmetric: true
-    # routes from s16
+    # routes from s17
+  - ingress: s17
+    egress: s17
+    via: []
+    symmetric: false
   - ingress: s17
     egress: s18
-    via: [s01]
+    via: [s4]
     symmetric: true
 hosts:
   h01:
@@ -280,7 +292,7 @@ hosts:
       - "arp -i eth0 -s 31.10.128.1 08:EE:00:00:00:18"
       - "python3 network/utils/traffic_generator.py --ipv6 --src 'h11' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
 switches:
-  s01:
+  s1:
     mac: 08:CC:00:00:00:01
     hei:
       - data_param: 255
@@ -296,13 +308,13 @@ switches:
       data_param: 255
     ports:
       1:
-        neighbor: s02
+        neighbor: s2
         lei: 250
       2:
-        neighbor: s03
+        neighbor: s3
         lei: 500
       3:
-        neighbor: s04
+        neighbor: s4
         lei: 100
       4:
         neighbor: s17
@@ -316,7 +328,7 @@ switches:
       7:
         neighbor: s12
         lei: 200
-  s02:
+  s2:
     mac: 08:CC:00:00:00:02
     hei:
       - data_param: 255
@@ -332,13 +344,13 @@ switches:
       data_param: 255
     ports:
       1:
-        neighbor: s01
+        neighbor: s1
         lei: 250
       2:
-        neighbor: s04
+        neighbor: s4
         lei: 500
       3:
-        neighbor: s03
+        neighbor: s3
         lei: 100
       4:
         neighbor: s14
@@ -352,7 +364,7 @@ switches:
       7:
         neighbor: s11
         lei: 200
-  s03:
+  s3:
     mac: 08:CC:00:00:00:03
     hei:
       - data_param: 255
@@ -368,13 +380,13 @@ switches:
       data_param: 255
     ports:
       1:
-        neighbor: s02
+        neighbor: s2
         lei: 100
       2:
-        neighbor: s01
+        neighbor: s1
         lei: 500
       3:
-        neighbor: s04
+        neighbor: s4
         lei: 250
       4:
         neighbor: s16
@@ -388,7 +400,7 @@ switches:
       7:
         neighbor: s13
         lei: 200
-  s04:
+  s4:
     mac: 08:CC:00:00:00:04
     hei:
       - data_param: 255
@@ -404,13 +416,13 @@ switches:
       data_param: 255
     ports:
       1:
-        neighbor: s01
+        neighbor: s1
         lei: 100
       2:
-        neighbor: s02
+        neighbor: s2
         lei: 500
       3:
-        neighbor: s03
+        neighbor: s3
         lei: 250
       4:
         neighbor: s15
@@ -440,10 +452,10 @@ switches:
       data_param: 255
     ports:
       1:
-        neighbor: s01
+        neighbor: s1
         lei: 200
       2:
-        neighbor: s02
+        neighbor: s2
         lei: 200
       3:
         neighbor: h01
@@ -464,10 +476,10 @@ switches:
       data_param: 255
     ports:
       1:
-        neighbor: s01
+        neighbor: s1
         lei: 200
       2:
-        neighbor: s02
+        neighbor: s2
         lei: 200
       3:
         neighbor: h02
@@ -491,10 +503,10 @@ switches:
       data_param: 255
     ports:
       1:
-        neighbor: s02
+        neighbor: s2
         lei: 200
       2:
-        neighbor: s03
+        neighbor: s3
         lei: 200
       3:
         neighbor: h05
@@ -518,10 +530,10 @@ switches:
       data_param: 255
     ports:
       1:
-        neighbor: s02
+        neighbor: s2
         lei: 200
       2:
-        neighbor: s03
+        neighbor: s3
         lei: 200
       3:
         neighbor: h06
@@ -542,10 +554,10 @@ switches:
       data_param: 255
     ports:
       1:
-        neighbor: s04
+        neighbor: s4
         lei: 200
       2:
-        neighbor: s03
+        neighbor: s3
         lei: 200
       3:
         neighbor: h07
@@ -566,10 +578,10 @@ switches:
       data_param: 255
     ports:
       1:
-        neighbor: s04
+        neighbor: s4
         lei: 200
       2:
-        neighbor: s03
+        neighbor: s3
         lei: 200
       3:
         neighbor: h08
@@ -590,10 +602,10 @@ switches:
       data_param: 255
     ports:
       1:
-        neighbor: s01
+        neighbor: s1
         lei: 200
       2:
-        neighbor: s04
+        neighbor: s4
         lei: 200
       3:
         neighbor: h09
@@ -617,10 +629,10 @@ switches:
       data_param: 255
     ports:
       1:
-        neighbor: s01
+        neighbor: s1
         lei: 200
       2:
-        neighbor: s04
+        neighbor: s4
         lei: 200
       3:
         neighbor: h11

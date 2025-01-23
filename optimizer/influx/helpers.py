@@ -42,6 +42,6 @@ def get_aggregator(path_entry: dict) -> Aggregator:
 
 def extract_path_entries_from_raw_data(influx_data: list) -> list[dict]:
     path_entries: list = []
-    for raw_path_entries in influx_data:
-        path_entries.append(raw_path_entries[0]["values"])
+    for raw_path_entries in influx_data[0]:
+        path_entries.append(raw_path_entries["values"])
     return path_entries

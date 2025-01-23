@@ -57,6 +57,7 @@ dependencies = [
     { name = "protobuf" },
     { name = "pytz" },
     { name = "pyyaml" },
+    { name = "rich" },
     { name = "setuptools" },
     { name = "typer" },
 ]
@@ -72,6 +73,7 @@ requires-dist = [
     { name = "protobuf", specifier = "<=3.20.1" },
     { name = "pytz", specifier = ">=2024.2" },
     { name = "pyyaml", specifier = ">=6.0.2" },
+    { name = "rich", specifier = ">=13.9.4" },
     { name = "setuptools", specifier = ">=75.6.0" },
     { name = "typer", specifier = ">=0.14.0" },
 ]

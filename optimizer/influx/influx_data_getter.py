@@ -59,6 +59,7 @@ class InfluxDataGetter:
             |> filter(fn: (r) => r["_field"] == "aggregate")\n
             |> group(columns: ["node_01", "node_02", "node_03", "node_04", "ioam_data_param", "aggregator"])\n
             |> median(column: "_value")\n
+            |> group()\n
             """
         elif record_aggregator == "last":
             query: str = f"""from(bucket: "{self.raw_bucket}")\n
@@ -68,6 +69,7 @@ class InfluxDataGetter:
             |> filter(fn: (r) => r["_field"] == "aggregate")\n
             |> group(columns: ["node_01", "node_02", "node_03", "node_04", "ioam_data_param", "aggregator"])\n
             |> last(column: "_value")\n
+            |> group()\n
             """
         elif record_aggregator == "mean":
             query: str = f"""from(bucket: "{self.raw_bucket}")\n
@@ -77,6 +79,7 @@ class InfluxDataGetter:
             |> filter(fn: (r) => r["_field"] == "aggregate")\n
             |> group(columns: ["node_01", "node_02", "node_03", "node_04", "ioam_data_param", "aggregator"])\n
             |> mean(column: "_value")\n
+            |> group()\n
             """
         else:
             raise ValueError("Unsupported record aggregator")
@@ -96,6 +99,8 @@ class InfluxDataGetter:
         |> filter(fn: (r) => r["_field"] == "aggregate")\n
         |> group(columns: ["node_01", "node_02", "node_03", "node_04"])\n
         |> last(column: "_value")\n
+        |> group()\n
+        |> sort(columns: ["_time"], desc: true)\n
         """
         influx_raw_data: list[dict] = self.run_influx_query(query)
         path_entries = extract_path_entries_from_raw_data(influx_raw_data)
@@ -143,7 +148,8 @@ class InfluxDataGetter:
                 path_dict_entry[data_param] = {}
 
             path_dict_entry[data_param][get_aggregator(entry)] = {
-                "aggregate": entry["_value"]
+                "aggregate": entry["_value"],
+                "time": entry["_time"],
             }
 
     def insert_into_last_path_usage_dict(
@@ -162,5 +168,6 @@ class InfluxDataGetter:
             # insert ingress/egress nodes if not existing
             if ingress not in self.last_used_path_dict:
                 self.last_used_path_dict[ingress] = {}
+
             if egress not in self.last_used_path_dict[ingress]:
                 self.last_used_path_dict[ingress][egress] = path_key
