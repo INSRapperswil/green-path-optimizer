@@ -1,23 +1,23 @@
-s01:
+s1:
   port: 50051
   data:
     device_id: 0
-    runtime_file_name: "s01-runtime.json"
-s02:
+    runtime_file_name: "s1-runtime.json"
+s2:
   port: 50052
   data:
     device_id: 1
-    runtime_file_name: "s02-runtime.json"
-s03:
+    runtime_file_name: "s2-runtime.json"
+s3:
   port: 50053
   data:
     device_id: 2
-    runtime_file_name: "s03-runtime.json"
-s04:
+    runtime_file_name: "s3-runtime.json"
+s4:
   port: 50054
   data:
     device_id: 3
-    runtime_file_name: "s04-runtime.json"
+    runtime_file_name: "s4-runtime.json"
 s11:
   port: 50055
   data:
