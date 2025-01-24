@@ -115,7 +115,7 @@ class InfluxDataGetter:
 
             # skip path entry in case node list is empty
             if is_empty_node_list(path_key):
-                return
+                continue
 
             ingress: int = get_ingress(entry)
             egress: int = get_egress(entry)
@@ -160,7 +160,7 @@ class InfluxDataGetter:
 
             # skip path entry in case node list is empty
             if is_empty_node_list(path_key):
-                return
+                continue
 
             ingress: int = get_ingress(entry)
             egress: int = get_egress(entry)
