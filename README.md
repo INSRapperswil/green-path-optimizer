@@ -260,6 +260,7 @@ Design and prototype the _green-path-optimizer_ application, which provides path
 - **Core Functionality:**
   - Evaluate available paths for each ingress and egress router based on their efficiencies.
   - Identify alternative paths either continuously, upon detecting efficiency drops, or when changes in node metrics occur.
+  - Identify exceptionally bad performing routers which would make sense to isolate and only operate in case the traffic demands require it.
   - Suggest path updates where alternative routes offer sustained and measurable advantages while minimizing churn.
 
 > **Note:** The application does not need to be fully implemented for the hackathon and may include stubs to simulate functionality for demonstration purposes.
@@ -370,6 +371,30 @@ To run the configuration utilities, the following `make` targets are available:
   This task is automatically executed as part of the `run` target.
 - `update-config:` Pushes the generated configurations to the BMv2 software switches.
   Make sure to select the correct inventory in the `config.yaml` file inside the config updater.
+
+
+#### Optimizer
+
+The optimizer is currently not included in the `Makefile`.
+It has to be run manually using the `uv` utility executing the `optimizer/optimizer.py` file.
+
+```sh
+uv run --env-file monitoring/.env optimizer/optimizer.py \
+       --time 600 \
+       --write optimizer/path_efficiency_entries.txt \
+       --resources config/generator/resources/large_network.yaml
+```
+
+Refer to [optimizer/REDME.md](optimizer/README.md) for a detailed description of an example scenario.
+
+##### Prerequisite
+
+- Network environment up and running
+- Monitoring environment up and running
+- At least one configuration update to adjust traffic flow in the network was attempted
+
+The last step is important because the optimizer will compare all known paths grouped by ingress/egress router and will suggest to use the best path.
+** In case no configuration update was triggered there is only one path known and so there is noting to optimize.**
 
 ### Stopping the Environment
 

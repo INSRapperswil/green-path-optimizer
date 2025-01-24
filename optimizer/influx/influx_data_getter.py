@@ -1,10 +1,28 @@
+from __future__ import annotations
+
+from influxdb_client.client.flux_table import FluxStructureEncoder, TableList
+from .helpers import (
+    get_ingress,
+    get_egress,
+    get_path_tuple,
+    get_aggregator,
+    is_empty_node_list,
+    extract_path_entries_from_raw_data,
+)
+
+import json
 import influxdb_client
-from influxdb_client.client.write_api import SYNCHRONOUS
-import ipaddress
 
 
 class InfluxDataGetter:
-    def __init__(self, raw_bucket, aggregated_bucket, org, token, url):
+    def __init__(
+        self: InfluxDataGetter,
+        raw_bucket: str,
+        aggregated_bucket: str,
+        org: str,
+        token: str,
+        url: str,
+    ) -> InfluxDataGetter:
         # making all variables which are needed multiple times
         self.raw_bucket = raw_bucket
         self.aggregated_bucket = aggregated_bucket
@@ -13,381 +31,143 @@ class InfluxDataGetter:
         self.url = url
 
         # defining the API Client
-        client = influxdb_client.InfluxDBClient(
+        client: influxdb_client.InfluxDBClient = influxdb_client.InfluxDBClient(
             url=self.url, token=self.token, org=self.org
         )
 
         # initializing the API Client
-        self.query_api = client.query_api()
+        self.query_api: influxdb_client.QueryAPI = client.query_api()
 
-    def makeprovisionary_aggregate_results(self, api_response):
-        # get all the data out of the InfluxTables and put it into a list to be used later
-        results = []
-        x = 0
-        for table in api_response:
-            results.append([])
-            for record in table.records:
-                results[x].append(
-                    {
-                        record.get_field(): [
-                            record.get_value(),
-                            record.values.get("flow_label"),
-                        ]
-                    }
-                )
-            x += 1
+        self.path_efficiency_dict: dict = {}
+        self.last_used_path_dict: dict = {}
+        self.known_path_set: set = set()
 
-        return results
+    def run_influx_query(self: InfluxDataGetter, query: str) -> list[dict]:
+        tables: TableList = self.query_api.query(org=self.org, query=query)
+        json_query_results: str = json.dumps(tables, cls=FluxStructureEncoder, indent=2)
+        query_results: dict = json.loads(json_query_results)
+        return [result["records"] for result in query_results]
 
-    def basic_aggregated_query(self, time):
-        # define the query
-        query = (
-            'from(bucket: "'
-            + self.aggregated_bucket
-            + '")\
-        |> range(start: -'
-            + str(time)
-            + 'm)\
-        |> filter(fn: (r) => r["_measurement"] == "netflow")\
-        |> filter(fn: (r) => r["type_5052"] == "0x01")\
-        |> group(columns: ["flow_label"])'
-        )
+    def get_path_efficiency_by_ingress(
+        self: InfluxDataGetter, start: int, stop: int, record_aggregator: str
+    ) -> dict:
+        if record_aggregator == "median":
+            query: str = f"""from(bucket: "{self.raw_bucket}")\n
+            |> range(start: {start}, stop: {stop})\n
+            |> filter(fn: (r) => r["_measurement"] == "netflow")\n
+            |> filter(fn: (r) => r["flags"] == "0")\n
+            |> filter(fn: (r) => r["_field"] == "aggregate")\n
+            |> group(columns: ["node_01", "node_02", "node_03", "node_04", "ioam_data_param", "aggregator"])\n
+            |> median(column: "_value")\n
+            |> group()\n
+            """
+        elif record_aggregator == "last":
+            query: str = f"""from(bucket: "{self.raw_bucket}")\n
+            |> range(start: {start}, stop: {stop})\n
+            |> filter(fn: (r) => r["_measurement"] == "netflow")\n
+            |> filter(fn: (r) => r["flags"] == "0")\n
+            |> filter(fn: (r) => r["_field"] == "aggregate")\n
+            |> group(columns: ["node_01", "node_02", "node_03", "node_04", "ioam_data_param", "aggregator"])\n
+            |> last(column: "_value")\n
+            |> group()\n
+            """
+        elif record_aggregator == "mean":
+            query: str = f"""from(bucket: "{self.raw_bucket}")\n
+            |> range(start: {start}, stop: {stop})\n
+            |> filter(fn: (r) => r["_measurement"] == "netflow")\n
+            |> filter(fn: (r) => r["flags"] == "0")\n
+            |> filter(fn: (r) => r["_field"] == "aggregate")\n
+            |> group(columns: ["node_01", "node_02", "node_03", "node_04", "ioam_data_param", "aggregator"])\n
+            |> mean(column: "_value")\n
+            |> group()\n
+            """
+        else:
+            raise ValueError("Unsupported record aggregator")
 
-        # make theAPI query and get the Data in a usable format
-        result = self.query_api.query(org=self.org, query=query)
-        results = self.makeprovisionary_aggregate_results(result)
+        influx_raw_data: list[dict] = self.run_influx_query(query)
+        path_entries = extract_path_entries_from_raw_data(influx_raw_data)
+        self.insert_into_path_efficiency_dict(path_entries)
+        return self.path_efficiency_dict
 
-        # make a dict in the format we want and input all the data
-        final_results = {}
-        for flow in results:
-            final_results[list(flow[3].values())[0][1]] = {
-                list(flow[0].keys())[0]: list(flow[0].values())[0][0],
-                list(flow[1].keys())[0]: list(flow[1].values())[0][0],
-                list(flow[2].keys())[0]: list(flow[2].values())[0][0],
-                list(flow[3].keys())[0]: list(flow[3].values())[0][0],
+    def get_last_used_paths_by_ingress(
+        self: InfluxDataGetter, start: int, stop: int
+    ) -> dict:
+        query: str = f"""from(bucket: "{self.raw_bucket}")\n
+        |> range(start: {start}, stop: {stop})\n
+        |> filter(fn: (r) => r["_measurement"] == "netflow")\n
+        |> filter(fn: (r) => r["flags"] == "0")\n
+        |> filter(fn: (r) => r["_field"] == "aggregate")\n
+        |> group(columns: ["node_01", "node_02", "node_03", "node_04"])\n
+        |> last(column: "_value")\n
+        |> group()\n
+        |> sort(columns: ["_time"], desc: true)\n
+        """
+        influx_raw_data: list[dict] = self.run_influx_query(query)
+        path_entries = extract_path_entries_from_raw_data(influx_raw_data)
+        self.insert_into_last_path_usage_dict(path_entries)
+        return self.last_used_path_dict
+
+    def insert_into_path_efficiency_dict(
+        self: InfluxDataGetter, path_entries: list[dict]
+    ) -> None:
+        for entry in path_entries:
+            path_key: tuple = get_path_tuple(entry)
+
+            # skip path entry in case node list is empty
+            if is_empty_node_list(path_key):
+                continue
+
+            ingress: int = get_ingress(entry)
+            egress: int = get_egress(entry)
+
+            # insert ingress/egress nodes if not existing
+            if ingress not in self.path_efficiency_dict:
+                self.path_efficiency_dict[ingress] = {}
+            if egress not in self.path_efficiency_dict[ingress]:
+                self.path_efficiency_dict[ingress][egress] = []
+
+            # insert path_dict into provisioned list in ingress egress dict
+            path_index = 0
+            if path_key not in self.known_path_set:
+                self.path_efficiency_dict[ingress][egress].append({path_key: {}})
+                self.known_path_set.add(path_key)
+                path_index = -1
+            else:
+                for i, path in enumerate(self.path_efficiency_dict[ingress][egress]):
+                    if path_key in path:
+                        path_index = i
+                        break
+
+            data_param: int = int(entry["ioam_data_param"])
+
+            path_dict_entry = self.path_efficiency_dict[ingress][egress][path_index][
+                path_key
+            ]
+
+            if data_param not in path_dict_entry:
+                path_dict_entry[data_param] = {}
+
+            path_dict_entry[data_param][get_aggregator(entry)] = {
+                "aggregate": entry["_value"],
+                "time": entry["_time"],
             }
 
-        # return these results
-        return final_results
+    def insert_into_last_path_usage_dict(
+        self: InfluxDataGetter, path_entries: list[dict]
+    ) -> None:
+        for entry in path_entries:
+            path_key: tuple = get_path_tuple(entry)
 
-    def makeprovisionary_raw_results(self, api_response):
-        # get all the data from the Influx tables and make it easily usable for later steps
-        results = []
-        x = 0
-        for table in api_response:
-            results.append([])
-            results[x].append(
-                {
-                    "flow_label": table.records[0].values.get("flow_label"),
-                    "aggregator": table.records[0].values.get("aggregator"),
-                }
-            )
-            results[x].append(
-                {
-                    "source_ipv6": table.records[0].values.get("source_ipv6"),
-                    "destination_ipv6": table.records[0].values.get("destination_ipv6"),
-                    "namespace_id": table.records[0].values.get("namespace_id"),
-                    "auxil_data_node_id": table.records[0].values.get(
-                        "auxil_data_node_id"
-                    ),
-                }
-            )
-            results[x].append(
-                {
-                    "node1": table.records[0].values.get("node_01"),
-                    "node2": table.records[0].values.get("node_02"),
-                    "node3": table.records[0].values.get("node_03"),
-                    "node4": table.records[0].values.get("node_04"),
-                }
-            )
-            for record in table.records:
-                results[x].append({record.get_field(): record.get_value()})
-            x += 1
+            # skip path entry in case node list is empty
+            if is_empty_node_list(path_key):
+                continue
 
-        return results
+            ingress: int = get_ingress(entry)
+            egress: int = get_egress(entry)
 
-    def makefinal_raw_results(self, prov_results):
-        # make a entry in the dict for each flow
-        fin_res = {}
-        for flow in prov_results:
-            fin_res[flow[0]["flow_label"]] = []
+            # insert ingress/egress nodes if not existing
+            if ingress not in self.last_used_path_dict:
+                self.last_used_path_dict[ingress] = {}
 
-        for flow in prov_results:
-            for dict in flow:
-                # get each value needed for each flow
-                if str(list(dict.keys())[0]) == "aggregate":
-                    aggregate = [str(list(dict.keys())[0]), int(list(dict.values())[0])]
-                elif str(list(dict.keys())[0]) == "ioam_data_param":
-                    ioam_data_param = [
-                        str(list(dict.keys())[0]),
-                        int(list(dict.values())[0]),
-                    ]
-                elif str(list(dict.keys())[0]) == "hop_limit_node_01":
-                    hop_limit_node_01 = [
-                        str(list(dict.keys())[0]),
-                        int(list(dict.values())[0]),
-                    ]
-                elif str(list(dict.keys())[0]) == "hop_limit_node_02":
-                    hop_limit_node_02 = [
-                        str(list(dict.keys())[0]),
-                        int(list(dict.values())[0]),
-                    ]
-                elif str(list(dict.keys())[0]) == "hop_limit_node_03":
-                    hop_limit_node_03 = [
-                        str(list(dict.keys())[0]),
-                        int(list(dict.values())[0]),
-                    ]
-                elif str(list(dict.keys())[0]) == "hop_limit_node_04":
-                    hop_limit_node_04 = [
-                        str(list(dict.keys())[0]),
-                        int(list(dict.values())[0]),
-                    ]
-                elif str(list(dict.keys())[0]) == "hop_count":
-                    hop_count = [str(list(dict.keys())[0]), int(list(dict.values())[0])]
-
-            # map the aggregator the the set String
-            if int(flow[0]["aggregator"]) == 1:
-                sec_lvl_key = "SUM"
-            if int(flow[0]["aggregator"]) == 2:
-                sec_lvl_key = "MIN"
-            if int(flow[0]["aggregator"]) == 4:
-                sec_lvl_key = "MAX"
-
-            # fin_res[flow[0]["flow_label"]] = {str(sec_lvl_key):{
-            #     "generic":{
-            #         str(list(flow[1].keys())[0]):str(ipaddress.ip_address(list(flow[1].values())[0])),
-            #         str(list(flow[1].keys())[1]):str(ipaddress.ip_address(list(flow[1].values())[1])),
-            #         str(list(flow[1].keys())[2]):str(list(flow[1].values())[2])
-            #     },
-            #     "ioam_aggr":{
-            #         ioam_data_param[0]:ioam_data_param[1],
-            #         aggregate[0]:aggregate[1],
-            #         str(list(flow[1].keys())[3]):str(list(flow[1].values())[3]),
-            #         hop_count[0]:hop_count[1]
-            #     },
-            #     "ioam_trace":
-            #         [
-            #             {str(list(flow[2].keys())[0]):[str(list(flow[2].values())[0]),hop_limit_node_01[1]]},
-            #             {str(list(flow[2].keys())[1]):[str(list(flow[2].values())[1]),hop_limit_node_02[1]]},
-            #             {str(list(flow[2].keys())[2]):[str(list(flow[2].values())[2]),hop_limit_node_03[1]]},
-            #             {str(list(flow[2].keys())[3]):[str(list(flow[2].values())[3]),hop_limit_node_04[1]]},
-            #         ]
-            #     }}
-
-            # input the data into the Table in the Format we want which corresponds to a normal json format
-            fin_res[flow[0]["flow_label"]].append(
-                {
-                    str(sec_lvl_key): {
-                        "generic": {
-                            str(list(flow[1].keys())[0]): str(
-                                ipaddress.ip_address(list(flow[1].values())[0])
-                            ),
-                            str(list(flow[1].keys())[1]): str(
-                                ipaddress.ip_address(list(flow[1].values())[1])
-                            ),
-                            str(list(flow[1].keys())[2]): str(
-                                list(flow[1].values())[2]
-                            ),
-                        },
-                        "ioam_aggr": {
-                            ioam_data_param[0]: ioam_data_param[1],
-                            aggregate[0]: aggregate[1],
-                            str(list(flow[1].keys())[3]): str(
-                                list(flow[1].values())[3]
-                            ),
-                            hop_count[0]: hop_count[1],
-                        },
-                        "ioam_trace": [
-                            {
-                                "node_id": str(list(flow[2].values())[0]),
-                                "hop_limit": hop_limit_node_01[1],
-                            },
-                            {
-                                "node_id": str(list(flow[2].values())[1]),
-                                "hop_limit": hop_limit_node_02[1],
-                            },
-                            {
-                                "node_id": str(list(flow[2].values())[2]),
-                                "hop_limit": hop_limit_node_03[1],
-                            },
-                            {
-                                "node_id": str(list(flow[2].values())[3]),
-                                "hop_limit": hop_limit_node_04[1],
-                            },
-                        ],
-                    }
-                }
-            )
-
-        return fin_res
-
-    def basic_raw_query(self, time):
-        # define the query
-        query = (
-            'from(bucket: "'
-            + self.raw_bucket
-            + '")\
-        |> range(start: -'
-            + str(time)
-            + 'm)\
-        |> filter(fn: (r) => r["_measurement"] == "netflow")\
-        |> filter(fn: (r) => r["_field"] != "fwd_status" and r["_field"] != "fwd_reason")\
-        |> filter(fn: (r) => r["flags"] == "0")\
-        |> group(columns: ["flow_label","aggregator"])'
-        )
-
-        # make the query, make the provisionary results and then make the final results and return all these results
-        result = self.query_api.query(org=self.org, query=query)
-        results = self.makeprovisionary_raw_results(result)
-        fin_result = self.makefinal_raw_results(results)
-
-        return fin_result
-
-    def makefinal_raw_results_by_query(self, prov_results):
-        # make the final table in the format wanted
-        fin_res = {}
-
-        for flow in prov_results:
-            # make all the empty table in which the data will be input
-            for dict in flow:
-                if str(list(dict.keys())[0]) == "ioam_data_param":
-                    ioam_data_param = [
-                        str(list(dict.keys())[0]),
-                        int(list(dict.values())[0]),
-                    ]
-
-            if int(flow[0]["aggregator"]) == 1:
-                sec_lvl_key = "SUM"
-            if int(flow[0]["aggregator"]) == 2:
-                sec_lvl_key = "MIN"
-            if int(flow[0]["aggregator"]) == 4:
-                sec_lvl_key = "MAX"
-
-            if str(ipaddress.ip_address(list(flow[1].values())[0])) not in list(
-                fin_res.keys()
-            ):
-                fin_res[str(ipaddress.ip_address(list(flow[1].values())[0]))] = {}
-            if str(ipaddress.ip_address(list(flow[1].values())[1])) not in list(
-                fin_res[str(ipaddress.ip_address(list(flow[1].values())[0]))].keys()
-            ):
-                fin_res[str(ipaddress.ip_address(list(flow[1].values())[0]))][
-                    str(ipaddress.ip_address(list(flow[1].values())[1]))
-                ] = {}
-            if str(list(flow[0].values())[0]) not in list(
-                fin_res[str(ipaddress.ip_address(list(flow[1].values())[0]))][
-                    str(ipaddress.ip_address(list(flow[1].values())[1]))
-                ].keys()
-            ):
-                fin_res[str(ipaddress.ip_address(list(flow[1].values())[0]))][
-                    str(ipaddress.ip_address(list(flow[1].values())[1]))
-                ][list(flow[0].values())[0]] = {}
-            if str(ioam_data_param) not in list(
-                fin_res[str(ipaddress.ip_address(list(flow[1].values())[0]))][
-                    str(ipaddress.ip_address(list(flow[1].values())[1]))
-                ][list(flow[0].values())[0]].keys()
-            ):
-                fin_res[str(ipaddress.ip_address(list(flow[1].values())[0]))][
-                    str(ipaddress.ip_address(list(flow[1].values())[1]))
-                ][list(flow[0].values())[0]][str(ioam_data_param[1])] = []
-
-        for flow in prov_results:
-            # get all the data to input into the tables
-            for dict in flow:
-                if str(list(dict.keys())[0]) == "aggregate":
-                    aggregate = [str(list(dict.keys())[0]), int(list(dict.values())[0])]
-                elif str(list(dict.keys())[0]) == "ioam_data_param":
-                    ioam_data_param = [
-                        str(list(dict.keys())[0]),
-                        int(list(dict.values())[0]),
-                    ]
-                elif str(list(dict.keys())[0]) == "hop_limit_node_01":
-                    hop_limit_node_01 = [
-                        str(list(dict.keys())[0]),
-                        int(list(dict.values())[0]),
-                    ]
-                elif str(list(dict.keys())[0]) == "hop_limit_node_02":
-                    hop_limit_node_02 = [
-                        str(list(dict.keys())[0]),
-                        int(list(dict.values())[0]),
-                    ]
-                elif str(list(dict.keys())[0]) == "hop_limit_node_03":
-                    hop_limit_node_03 = [
-                        str(list(dict.keys())[0]),
-                        int(list(dict.values())[0]),
-                    ]
-                elif str(list(dict.keys())[0]) == "hop_limit_node_04":
-                    hop_limit_node_04 = [
-                        str(list(dict.keys())[0]),
-                        int(list(dict.values())[0]),
-                    ]
-                elif str(list(dict.keys())[0]) == "hop_count":
-                    hop_count = [str(list(dict.keys())[0]), int(list(dict.values())[0])]
-
-            # map the aggregator to the string needed
-            if int(flow[0]["aggregator"]) == 1:
-                sec_lvl_key = "SUM"
-            if int(flow[0]["aggregator"]) == 2:
-                sec_lvl_key = "MIN"
-            if int(flow[0]["aggregator"]) == 4:
-                sec_lvl_key = "MAX"
-
-            # input all the data into the empty tables
-            fin_res[str(ipaddress.ip_address(list(flow[1].values())[0]))][
-                str(ipaddress.ip_address(list(flow[1].values())[1]))
-            ][list(flow[0].values())[0]][str(ioam_data_param[1])].append(
-                {
-                    sec_lvl_key: {
-                        "generic": {
-                            str(list(flow[1].keys())[2]): str(list(flow[1].values())[2])
-                        },
-                        "ioam_aggr": {
-                            aggregate[0]: aggregate[1],
-                            str(list(flow[1].keys())[3]): str(
-                                list(flow[1].values())[3]
-                            ),
-                            hop_count[0]: hop_count[1],
-                        },
-                        "ioam_trace": [
-                            {
-                                "node_id": str(list(flow[2].values())[0]),
-                                "hop_limit": hop_limit_node_01[1],
-                            },
-                            {
-                                "node_id": str(list(flow[2].values())[1]),
-                                "hop_limit": hop_limit_node_02[1],
-                            },
-                            {
-                                "node_id": str(list(flow[2].values())[2]),
-                                "hop_limit": hop_limit_node_03[1],
-                            },
-                            {
-                                "node_id": str(list(flow[2].values())[3]),
-                                "hop_limit": hop_limit_node_04[1],
-                            },
-                        ],
-                    }
-                }
-            )
-        return fin_res
-
-    def basic_raw_query_by_src_dst(self, time):
-        # define the query to get the data needed
-        query = (
-            'from(bucket: "'
-            + self.raw_bucket
-            + '")\
-        |> range(start: -'
-            + str(time)
-            + 'm)\
-        |> filter(fn: (r) => r["_measurement"] == "netflow")\
-        |> filter(fn: (r) => r["_field"] != "fwd_status" and r["_field"] != "fwd_reason")\
-        |> filter(fn: (r) => r["flags"] == "0")\
-        |> group(columns: ["source_ipv6","destination_ipv6","flow_label","ioam_data_param","aggregator"])'
-        )
-
-        # make the query, make provisionary results and then definite results
-        result = self.query_api.query(org=self.org, query=query)
-        results = self.makeprovisionary_raw_results(result)
-        fin_result = self.makefinal_raw_results_by_query(results)
-
-        return fin_result
+            if egress not in self.last_used_path_dict[ingress]:
+                self.last_used_path_dict[ingress][egress] = path_key
