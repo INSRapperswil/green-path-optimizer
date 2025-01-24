@@ -372,6 +372,30 @@ To run the configuration utilities, the following `make` targets are available:
 - `update-config:` Pushes the generated configurations to the BMv2 software switches.
   Make sure to select the correct inventory in the `config.yaml` file inside the config updater.
 
+
+#### Optimizer
+
+The optimizer is currently not included in the `Makefile`.
+It has to be run manually using the `uv` utility executing the `optimizer/optimizer.py` file.
+
+```sh
+uv run --env-file monitoring/.env optimizer/optimizer.py \
+       --time 600 \
+       --write optimizer/path_efficiency_entries.txt \
+       --resources config/generator/resources/large_network.yaml
+```
+
+Refer to [optimizer/REDME.md](optimizer/README.md) for a detailed description of an example scenario.
+
+##### Prerequisite
+
+- Network environment up and running
+- Monitoring environment up and running
+- At least one configuration update to adjust traffic flow in the network was attempted
+
+The last step is important because the optimizer will compare all known paths grouped by ingress/egress router and will suggest to use the best path.
+** In case no configuration update was triggered there is only one path known and so there is noting to optimize.**
+
 ### Stopping the Environment
 
 To stop the environment there are dedicated stop `make` targets:
