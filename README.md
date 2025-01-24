@@ -63,7 +63,7 @@ The figure below illustrates our proof of concept in a simplified network enviro
 
 On the Monitoring side there is a **Telegraf, Influx, Grafana (TIG) Stack** which collects, stores and displays the collected data.
 
-![PoC Overview](assets/figures/proof_of_concept_overview.svg)
+![PoC Overview](assets/figures/proof_of_concept_overview.png)
 
 #### Efficiency Indication
 
