@@ -21,7 +21,7 @@ During the experiment the following updates to the forwarding tables of the netw
 
 1. **Good Routing:** Traffic is sent via "eco"-rated routers.
 2. **Bad Routing:** Traffic is sent via paths with higher carbon intensity.
-3. **Optimized Routing:** After the optimizer has determined the routes with the lowest carbon intensity from the given set of routes between input and output routers, the traffic is routed via the *optimal* routes in terms of carbon intensity.
+3. **Optimized Routing:** After the optimizer has determined the routes with the lowest carbon intensity from the given set of routes between every ingress and egress router, the traffic is routed via the *optimal* routes in terms of carbon intensity.
 
 
 ### Good Routing
@@ -73,7 +73,7 @@ In both the top left and the diagram at the bottom one can see that:
 
 ### Routing Update
 
-- In the Makefile set the `RESOURCE FILE` variable to `bad_network_good_routing.yaml`
+- In the Makefile set the `RESOURCE FILE` variable to `large_network_bad_routing.yaml`
 - Trigger a configuration update using `make config`
 - Wait a couple of minutes for traffic to be sent through the currently configured paths
 
@@ -81,13 +81,13 @@ In both the top left and the diagram at the bottom one can see that:
 
 Due to the configuration updates carbon intensity information could be collected of different network paths.
 
-The optimizer can now be used to identify and configer the most efficient path between every ingress/egress router combination.
+The optimizer can now be used to identify and configure the most efficient path between every ingress/egress router combination.
 
 To run the optimizer carry out the following steps:
 
 1. Copy the contents of the currently deployed resource file into a temporary file e.g. `large_network_temp.yaml`
 2. Run the uv command with the following options:
-    - `env-file`: Path to the file containing the environment variabes necessary to connect to InfluxDB
+    - `env-file`: Path to the file containing the environment variables necessary to connect to InfluxDB
     - `time`: Is by default 600 seconds (10 minutes); as the data of the "good routing" period shall be included time is set 3600 to include all data from (*now-1h*).
     - `resources`: Path to resources file in which the path definitions shall be updated.
     - `verbose`: Displays the path efficiency entries data structure which is used to find the most effienct paths.
