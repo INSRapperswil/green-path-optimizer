@@ -1,13 +1,13 @@
 # Optimizer Example Scenario
 
-*Throughout this document the terms path efficiency and path carbon intensity are used interchangably.*
+_Throughout this document the terms path efficiency and path carbon intensity are used interchangably._
 
-This README is intended to give an overview about the capabilities of the *path optimizer software* component.
+This README is intended to give an overview about the capabilities of the _path optimizer software_ component.
 
 Our PoC environment is used as a base to simulate the underlying network infrastructure.
 As described in [README.md](../README.md) the IOAM protocol is used for inband network telemetry data collection of sustainability metrics.
 The collected data is exported by egress nodes using the IPFIX protocol and stored inside an Influx timeseries database.
-This database is accessed by the *path optimizer* to make decisions on how to optimize traffic flow inside a network.
+This database is accessed by the _path optimizer_ to make decisions on how to optimize traffic flow inside a network.
 
 **The goal is to make traffic forwarding carbon aware and to isolate inefficient equipment so that it could be put into an energy saving standby mode during off-peak periods.**
 
@@ -21,8 +21,7 @@ During the experiment the following updates to the forwarding tables of the netw
 
 1. **Good Routing:** Traffic is sent via "eco"-rated routers.
 2. **Bad Routing:** Traffic is sent via paths with higher carbon intensity.
-3. **Optimized Routing:** After the optimizer has determined the routes with the lowest carbon intensity from the given set of routes between every ingress and egress router, the traffic is routed via the *optimal* routes in terms of carbon intensity.
-
+3. **Optimized Routing:** After the optimizer has determined the routes with the lowest carbon intensity from the given set of routes between every ingress and egress router, the traffic is routed via the _optimal_ routes in terms of carbon intensity.
 
 ### Good Routing
 
@@ -43,37 +42,39 @@ As depicted below with red arrows traffic is sent via forwarding devices with hi
 The screenshot below shows the path statistics Grafana dashboard.
 
 Top row:
+
 - The top left diagram shows the average path carbon intensity of all currently used paths in the network
 - The top right diagram shows the distribution of path carbon intensity values
 
 Middle row:
+
 - The left table in the middle row shows which path is currently used between which hosts
 - The right table in the middle row shows the last collected path carbon intensity value of each path
 
 Bottom row:
+
 - The diagram in the bottom row shows the path carbon intensity of each path over time
 
 In both the top left and the diagram at the bottom one can see that:
 
 - **From 15:50 until 15:55** the good routing configuration was applied
 - **From 16:00 until 16:30** the bad routing configuration was applied
-- **On 16:35** the optimizer was executed to find the paths with the least carbon intensity which where used at least once in the period from *15:50 to 16:30*
+- **On 16:35** the optimizer was executed to find the paths with the least carbon intensity which where used at least once in the period from _15:50 to 16:30_
 - **The optimizer found and configured the paths with the lowest carbon intensity**
 
 ![Path Statistics Grafana Dashboard](../assets/figures/optimizer_grafana_dashboard.png)
-
 
 ## Experiment
 
 ### Deployment of Environment
 
-- In the Makefile set the `RESOURCE FILE` variable to `large_network_good_routing.yaml`
+- In the Makefile set the `RESOURCE_FILE` variable to `large_network_good_routing.yaml`
 - Start the environment using `make run`
 - Wait a couple of minutes for traffic to be sent through the currently configured paths
 
 ### Routing Update
 
-- In the Makefile set the `RESOURCE FILE` variable to `large_network_bad_routing.yaml`
+- In the Makefile set the `RESOURCE_FILE` variable to `large_network_bad_routing.yaml`
 - Trigger a configuration update using `make config`
 - Wait a couple of minutes for traffic to be sent through the currently configured paths
 
@@ -87,10 +88,10 @@ To run the optimizer carry out the following steps:
 
 1. Copy the contents of the currently deployed resource file into a temporary file e.g. `large_network_temp.yaml`
 2. Run the uv command with the following options:
-    - `env-file`: Path to the file containing the environment variables necessary to connect to InfluxDB
-    - `time`: Is by default 600 seconds (10 minutes); as the data of the "good routing" period shall be included time is set 3600 to include all data from (*now-1h*).
-    - `resources`: Path to resources file in which the path definitions shall be updated.
-    - `verbose`: Displays the path efficiency entries data structure which is used to find the most effienct paths.
+   - `env-file`: Path to the file containing the environment variables necessary to connect to InfluxDB
+   - `time`: Is by default 600 seconds (10 minutes); as the data of the "good routing" period shall be included time is set 3600 to include all data from (_now-1h_).
+   - `resources`: Path to resources file in which the path definitions shall be updated.
+   - `verbose`: Displays the path efficiency entries data structure which is used to find the most effienct paths.
 
 ```sh
 uv run --env-file monitoring/.env optimizer/optimizer.py \
@@ -102,7 +103,7 @@ uv run --env-file monitoring/.env optimizer/optimizer.py \
 #### Path Efficiency Data Structure
 
 The path efficiency data structure is a mapping from ingress router to egress router to a list of path entries.
-The list of path entries then contains again a mapping from *IOAM Data Param* to efficiency entry.
+The list of path entries then contains again a mapping from _IOAM Data Param_ to efficiency entry.
 The effciency entry is then again a mapping from aggregator to an actual efficiency value.
 
 **The data structure allows instant access to a list of all available paths between an ingress and egress router. Furthermore the data structure can handle the simultaneous collection of multple IOAM data params and aggregators.**
@@ -239,11 +240,10 @@ In this case into `config/generator/resources/large_network_temp.yaml`.
 
 #### Apply Optimized Configuration
 
-The optimized configuration needs to be applied using the configuration update utilities available with the `make` utiltiy.
+The optimized configuration needs to be applied using the configuration update utilities available with the `make` utility.
 
-- In the Makefile set the `RESOURCE FILE` variable to `large_network_temp.yaml`
+- In the Makefile set the `RESOURCE_FILE` variable to `large_network_temp.yaml`
 - Trigger a configuration update using `make config`
-
 
 #### Reachability Test
 
