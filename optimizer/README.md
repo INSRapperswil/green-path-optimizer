@@ -57,9 +57,9 @@ Bottom row:
 
 In both the top left and the diagram at the bottom one can see that:
 
-- **From 15:50 until 15:55** the good routing configuration was applied
-- **From 16:00 until 16:30** the bad routing configuration was applied
-- **On 16:35** the optimizer was executed to find the paths with the least carbon intensity which where used at least once in the period from _15:50 to 16:30_
+- **From 10:10 until 10:15** the good routing configuration was applied
+- **From 10:15 until 11:10** the bad routing configuration was applied
+- **On 11:10** the optimizer was executed to find the paths with the least carbon intensity which where used at least once in the period from _10:10 to 11:10_
 - **The optimizer found and configured the paths with the lowest carbon intensity**
 
 ![Path Statistics Grafana Dashboard](../assets/figures/optimizer_grafana_dashboard.png)
