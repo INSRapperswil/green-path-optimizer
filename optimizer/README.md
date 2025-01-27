@@ -95,8 +95,8 @@ To run the optimizer carry out the following steps:
 
 ```sh
 uv run --env-file monitoring/.env optimizer/optimizer.py \
-       --time 3600
-       --resources config/generator/resources/large_network_temp.yaml
+       --time 3600 \
+       --resources config/generator/resources/large_network_temp.yaml \
        --verbose
 ```
 
