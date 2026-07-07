@@ -56,14 +56,10 @@ The green-path-optimizer is a framework for simulating a proof-of-concept enviro
   - Visualization of efficiency data ([Grafana](https://grafana.com/)). Two example graphs are:
     - [Heatmap](./assets/figures/grafana_matrix.png) showing endpoint to endpoint flow efficiency
     - [Timeseries graph](./assets/figures/grafana_path_statistics.png) showing the efficiency of paths over time
-
-**In near future** it will also contain the following components:
-
-- **Optimizer** to be developed at [RIPE NCC Green Tech Hackathon](https://labs.ripe.net/author/becha/announcing-the-green-tech-hackathon/) capable of:
+- **Optimizer** developed at the [RIPE NCC Green Tech Hackathon](https://labs.ripe.net/author/becha/announcing-the-green-tech-hackathon/) capable of:
   - Analyzing the given time series data stored in InfluxDB
   - Proposing configuration changes to route traffic over the most efficient paths between every possible ingress and egress router
   - Trigger configuration update to actually implement the proposed optimization in the network.
-- **Validator** to be developed after the hackathon and validates the optimiser's configuration changes to e.g. prevent data from being sent through bottlenecks or certain paths from being overprovisioned.
 
 ## Project Overview
 
