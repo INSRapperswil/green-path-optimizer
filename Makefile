@@ -1,5 +1,8 @@
 .PHONY: build prepare config run run-debug stop clean setup-env generate-config update-config clean-config build-network run-network run-network-debug stop-network clean-network run-monitoring stop-monitoring clean-monitoring
 
+# Chose the IOAM version to be deployed (currently supported: template, aggregation)
+IOAM_OPTION = aggregation
+
 # Reset this variable to chose the topology which should be deployed
 RESOURCE_FILE = ${CONFIG_GEN_DIR}/resources/large_network.yaml
 
@@ -19,12 +22,12 @@ INFLUX_ENV_SCRIPT_DIR = monitoring/influx/envsubst
 INFLUX_SCRIPT_DIR = monitoring/influx/entrypoint
 
 P4C = p4c-bm2-ss
-P4C_ARGS += --p4runtime-files $(P4_BUILD_DIR)/main.p4.p4info.txt --emit-externs
+P4C_ARGS += --p4runtime-files $(P4_BUILD_DIR)/main.p4.p4info.txtpb --emit-externs
 
 RUN_NETWORK_SCRIPT = network/utils/run_network.py
 
 BMV2_SWITCH_EXE = simple_switch_grpc
-BMV2_REPO = ${HOME}/git/ba/behavioral-model
+BMV2_REPO = ${HOME}/git/behavioral-model
 BMV2_EXTERN_DIR = ${BMV2_REPO}/externs/obj
 BMV2_EXTERNS = ${BMV2_EXTERN_DIR}/ipfix.so # comma separated list
 
@@ -72,7 +75,7 @@ setup-env:
 ### config tasks ###
 
 generate-config:
-	uv run ${CONFIG_GEN_DIR}/main.py \
+	python3 ${CONFIG_GEN_DIR}/main.py \
 	--template-dir $(CONFIG_GEN_DIR)/templates \
 	--grafana-template-dir $(CONFIG_GEN_DIR)/templates/grafana \
 	--mininet-template mininet_topology.j2 \
@@ -83,28 +86,30 @@ generate-config:
 	--out-dir ${CONFIG_GEN_OUT_DIR}
 
 update-config:
-	uv run ${CONFIG_UPDATE_DIR}/updater.py
+	python3 ${CONFIG_UPDATE_DIR}/updater.py
 
 clean-config:
 	rm -rf ${CONFIG_LOG_DIR} ${CONFIG_GEN_OUT_DIR} ${CONFIG_UPDATE_CHKSUM_FILE}
 
+optimize:
+	python3 optimizer/main.py -t 5000 -r ${RESOURCE_FILE}
 
 ### network tasks ###
 
 build-network:
 	mkdir -p $(P4_BUILD_DIR)
-	$(P4C) --p4v 16 $(P4C_ARGS) -o $(P4_BUILD_DIR)/main.json ${P4_DIR}/main.p4
+	$(P4C) --p4v 16 $(P4C_ARGS) -o $(P4_BUILD_DIR)/main.json ${P4_DIR}/ioam_${IOAM_OPTION}/main.p4
 
 run-network: build generate-config
 	mkdir -p $(P4_LOG_DIR)
-	sudo python3 $(RUN_NETWORK_SCRIPT) -t $(CONFIG_GEN_OUT_DIR)/topology.json $(run_args) -l $(P4_LOG_DIR)
+	sudo .venv/bin/python3 $(RUN_NETWORK_SCRIPT) -t $(CONFIG_GEN_OUT_DIR)/topology.json $(run_args) -l $(P4_LOG_DIR)
 
 run-network-debug: build generate-config
 	mkdir -p $(P4_PCAP_DIR) $(P4_LOG_DIR)
-	sudo python3 $(RUN_NETWORK_SCRIPT) -t $(CONFIG_GEN_OUT_DIR)/topology.json $(run_args) -l $(P4_LOG_DIR) -p $(P4_PCAP_DIR) --bmv2-log-console
+	sudo .venv/bin/python3 $(RUN_NETWORK_SCRIPT) -t $(CONFIG_GEN_OUT_DIR)/topology.json $(run_args) -l $(P4_LOG_DIR) -p $(P4_PCAP_DIR) --bmv2-log-console
 
 stop-network:
-	sudo mn -c
+	sudo .venv/bin/mn -c
 
 clean-network: stop-network
 	rm -rf ${P4_LOG_DIR} ${P4_BUILD_DIR} ${P4_PCAP_DIR}
@@ -113,11 +118,11 @@ clean-network: stop-network
 ### monitor tasks ###
 
 run-monitoring: build generate-config
-	sudo docker compose -f monitoring/docker-compose.yaml up --detach
+	sudo IOAM_OPTION=${IOAM_OPTION} docker compose -f monitoring/compose.yaml up --detach
 
 stop-monitoring:
-	sudo docker compose -f monitoring/docker-compose.yaml down
+	sudo IOAM_OPTION=${IOAM_OPTION} docker compose -f monitoring/compose.yaml down
 
 clean-monitoring: stop-monitoring
 	rm -rf ${GRAFANA_DATASOURCE_DIR} ${INFLUX_SCRIPT_DIR}
-	sudo docker volume prune -a
+	docker volume prune -a

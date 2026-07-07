@@ -7,20 +7,20 @@ control process_efficiency_indicator(inout headers hdr,
                                      inout standard_metadata_t standard_metadata) {
 
     action add_indicator_to_aggregate(ioamAggregate_t indicator_value) {
-        meta.ioamAggrMeta.aggregate = meta.ioamAggrMeta.aggregate + indicator_value;
+        meta.ioamAggregationMeta.aggregate = meta.ioamAggregationMeta.aggregate + indicator_value;
     }
 
     action indicate_data_param_error() {
-        meta.ioamAggrMeta.dataParamError = 1;
+        meta.ioamAggregationMeta.dataParamError = 1;
     }
 
     action indicate_other_error() {
-        meta.ioamAggrMeta.otherError = 1;
+        meta.ioamAggregationMeta.otherError = 1;
     }
 
     table get_hop_efficiency_indicator {
         key = {
-            hdr.ioam_a_ioam_aggregation.dataParam: exact;
+            hdr.ioam_aggregation.dataParam: exact;
         }
         actions = {
             add_indicator_to_aggregate;
@@ -53,9 +53,9 @@ control process_efficiency_indicator(inout headers hdr,
 
     apply {
         // Efficiency Indicator Processing
-        if (hdr.ioam_a_ioam_aggregation.isValid() && hdr.ioam_a_ioam_aggregation.flags == 0) {
+        if (hdr.ioam_aggregation.isValid() && hdr.ioam_aggregation.flags == 0) {
             get_hop_efficiency_indicator.apply();
-            if (meta.ioamAggrMeta.dataParamError == 0) {
+            if (meta.ioamAggregationMeta.dataParamError == 0) {
                 get_ingress_link_efficiency_indicator.apply();
                 get_egress_link_efficiency_indicator.apply();
             }

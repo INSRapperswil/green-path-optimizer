@@ -1,5 +1,34 @@
 # green-path-optimizer [@OST](https://www.ost.ch/en/)
 
+## IETF 126 Hackathon
+
+At the IETF hackathon in Vienna we will present this PoC and extend it with an additional IOAM Option to transport aggregated network telemetry data, so-called aggregation traces.
+The current implementation supports the transport of aggregation traces with two different IOAM Options:
+
+- [IOAM Aggregation Trace Option](https://datatracker.ietf.org/doc/draft-cxx-ippm-ioamaggr/): A new IOAM Option which can carry registry and operator defined aggregates.
+- [IOAM Template Option](https://datatracker.ietf.org/doc/draft-mbci-ippm-ioam-template-option/): A new IOAM Option which can carry constant length data, structured according to registry or operator defined templates.
+
+Next to the protocol implementation in the data plane in P4, the IPFIX export implementation in the control plane in C++, we extended Wireshark with a dissector for each option.
+The screenshots below show the wire image of both the IOAM Aggregation Trace Option and the IOAM Template Option.
+
+IOAM Aggregation Trace Option:
+
+![Wire Image of IOAM Aggregation Trace Option](assets/figures/wireshark_hackathon_aggregation_option.png)
+
+IOAM Template Option:
+
+![Wire Image of IOAM Template Option](assets/figures/wireshark_hackathon_template_option.png)
+
+
+### Goals for the Hackathon
+
+During the hackathon we would like to extend the PoC to support a third IOAM-based mechanism to transport aggregation traces.
+Namely:
+
+- [Global Opaque Block for IOAM Pre-allocated Trace Option](https://datatracker.ietf.org/doc/draft-mayer-ioam-gob/): An extension to the IOAM Pre-allocated Trace Option adding an optional data structure to carry constant length data, structured according to registry or operator defined schemas (aka. templates). If present, the optional data structure is located immediately before the node data list. The node list may be empty if only aggregated traces shall be collected without any path tracing on the node level.
+
+We also plan to extend the dissector of the IOAM Pre-allocated Trace Option to add support for the Global Opaque Block in Wireshark.
+
 ## Contents
 
 - [Introduction](#introduction)

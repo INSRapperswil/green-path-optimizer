@@ -19,12 +19,14 @@ typedef bit<8> ioamAggregator_t;
 typedef bit<32> ioamAggregate_t;
 typedef bit<16> ioamNamespace_t;
 
-struct ioamAggrMeta_t {
+struct ioamAggregationMeta_t {
     ioamAggregate_t aggregate;
     ioamDataParam_t dataParam;
-    bit<2> aggregator_selector;
+    bit<2> aggregatorSelector;
     bit<1> dataParamError;
     bit<1> otherError;
+    bit<8> optionLength;
+    bit<8> paddingLength;
 }
 
 struct ioamMeta_t {
@@ -36,9 +38,6 @@ struct forwardingMeta_t {
     bit<8> routeType;
     bit<8> reverseRouteType;
 }
-
-// UDP Types
-typedef bit<16> udpAddr_t;
 
 // IPFIX Types
 typedef bit<148> flowKey_t;
