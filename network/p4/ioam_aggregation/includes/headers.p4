@@ -35,7 +35,7 @@ header ipv6_t {
 }
 
 // Hop-by-Hop Options Header
-header ipv6_ext_hop_by_hop_t {
+header ipv6_hop_opt_t {
     bit<8> nextHeader;
     bit<8> hdrLen;
 }
@@ -46,14 +46,21 @@ header ipv6_option_t {
     bit<8> optionDataLen;
 }
 
-header option_padn_data_t {
-    bit<((IPV6_EXT_HOP_BY_HOP_PADDING - 2) * 8)> padding; // NumOfBytesPadding = N-2
-}
-
 // IOAM Header
-header ioam_t {
+header ioam_option_t {
     bit<8> reserved;
     bit<8> ioamOptType;
+}
+
+// IOAM Aggreagation Type Option Header
+header ioam_pto_t {
+    bit<16> namespaceID;
+    bit<5> nodeLen;
+    bit<4> flags;
+    bit<7> remainingLen;
+    bit<24> ioamTraceType;
+    bit<8> reserved;
+    bit<(IOAM_PTO_DATA_LIST_LEN)> dataList;
 }
 
 // IOAM Aggreagation Type Option Header
@@ -68,15 +75,10 @@ header ioam_aggregation_t {
     bit<8> hopCount;
 }
 
-// IOAM Aggreagation Type Option Header
-header ioam_trace_t {
-    bit<16> namespaceID;
-    bit<5> nodeLen;
-    bit<4> flags;
-    bit<7> remainingLen;
-    bit<24> ioamTraceType;
-    bit<8> reserved;
-    bit<(IOAM_TRACE_DATA_LIST_LEN)> dataList;
+// PadN Option padding field with the required length for 8 octet alignment of the Hop by Hop Option header
+// when the IOAM PTO is present in combination with the IOAM Template Option carrying the Aggregation Template
+header option_padn_data_t {
+    bit<32> padding;
 }
 
 header udp_t {
@@ -88,27 +90,25 @@ header udp_t {
 
 struct metadata {
     ioamMeta_t ioamMeta;
-    ioamAggrMeta_t ioamAggrMeta;
+    ioamAggregationMeta_t ioamAggregationMeta;
     forwardingMeta_t forwardingMeta;
 }
 
 struct headers {
-    // Datalink protocol
     ethernet_t                                      ethernet;
-    // Network protocol
     ipv4_t                                          ipv4;
     ipv6_t                                          ipv6;
-    // IOAM trace option
-    ipv6_ext_hop_by_hop_t                           ipv6_ext_hop_by_hop;
-    ipv6_option_t                                   ioam_t_ipv6_option;
-    ioam_t                                          ioam_t_ioam;
-    ioam_trace_t                                    ioam_t_ioam_trace;
-    // IOAM aggregation option
-    ipv6_option_t                                   ioam_a_ipv6_option;
-    ioam_t                                          ioam_a_ioam;
-    ioam_aggregation_t                              ioam_a_ioam_aggregation;
-    ipv6_option_t                                   option_padn;
-    option_padn_data_t                              option_padn_data;
-    // Transport protocol
+    // IOAM Preallocated Trace Option
+    ipv6_hop_opt_t                                  ipv6_hop_opt;
+    ipv6_option_t                                   ipv6_option_pto;
+    ioam_option_t                                   ioam_option_pto;
+    ioam_pto_t                                      ioam_pto;
+    // IOAM Template Option
+    ipv6_option_t                                   ipv6_option_aggregation;
+    ioam_option_t                                   ioam_option_aggregation;
+    ioam_aggregation_t                              ioam_aggregation;
+    // Hop By Hop Option PadN for 8 octett alignment of option data
+    ipv6_option_t                                   ipv6_option_padn;
+    option_padn_data_t                              padn;
     udp_t                                           udp;
 }

@@ -97,7 +97,7 @@ control MyEgress(inout headers hdr,
             process_ioam_init.apply(hdr, meta, standard_metadata);
 
             // IOAM Tracing
-            process_ioam_tracing.apply(hdr, meta, standard_metadata);
+            process_ioam_pto.apply(hdr, meta, standard_metadata);
 
             // Efficiency Indicator
             process_efficiency_indicator.apply(hdr, meta, standard_metadata);
@@ -144,15 +144,16 @@ control MyDeparser(packet_out packet, in headers hdr) {
         packet.emit(hdr.ethernet);
         packet.emit(hdr.ipv4);
         packet.emit(hdr.ipv6);
-        packet.emit(hdr.ipv6_ext_hop_by_hop);
-        packet.emit(hdr.ioam_t_ipv6_option);
-        packet.emit(hdr.ioam_t_ioam);
-        packet.emit(hdr.ioam_t_ioam_trace);
-        packet.emit(hdr.ioam_a_ipv6_option);
-        packet.emit(hdr.ioam_a_ioam);
-        packet.emit(hdr.ioam_a_ioam_aggregation);
-        packet.emit(hdr.option_padn);
-        packet.emit(hdr.option_padn_data);
+        packet.emit(hdr.ipv6_hop_opt);
+        packet.emit(hdr.ipv6_option_pto);
+        packet.emit(hdr.ioam_option_pto);
+        packet.emit(hdr.ioam_pto);
+        packet.emit(hdr.ipv6_option_template);
+        packet.emit(hdr.ioam_option_template);
+        packet.emit(hdr.ioam_template);
+        packet.emit(hdr.ioam_aggregation);
+        packet.emit(hdr.ipv6_option_padn);
+        packet.emit(hdr.padn);
         packet.emit(hdr.udp);
     }
 }

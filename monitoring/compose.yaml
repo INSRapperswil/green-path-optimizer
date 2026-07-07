@@ -1,6 +1,6 @@
 services:
   influxdb:
-    image: influxdb:latest
+    image: influxdb:2.8.0
     container_name: influxdb
     ports:
       - "8086:8086"
@@ -22,7 +22,7 @@ services:
     restart: unless-stopped
 
   telegraf:
-    image: telegraf:latest
+    image: telegraf:1.38.1
     container_name: telegraf
     environment:
       - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
@@ -31,7 +31,7 @@ services:
       - DOCKER_INFLUXDB_INIT_URL=${INFLUXDB_INIT_URL}
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
     volumes:
-      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - ./telegraf/telegraf_ioam_${IOAM_OPTION}.conf:/etc/telegraf/telegraf.conf:ro
     networks:
       efficientNetwork:
         ipv4_address: 192.168.100.20
@@ -42,7 +42,7 @@ services:
     restart: unless-stopped
 
   grafana:
-    image: grafana/grafana-oss:latest
+    image: grafana/grafana-oss:12.4.2
     container_name: grafana
     ports:
     - "3000:3000"

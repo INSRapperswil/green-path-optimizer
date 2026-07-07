@@ -4,7 +4,7 @@ hosts:
     commands:
     - route add default gw 146.185.64.1 dev eth0
     - arp -i eth0 -s 146.185.64.1 08:EE:00:00:00:11
-    - python3 network/utils/traffic_generator.py --ipv6 --src 'h01' --infinite --startup-delay
+    - .venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h01' --infinite --startup-delay
       15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs
       --config config/generator/out/traffic-generator-config.json &
     ipv4:
@@ -20,7 +20,7 @@ hosts:
     commands:
     - route add default gw 31.24.8.1 dev eth0
     - arp -i eth0 -s 31.24.8.1 08:EE:00:00:00:12
-    - python3 network/utils/traffic_generator.py --ipv6 --src 'h02' --infinite --startup-delay
+    - .venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h02' --infinite --startup-delay
       15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs
       --config config/generator/out/traffic-generator-config.json &
     ipv4:
@@ -36,7 +36,7 @@ hosts:
     commands:
     - route add default gw 31.207.52.1 dev eth0
     - arp -i eth0 -s 31.207.52.1 08:EE:00:00:00:12
-    - python3 network/utils/traffic_generator.py --ipv6 --src 'h03' --infinite --startup-delay
+    - .venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h03' --infinite --startup-delay
       15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs
       --config config/generator/out/traffic-generator-config.json &
     ipv4:
@@ -52,7 +52,7 @@ hosts:
     commands:
     - route add default gw 31.132.8.1 dev eth0
     - arp -i eth0 -s 31.132.8.1 08:EE:00:00:00:13
-    - python3 network/utils/traffic_generator.py --ipv6 --src 'h04' --infinite --startup-delay
+    - .venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h04' --infinite --startup-delay
       15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs
       --config config/generator/out/traffic-generator-config.json &
     ipv4:
@@ -68,7 +68,7 @@ hosts:
     commands:
     - route add default gw 23.56.98.1 dev eth0
     - arp -i eth0 -s 23.56.98.1 08:EE:00:00:00:13
-    - python3 network/utils/traffic_generator.py --ipv6 --src 'h05' --infinite --startup-delay
+    - .venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h05' --infinite --startup-delay
       15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs
       --config config/generator/out/traffic-generator-config.json &
     ipv4:
@@ -84,7 +84,7 @@ hosts:
     commands:
     - route add default gw 45.61.192.1 dev eth0
     - arp -i eth0 -s 45.61.192.1 08:EE:00:00:00:14
-    - python3 network/utils/traffic_generator.py --ipv6 --src 'h06' --infinite --startup-delay
+    - .venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h06' --infinite --startup-delay
       15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs
       --config config/generator/out/traffic-generator-config.json &
     ipv4:
@@ -100,7 +100,7 @@ hosts:
     commands:
     - route add default gw 37.46.144.1 dev eth0
     - arp -i eth0 -s 37.46.144.1 08:EE:00:00:00:15
-    - python3 network/utils/traffic_generator.py --ipv6 --src 'h07' --infinite --startup-delay
+    - .venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h07' --infinite --startup-delay
       15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs
       --config config/generator/out/traffic-generator-config.json &
     ipv4:
@@ -116,7 +116,7 @@ hosts:
     commands:
     - route add default gw 31.207.60.1 dev eth0
     - arp -i eth0 -s 31.207.60.1 08:EE:00:00:00:16
-    - python3 network/utils/traffic_generator.py --ipv6 --src 'h08' --infinite --startup-delay
+    - .venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h08' --infinite --startup-delay
       15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs
       --config config/generator/out/traffic-generator-config.json &
     ipv4:
@@ -132,7 +132,7 @@ hosts:
     commands:
     - route add default gw 37.1.224.1 dev eth0
     - arp -i eth0 -s 37.1.224.1 08:EE:00:00:00:17
-    - python3 network/utils/traffic_generator.py --ipv6 --src 'h09' --infinite --startup-delay
+    - .venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h09' --infinite --startup-delay
       15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs
       --config config/generator/out/traffic-generator-config.json &
     ipv4:
@@ -148,7 +148,7 @@ hosts:
     commands:
     - route add default gw 46.14.0.1 dev eth0
     - arp -i eth0 -s 46.14.0.1 08:EE:00:00:00:17
-    - python3 network/utils/traffic_generator.py --ipv6 --src 'h10' --infinite --startup-delay
+    - .venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h10' --infinite --startup-delay
       15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs
       --config config/generator/out/traffic-generator-config.json &
     ipv4:
@@ -164,7 +164,7 @@ hosts:
     commands:
     - route add default gw 31.10.128.1 dev eth0
     - arp -i eth0 -s 31.10.128.1 08:EE:00:00:00:18
-    - python3 network/utils/traffic_generator.py --ipv6 --src 'h11' --infinite --startup-delay
+    - .venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h11' --infinite --startup-delay
       15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs
       --config config/generator/out/traffic-generator-config.json &
     ipv4:
@@ -176,7 +176,7 @@ hosts:
       net: '2001:678:7f0::'
       prefix_len: 48
     mac: 08:FF:00:00:00:11
-p4info: network/p4/build/main.p4.p4info.txt
+p4info: network/p4/build/main.p4.p4info.txtpb
 paths:
 - egress: s12
   ingress: s12
@@ -847,7 +847,7 @@ tables:
   hei:
     action_name: MyEgress.process_efficiency_indicator.add_indicator_to_aggregate
     default_action: MyEgress.process_efficiency_indicator.indicate_data_param_error
-    match_key: hdr.ioam_a_ioam_aggregation.dataParam
+    match_key: hdr.ioam_aggregation.dataParam
     name: MyEgress.process_efficiency_indicator.get_hop_efficiency_indicator
   ingress_lei:
     action_name: MyEgress.process_efficiency_indicator.add_indicator_to_aggregate
@@ -857,7 +857,7 @@ tables:
   ioam_aggr_aggregator:
     action_name: MyEgress.process_ioam_init.ioam_aggr_set_aggregator
     default_action: MyEgress.process_ioam_init.ioam_aggr_fallback_default_aggregator
-    match_key: meta.ioamAggrMeta.aggregator_selector
+    match_key: meta.ioamAggregationMeta.aggregatorSelector
     name: MyEgress.process_ioam_init.ioam_aggr_aggregator
   ioam_aggr_data_param:
     action_name: MyEgress.process_ioam_init.ioam_aggr_get_data_param

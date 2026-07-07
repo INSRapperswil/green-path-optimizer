@@ -1,5 +1,5 @@
 ---
-p4info: network/p4/build/main.p4.p4info.txt
+p4info: network/p4/build/main.p4.p4info.txtpb
 bmv2_json: network/p4/build/main.json
 paths:
   - ingress: s1
@@ -28,7 +28,7 @@ hosts:
     commands:
       - "route add default gw 10.100.0.1 dev eth0"
       - "arp -i eth0 -s 10.100.0.1 08:00:00:00:01:00"
-      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h1' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+      - ".venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h1' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
   h2:
     ipv4:
       ip: 10.200.0.20
@@ -42,7 +42,7 @@ hosts:
     commands:
       - "route add default gw 10.200.1 dev eth0"
       - "arp -i eth0 -s 10.200.0.1 08:00:00:00:04:00"
-      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h2' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+      - ".venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h2' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
   h3:
     ipv4:
       ip: 10.201.0.30
@@ -56,7 +56,7 @@ hosts:
     commands:
       - "route add default gw 10.201.0.1 dev eth0"
       - "arp -i eth0 -s 10.201.0.1 08:00:00:00:04:00"
-      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h3' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+      - ".venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h3' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
   h4:
     ipv4:
       ip: 10.255.0.40
@@ -70,7 +70,7 @@ hosts:
     commands:
       - "route add default gw 10.255.0.1 dev eth0"
       - "arp -i eth0 -s 10.255.0.1 08:00:00:00:06:00"
-      - "python3 network/utils/traffic_generator.py --ipv6 --src 'h4' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+      - ".venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h4' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
 switches:
   s1:
     mac: 08:00:00:00:01:00
@@ -211,54 +211,54 @@ switches:
         neighbor: h4
         lei: 20
 tables:
-  ipv4_forwarding:
-    name: MyIngress.ipv4_lpm
-    action_name: MyIngress.ipv4_forward
-    default_action: MyIngress.drop
-    match_key: hdr.ipv4.dstAddr
-  ipv6_forwarding:
-    name: MyIngress.ipv6_lpm
-    action_name: MyIngress.ipv6_forward
-    default_action: MyIngress.drop
-    match_key: hdr.ipv6.dstAddr
-  ipv6_reverse_lookup:
-    name: MyEgress.process_ioam_init.ipv6_reverse_lookup
-    action_name: MyEgress.process_ioam_init.set_reverse_route_type
-    match_key: hdr.ipv6.srcAddr
-    default_action: MyEgress.process_ioam_init.set_default_reverse_route_type
-  hei:
-    name: MyEgress.process_efficiency_indicator.get_hop_efficiency_indicator
-    action_name: MyEgress.process_efficiency_indicator.add_indicator_to_aggregate
-    default_action: MyEgress.process_efficiency_indicator.indicate_data_param_error
-    match_key: hdr.ioam_a_ioam_aggregation.dataParam
-  ingress_lei:
-    name: MyEgress.process_efficiency_indicator.get_ingress_link_efficiency_indicator
-    action_name: MyEgress.process_efficiency_indicator.add_indicator_to_aggregate
-    default_action: MyEgress.process_efficiency_indicator.indicate_other_error
-    match_key: standard_metadata.ingress_port
   egress_lei:
-    name: MyEgress.process_efficiency_indicator.get_egress_link_efficiency_indicator
     action_name: MyEgress.process_efficiency_indicator.add_indicator_to_aggregate
     default_action: MyEgress.process_efficiency_indicator.indicate_other_error
     match_key: standard_metadata.egress_port
-  ioam_aggr_data_param:
-    name: MyEgress.process_ioam_init.ioam_aggr_data_param
-    action_name: MyEgress.process_ioam_init.ioam_aggr_get_data_param
-    match_key: hdr.ethernet.srcAddr
-    default_action: MyEgress.process_ioam_init.indicate_other_error
-  ioam_namespace_id:
-    name: MyEgress.process_ioam_init.ioam_namespace_id
-    action_name: MyEgress.process_ioam_init.ioam_get_namespace_id
-    match_key: hdr.ethernet.srcAddr
-    default_action: MyEgress.process_ioam_init.indicate_other_error
-  ioam_node_id:
-    name: MyEgress.process_ioam_init.ioam_node_id
-    action_name: MyEgress.process_ioam_init.ioam_get_node_id
-    match_key: hdr.ethernet.srcAddr
-    default_action: MyEgress.process_ioam_init.indicate_other_error
+    name: MyEgress.process_efficiency_indicator.get_egress_link_efficiency_indicator
+  hei:
+    action_name: MyEgress.process_efficiency_indicator.add_indicator_to_aggregate
+    default_action: MyEgress.process_efficiency_indicator.indicate_data_param_error
+    match_key: hdr.ioam_aggregation.dataParam
+    name: MyEgress.process_efficiency_indicator.get_hop_efficiency_indicator
+  ingress_lei:
+    action_name: MyEgress.process_efficiency_indicator.add_indicator_to_aggregate
+    default_action: MyEgress.process_efficiency_indicator.indicate_other_error
+    match_key: standard_metadata.ingress_port
+    name: MyEgress.process_efficiency_indicator.get_ingress_link_efficiency_indicator
   ioam_aggr_aggregator:
-    name: MyEgress.process_ioam_init.ioam_aggr_aggregator
     action_name: MyEgress.process_ioam_init.ioam_aggr_set_aggregator
-    match_key: meta.ioamAggrMeta.aggregator_selector
     default_action: MyEgress.process_ioam_init.ioam_aggr_fallback_default_aggregator
+    match_key: meta.ioamAggregationMeta.aggregatorSelector
+    name: MyEgress.process_ioam_init.ioam_aggr_aggregator
+  ioam_aggr_data_param:
+    action_name: MyEgress.process_ioam_init.ioam_aggr_get_data_param
+    default_action: MyEgress.process_ioam_init.indicate_other_error
+    match_key: hdr.ethernet.srcAddr
+    name: MyEgress.process_ioam_init.ioam_aggr_data_param
+  ioam_namespace_id:
+    action_name: MyEgress.process_ioam_init.ioam_get_namespace_id
+    default_action: MyEgress.process_ioam_init.indicate_other_error
+    match_key: hdr.ethernet.srcAddr
+    name: MyEgress.process_ioam_init.ioam_namespace_id
+  ioam_node_id:
+    action_name: MyEgress.process_ioam_init.ioam_get_node_id
+    default_action: MyEgress.process_ioam_init.indicate_other_error
+    match_key: hdr.ethernet.srcAddr
+    name: MyEgress.process_ioam_init.ioam_node_id
+  ipv4_forwarding:
+    action_name: MyIngress.ipv4_forward
+    default_action: MyIngress.drop
+    match_key: hdr.ipv4.dstAddr
+    name: MyIngress.ipv4_lpm
+  ipv6_forwarding:
+    action_name: MyIngress.ipv6_forward
+    default_action: MyIngress.drop
+    match_key: hdr.ipv6.dstAddr
+    name: MyIngress.ipv6_lpm
+  ipv6_reverse_lookup:
+    action_name: MyEgress.process_ioam_init.set_reverse_route_type
+    default_action: MyEgress.process_ioam_init.set_default_reverse_route_type
+    match_key: hdr.ipv6.srcAddr
+    name: MyEgress.process_ioam_init.ipv6_reverse_lookup
 ...

@@ -13,7 +13,7 @@ datasources:
     jsonData:
       version: Flux
       organization: ${INFLUXDB_ORG}
-      defaultBucket: network_energy_efficiency_data
+      defaultBucket: default
       tlsSkipVerify: true
     secureJsonData:
       token: ${INFLUXDB_TOKEN}
