@@ -102,14 +102,14 @@ build-network:
 
 run-network: build generate-config
 	mkdir -p $(P4_LOG_DIR)
-	sudo .venv/bin/python3 $(RUN_NETWORK_SCRIPT) -t $(CONFIG_GEN_OUT_DIR)/topology.json $(run_args) -l $(P4_LOG_DIR)
+	sudo ${HOME}/p4dev-python-venv/bin/python3 $(RUN_NETWORK_SCRIPT) -t $(CONFIG_GEN_OUT_DIR)/topology.json $(run_args) -l $(P4_LOG_DIR)
 
 run-network-debug: build generate-config
 	mkdir -p $(P4_PCAP_DIR) $(P4_LOG_DIR)
-	sudo .venv/bin/python3 $(RUN_NETWORK_SCRIPT) -t $(CONFIG_GEN_OUT_DIR)/topology.json $(run_args) -l $(P4_LOG_DIR) -p $(P4_PCAP_DIR) --bmv2-log-console
+	sudo ${HOME}/p4dev-python-venv/bin/python3 $(RUN_NETWORK_SCRIPT) -t $(CONFIG_GEN_OUT_DIR)/topology.json $(run_args) -l $(P4_LOG_DIR) -p $(P4_PCAP_DIR) --bmv2-log-console
 
 stop-network:
-	sudo .venv/bin/mn -c
+	sudo ${HOME}/p4dev-python-venv/bin/mn -c
 
 clean-network: stop-network
 	rm -rf ${P4_LOG_DIR} ${P4_BUILD_DIR} ${P4_PCAP_DIR}

@@ -19,16 +19,16 @@ netifaces==0.11.0
 nnpy==1.4.2
 nornir==3.5.0
 nornir-rich==0.2.0
-p4runtime-shell @ file:///opt/p4/p4runtime-shell
+p4runtime-shell @ file:///home/boss/p4runtime-shell
 packaging==26.0
 parso==0.7.1
 pexpect==4.9.0
 pickleshare==0.7.5
 ply==3.11
 prompt_toolkit==3.0.52
-protobuf==4.21.12
+protobuf==3.20.3
 psutil==7.2.2
-ptf @ file:///opt/p4/ptf
+ptf @ file:///home/boss/ptf
 ptyprocess==0.7.0
 pycparser==3.0
 Pygments==2.19.2

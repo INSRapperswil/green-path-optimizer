@@ -72,9 +72,9 @@ header ioam_template_t {
 
 // IOAM Aggreagation Template
 header ioam_aggregation_t {
-    bit<4> flags;
     ioamDataParam_t dataParam; // identifies the type of data being aggregated
     ioamAggregator_t aggregator;
+    ioamFlag_t flags;
     ioamAggregate_t aggregate;
     ioamNodeID_t auxilDataNodeID;
     bit<8> hopCount;
