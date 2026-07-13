@@ -41,9 +41,9 @@ control process_ipfix_export(inout headers hdr,
         ++ hdr.ioam_template.templateID
         ++ hdr.ioam_template.length;
 
-        bit<96> ioam_template_aggregation = hdr.ioam_aggregation.flags
-        ++ hdr.ioam_aggregation.dataParam
+        bit<96> ioam_template_aggregation = hdr.ioam_aggregation.dataParam
         ++ hdr.ioam_aggregation.aggregator
+        ++ hdr.ioam_aggregation.flags
         ++ hdr.ioam_aggregation.aggregate
         ++ hdr.ioam_aggregation.auxilDataNodeID
         ++ hdr.ioam_aggregation.hopCount;

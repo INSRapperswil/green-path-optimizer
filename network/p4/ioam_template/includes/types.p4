@@ -13,8 +13,8 @@ typedef bit<128> ip6Addr_t;
 
 // IOAM Types
 typedef bit<24> ioamNodeID_t;
-typedef bit<20> ioamDataParam_t;
-typedef bit<4> ioamFlag_t;
+typedef bit<16> ioamDataParam_t;
+typedef bit<8> ioamFlag_t;
 typedef bit<8> ioamAggregator_t;
 typedef bit<32> ioamAggregate_t;
 typedef bit<16> ioamNamespace_t;

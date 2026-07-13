@@ -138,7 +138,7 @@ hosts:
     commands:
       - "route add default gw 146.185.64.1 dev eth0"
       - "arp -i eth0 -s 146.185.64.1 08:EE:00:00:00:11"
-      - ".venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h01' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+      - "/home/boss/p4dev-python-venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h01' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
   h02:
     ipv4:
       ip: 31.24.8.10
@@ -152,7 +152,7 @@ hosts:
     commands:
       - "route add default gw 31.24.8.1 dev eth0"
       - "arp -i eth0 -s 31.24.8.1 08:EE:00:00:00:12"
-      - ".venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h02' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+      - "/home/boss/p4dev-python-venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h02' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
   h03:
     ipv4:
       ip: 31.207.52.10
@@ -166,7 +166,7 @@ hosts:
     commands:
       - "route add default gw 31.207.52.1 dev eth0"
       - "arp -i eth0 -s 31.207.52.1 08:EE:00:00:00:12"
-      - ".venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h03' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+      - "/home/boss/p4dev-python-venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h03' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
   h04:
     ipv4:
       ip: 31.132.8.10
@@ -180,7 +180,7 @@ hosts:
     commands:
       - "route add default gw 31.132.8.1 dev eth0"
       - "arp -i eth0 -s 31.132.8.1 08:EE:00:00:00:13"
-      - ".venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h04' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+      - "/home/boss/p4dev-python-venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h04' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
   h05:
     ipv4:
       ip: 23.56.98.10
@@ -194,7 +194,7 @@ hosts:
     commands:
       - "route add default gw 23.56.98.1 dev eth0"
       - "arp -i eth0 -s 23.56.98.1 08:EE:00:00:00:13"
-      - ".venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h05' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+      - "/home/boss/p4dev-python-venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h05' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
   h06:
     ipv4:
       ip: 45.61.192.10
@@ -208,7 +208,7 @@ hosts:
     commands:
       - "route add default gw 45.61.192.1 dev eth0"
       - "arp -i eth0 -s 45.61.192.1 08:EE:00:00:00:14"
-      - ".venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h06' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+      - "/home/boss/p4dev-python-venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h06' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
   h07:
     ipv4:
       ip: 37.46.144.10
@@ -222,7 +222,7 @@ hosts:
     commands:
       - "route add default gw 37.46.144.1 dev eth0"
       - "arp -i eth0 -s 37.46.144.1 08:EE:00:00:00:15"
-      - ".venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h07' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+      - "/home/boss/p4dev-python-venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h07' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
   h08:
     ipv4:
       ip: 31.207.60.10
@@ -236,7 +236,7 @@ hosts:
     commands:
       - "route add default gw 31.207.60.1 dev eth0"
       - "arp -i eth0 -s 31.207.60.1 08:EE:00:00:00:16"
-      - ".venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h08' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+      - "/home/boss/p4dev-python-venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h08' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
   h09:
     ipv4:
       ip: 37.1.224.10
@@ -250,7 +250,7 @@ hosts:
     commands:
       - "route add default gw 37.1.224.1 dev eth0"
       - "arp -i eth0 -s 37.1.224.1 08:EE:00:00:00:17"
-      - ".venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h09' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+      - "/home/boss/p4dev-python-venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h09' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
   h10:
     ipv4:
       ip: 46.14.0.10
@@ -264,7 +264,7 @@ hosts:
     commands:
       - "route add default gw 46.14.0.1 dev eth0"
       - "arp -i eth0 -s 46.14.0.1 08:EE:00:00:00:17"
-      - ".venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h10' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+      - "/home/boss/p4dev-python-venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h10' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
   h11:
     ipv4:
       ip: 31.10.128.10
@@ -278,7 +278,7 @@ hosts:
     commands:
       - "route add default gw 31.10.128.1 dev eth0"
       - "arp -i eth0 -s 31.10.128.1 08:EE:00:00:00:18"
-      - ".venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h11' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
+      - "/home/boss/p4dev-python-venv/bin/python3 network/utils/traffic_generator.py --ipv6 --src 'h11' --infinite --startup-delay 15 --pcap-file network/utils/captures/quic_ipv6.pcapng --log-dir config/logs --config config/generator/out/traffic-generator-config.json &"
 switches:
   s1:
     mac: 08:CC:00:00:00:01
