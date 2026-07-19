@@ -38,8 +38,8 @@ control process_ioam_init(inout headers hdr,
         meta.ioamAggregationMeta.dataParam = data_param;
     }
 
-    action init_ioam_aggregatorSelector() {
-        meta.ioamAggregationMeta.aggregatorSelector = (bit<2>) hdr.ipv6.payloadLen & 0b11;
+    action init_ioam_aggrFuncSelector() {
+        meta.ioamAggregationMeta.aggrFuncSelector = (bit<2>) hdr.ipv6.payloadLen & 0b11;
     }
 
     action init_ipv6_hop_opt() {
@@ -105,7 +105,7 @@ control process_ioam_init(inout headers hdr,
         // Initialize IOAM Template Option Type Header
         hdr.ioam_template.namespaceID = meta.ioamMeta.namespaceID;
         hdr.ioam_template.templateID = meta.ioamTemplateMeta.templateID;
-        hdr.ioam_template.length = meta.ioamTemplateMeta.templateLength;
+        hdr.ioam_template.fep = 0;
         
         // Initialize Aggregation Template fields
         hdr.ioam_aggregation.flags = 0;
@@ -120,7 +120,7 @@ control process_ioam_init(inout headers hdr,
         hdr.padn.padding = 0;
     }
 
-    action ioam_aggr_set_aggregator(ioamAggregator_t aggregator) {
+    action ioam_aggr_set_aggregator(ioamAggregateFunc_t aggregator) {
         hdr.ioam_aggregation.aggregator = aggregator;
     }
 
@@ -173,7 +173,7 @@ control process_ioam_init(inout headers hdr,
 
     table ioam_aggr_aggregator {
         key = {
-            meta.ioamAggregationMeta.aggregatorSelector: exact;
+            meta.ioamAggregationMeta.aggrFuncSelector: exact;
         }
         actions = {
             ioam_aggr_set_aggregator;
@@ -204,7 +204,7 @@ control process_ioam_init(inout headers hdr,
 
         // Initialize IOAM
         if (!hdr.ipv6_hop_opt.isValid() && meta.ioamAggregationMeta.otherError == 0 && meta.forwardingMeta.reverseRouteType == 0) {
-            init_ioam_aggregatorSelector();
+            init_ioam_aggrFuncSelector();
             init_ipv6_hop_opt();
             ioam_pto_push();
             ioam_template_push();

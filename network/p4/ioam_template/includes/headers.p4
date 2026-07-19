@@ -67,13 +67,13 @@ header ioam_pto_t {
 header ioam_template_t {
     bit<16> namespaceID;
     bit<8> templateID;
-    bit<8> length;
+    bit<8> fep; // Future Extension Point (FEP)
 }
 
 // IOAM Aggreagation Template
 header ioam_aggregation_t {
     ioamDataParam_t dataParam; // identifies the type of data being aggregated
-    ioamAggregator_t aggregator;
+    ioamAggregateFunc_t aggregator;
     ioamFlag_t flags;
     ioamAggregate_t aggregate;
     ioamNodeID_t auxilDataNodeID;
