@@ -27,7 +27,7 @@ number_of_paths_per_switch = union(
 main = from(bucket: "raw_data_export")
   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
   |> filter(fn: (r) => r["_measurement"] == "netflow")
-  |> filter(fn: (r) => r["aggregator"] == "2")
+  |> filter(fn: (r) => r["aggregator"] == "1")
   |> filter(fn: (r) => r["flags"] == "0")
   |> filter(fn: (r) => r["_field"] == "aggregate")
   |> group(columns: ["node_01", "node_02", "node_03", "node_04"])
