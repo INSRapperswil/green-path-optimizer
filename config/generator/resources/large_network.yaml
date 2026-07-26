@@ -499,10 +499,10 @@ switches:
       value: 1000
     ioam:
       aggregators:
-      - 0
-      - 1
-      - 0
-      - 2
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
       namespace_id: 10
       node_id: 1
@@ -535,10 +535,10 @@ switches:
       value: 1
     ioam:
       aggregators:
-      - 0
-      - 1
-      - 0
-      - 2
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
       namespace_id: 10
       node_id: 11
@@ -559,10 +559,10 @@ switches:
       value: 12000
     ioam:
       aggregators:
-      - 0
-      - 1
-      - 0
-      - 2
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
       namespace_id: 10
       node_id: 12
@@ -586,10 +586,10 @@ switches:
       value: 13000
     ioam:
       aggregators:
-      - 0
-      - 1
-      - 0
-      - 2
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
       namespace_id: 10
       node_id: 13
@@ -613,10 +613,10 @@ switches:
       value: 14000
     ioam:
       aggregators:
-      - 0
-      - 1
-      - 0
-      - 2
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
       namespace_id: 10
       node_id: 14
@@ -637,10 +637,10 @@ switches:
       value: 15000
     ioam:
       aggregators:
-      - 0
-      - 1
-      - 0
-      - 2
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
       namespace_id: 10
       node_id: 15
@@ -661,10 +661,10 @@ switches:
       value: 16000
     ioam:
       aggregators:
-      - 0
-      - 1
-      - 0
-      - 2
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
       namespace_id: 10
       node_id: 16
@@ -685,10 +685,10 @@ switches:
       value: 17000
     ioam:
       aggregators:
-      - 0
-      - 1
-      - 0
-      - 2
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
       namespace_id: 10
       node_id: 17
@@ -712,10 +712,10 @@ switches:
       value: 1
     ioam:
       aggregators:
-      - 0
-      - 1
-      - 0
-      - 2
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
       namespace_id: 10
       node_id: 18
@@ -736,10 +736,10 @@ switches:
       value: 2000
     ioam:
       aggregators:
-      - 0
-      - 1
-      - 0
-      - 2
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
       namespace_id: 10
       node_id: 2
@@ -772,10 +772,10 @@ switches:
       value: 30000
     ioam:
       aggregators:
-      - 0
-      - 1
-      - 0
-      - 2
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
       namespace_id: 10
       node_id: 3
@@ -808,10 +808,10 @@ switches:
       value: 4000
     ioam:
       aggregators:
-      - 0
-      - 1
-      - 0
-      - 2
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
       namespace_id: 10
       node_id: 4

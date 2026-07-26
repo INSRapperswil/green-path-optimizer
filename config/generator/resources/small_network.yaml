@@ -81,10 +81,10 @@ switches:
       namespace_id: 10
       node_id: 1
       aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
-        - 1 # selected if last two bits of payload size are [00]
-        - 2 # selected if last two bits of payload size are [01]
-        - 1 # selected if last two bits of payload size are [10]
-        - 4 # selected if last two bits of payload size are [11]
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
     ports:
       1:
@@ -105,10 +105,10 @@ switches:
       namespace_id: 10
       node_id: 2
       aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
-        - 1 # selected if last two bits of payload size are [00]
-        - 2 # selected if last two bits of payload size are [01]
-        - 1 # selected if last two bits of payload size are [10]
-        - 4 # selected if last two bits of payload size are [11]
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
     ports:
       1:
@@ -126,10 +126,10 @@ switches:
       namespace_id: 10
       node_id: 3
       aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
-        - 1 # selected if last two bits of payload size are [00]
-        - 2 # selected if last two bits of payload size are [01]
-        - 1 # selected if last two bits of payload size are [10]
-        - 4 # selected if last two bits of payload size are [11]
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
     ports:
       1:
@@ -147,10 +147,10 @@ switches:
       namespace_id: 10
       node_id: 4
       aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
-        - 1 # selected if last two bits of payload size are [00]
-        - 2 # selected if last two bits of payload size are [01]
-        - 1 # selected if last two bits of payload size are [10]
-        - 4 # selected if last two bits of payload size are [11]
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
     ports:
       1:
@@ -177,10 +177,10 @@ switches:
       namespace_id: 10
       node_id: 5
       aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
-        - 1 # selected if last two bits of payload size are [00]
-        - 2 # selected if last two bits of payload size are [01]
-        - 1 # selected if last two bits of payload size are [10]
-        - 4 # selected if last two bits of payload size are [11]
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
     ports:
       1:
@@ -198,10 +198,10 @@ switches:
       namespace_id: 10
       node_id: 6
       aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
-        - 1 # selected if last two bits of payload size are [00]
-        - 2 # selected if last two bits of payload size are [01]
-        - 1 # selected if last two bits of payload size are [10]
-        - 4 # selected if last two bits of payload size are [11]
+      - 0 # selected if last two bits of payload size are [00]
+      - 1 # selected if last two bits of payload size are [01]
+      - 0 # selected if last two bits of payload size are [10]
+      - 2 # selected if last two bits of payload size are [11]
       data_param: 255
     ports:
       1:
