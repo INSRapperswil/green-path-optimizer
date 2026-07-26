@@ -8,7 +8,7 @@ extern void ProcessEfficiencyIndicatorMetadata(
                                         in bit<16> destinationTransportPort,
                                         in ioamDataParam_t indicatorID,
                                         in ioamAggregate_t indicatorValue,
-                                        in bit<8> indicatorAggregator,
+                                        in bit<4> indicatorAggregator,
                                         in ioamFlag_t indicatorFlags,
                                         in bit<768> raw_ipv6_header
                                     );

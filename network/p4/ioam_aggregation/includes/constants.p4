@@ -15,7 +15,7 @@ const bit<8> HOP_BY_HOP_IOAM_OPTION = 0x31;
 
 // IOAM Option Types
 const bit<8> IOAM_PRE_ALLOC_TRACE_OPTION_TYPE = 0x0;
-const bit<8> IOAM_AGGREGATION_OPTION_TYPE = 0x6;
+const bit<8> IOAM_AGGREGATION_OPTION_TYPE = 0x7;
 
 const bit<8> IOAM_PTO_NUM_NODES = 4; // Must be an even number (if odd the padding must be adjusted appropriately)
 const bit<8> IOAM_PTO_DATA_LIST_LEN = IOAM_PTO_NUM_NODES * 32; // Length in bits
@@ -25,10 +25,10 @@ const bit<8> IOAM_PTO_OPTION_LEN = 10 + IOAM_PTO_NUM_NODES * 4;
 
 
 // IOAM Aggregators
-const bit<8> IOAM_AGGREGATOR_SUM = 0x1;
-const bit<8> IOAM_AGGREGATOR_MIN = 0x2;
-const bit<8> IOAM_AGGREGATOR_MAX = 0x4;
-const bit<8> IOAM_AGGREGATOR_DEFAULT = IOAM_AGGREGATOR_SUM;
+const bit<4> IOAM_AGGREGATOR_SUM = 0;
+const bit<4> IOAM_AGGREGATOR_MIN = 1;
+const bit<4> IOAM_AGGREGATOR_MAX = 2;
+const bit<4> IOAM_AGGREGATOR_DEFAULT = IOAM_AGGREGATOR_SUM;
 
 
 // IOAM_FLAGS

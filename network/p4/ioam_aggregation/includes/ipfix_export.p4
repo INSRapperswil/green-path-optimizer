@@ -38,10 +38,10 @@ control process_ipfix_export(inout headers hdr,
         ++ hdr.ioam_option_aggregation.ioamOptType;
 
         bit<128> ioam_aggregation_data = hdr.ioam_aggregation.namespaceID
-        ++ hdr.ioam_aggregation.flags
         ++ hdr.ioam_aggregation.reserved
         ++ hdr.ioam_aggregation.dataParam
         ++ hdr.ioam_aggregation.aggregator
+        ++ hdr.ioam_aggregation.flags
         ++ hdr.ioam_aggregation.aggregate
         ++ hdr.ioam_aggregation.auxilDataNodeID
         ++ hdr.ioam_aggregation.hopCount;
