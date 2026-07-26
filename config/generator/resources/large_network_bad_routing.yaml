@@ -656,7 +656,7 @@ tables:
   ioam_aggr_aggregator:
     action_name: MyEgress.process_ioam_init.ioam_aggr_set_aggregator
     default_action: MyEgress.process_ioam_init.ioam_aggr_fallback_default_aggregator
-    match_key: meta.ioamAggregationMeta.aggregatorSelector
+    match_key: meta.ioamAggregationMeta.aggrFuncSelector
     name: MyEgress.process_ioam_init.ioam_aggr_aggregator
   ioam_aggr_data_param:
     action_name: MyEgress.process_ioam_init.ioam_aggr_get_data_param
