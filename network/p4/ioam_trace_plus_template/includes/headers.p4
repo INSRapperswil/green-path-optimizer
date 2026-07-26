@@ -59,15 +59,11 @@ header ioam_pto_t {
     bit<4> flags;
     bit<7> remainingLen;
     bit<24> ioamTraceType;
-    bit<8> reserved;
-    bit<(IOAM_PTO_DATA_LIST_LEN)> dataList;
+    bit<8> templateID;
 }
 
-// IOAM Template Option Header
-header ioam_template_t {
-    bit<16> namespaceID;
-    bit<8> templateID;
-    bit<8> fep; // Future Extension Point (FEP)
+header ioam_pto_ndl_t {
+    bit<(IOAM_PTO_DATA_LIST_LEN)> dataList;
 }
 
 // IOAM Aggreagation Template
@@ -109,11 +105,8 @@ struct headers {
     ipv6_option_t                                   ipv6_option_pto;
     ioam_option_t                                   ioam_option_pto;
     ioam_pto_t                                      ioam_pto;
-    // IOAM Template Option
-    ipv6_option_t                                   ipv6_option_template;
-    ioam_option_t                                   ioam_option_template;
-    ioam_template_t                                 ioam_template;
-    ioam_aggregation_t                     ioam_aggregation;
+    ioam_aggregation_t                              ioam_aggregation;
+    ioam_pto_ndl_t                                  ioam_pto_ndl;
     // Hop By Hop Option PadN for 8 octett alignment of option data
     ipv6_option_t                                   ipv6_option_padn;
     option_padn_data_t                              padn;

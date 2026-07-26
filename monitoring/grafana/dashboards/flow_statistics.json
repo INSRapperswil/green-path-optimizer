@@ -18,7 +18,6 @@
  "editable": true,
  "fiscalYearStartMonth": 0,
  "graphTooltip": 0,
- "id": 1,
  "links": [],
  "panels": [
   {
@@ -26,7 +25,6 @@
     "type": "influxdb",
     "uid": "P3C6603E967DC8568"
    },
-   "description": "",
    "fieldConfig": {
     "defaults": {
      "color": {
@@ -39,6 +37,7 @@
       "axisLabel": "",
       "axisPlacement": "auto",
       "barAlignment": 0,
+      "barWidthFactor": 0.6,
       "drawStyle": "line",
       "fillOpacity": 20,
       "gradientMode": "scheme",
@@ -55,6 +54,7 @@
        "type": "linear"
       },
       "showPoints": "auto",
+      "showValues": false,
       "spanNulls": false,
       "stacking": {
        "group": "A",
@@ -71,7 +71,7 @@
       "steps": [
        {
         "color": "green",
-        "value": null
+        "value": 0
        },
        {
         "color": "red",
@@ -97,17 +97,19 @@
      "showLegend": true
     },
     "tooltip": {
+     "hideZeros": false,
      "mode": "single",
      "sort": "none"
     }
    },
+   "pluginVersion": "12.4.2",
    "targets": [
     {
      "datasource": {
       "type": "influxdb",
       "uid": "P3C6603E967DC8568"
      },
-     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x01\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"flow_label\"])\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> drop(columns: [\"type_5051\", \"in_packets\"])\n  |> group()\n  |> aggregateWindow(every: 5m, fn: mean)",
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x00\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"flow_label\"])\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> drop(columns: [\"type_5051\", \"in_packets\"])\n  |> group()\n  |> aggregateWindow(every: 5m, fn: mean)",
      "refId": "A"
     }
    ],
@@ -119,7 +121,6 @@
     "type": "influxdb",
     "uid": "P3C6603E967DC8568"
    },
-   "description": "",
    "fieldConfig": {
     "defaults": {
      "color": {
@@ -145,7 +146,7 @@
       "steps": [
        {
         "color": "green",
-        "value": null
+        "value": 0
        },
        {
         "color": "#EAB839",
@@ -172,9 +173,18 @@
     "addUrl": false,
     "cellPadding": 5,
     "cellSize": 50,
+    "colCategoryGap": 4,
+    "colCategoryHeaderHeight": 100,
     "defaultColor": "#948d8d",
+    "enableColGrouping": false,
+    "enableRowGrouping": false,
     "inputList": false,
+    "legendType": "range",
     "nullColor": "#E6E6E6",
+    "rowCategoryGap": 4,
+    "rowCategoryHeaderWidth": 100,
+    "showLegend": false,
+    "sortType": "natural-asc",
     "sourceField": "src",
     "sourceText": "From",
     "targetField": "dst",
@@ -184,13 +194,14 @@
     "valueField": "_value",
     "valueText": "Current Flow Efficiency"
    },
+   "pluginVersion": "2.1.0",
    "targets": [
     {
      "datasource": {
       "type": "influxdb",
       "uid": "P3C6603E967DC8568"
      },
-     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x01\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"src\", \"dst\"])\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> aggregateWindow(every: 5m, fn: mean)\n  |> filter(fn: (r) => r[\"_value\"] != 0)\n  |> last()\n  |> group()\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a04:f340::a\" then \"h01\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a04:f340::a\" then \"h01\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:10c0::a\" then \"h02\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:10c0::a\" then \"h02\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:67c:470::a\" then \"h03\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:67c:470::a\" then \"h03\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:c38::a\" then \"h04\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:c38::a\" then \"h04\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a02:2d8::a\" then \"h05\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a02:2d8::a\" then \"h05\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2607:5d00::a\" then \"h06\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2607:5d00::a\" then \"h06\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a05:ff80::a\" then \"h07\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a05:ff80::a\" then \"h07\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a0a:de00::a\" then \"h08\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a0a:de00::a\" then \"h08\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:274::a\" then \"h09\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:274::a\" then \"h09\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:e0::a\" then \"h10\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:e0::a\" then \"h10\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:7f0::a\" then \"h11\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:7f0::a\" then \"h11\" else r.dst }))",
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x00\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"src\", \"dst\"])\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> aggregateWindow(every: 5m, fn: mean)\n  |> filter(fn: (r) => r[\"_value\"] != 0)\n  |> last()\n  |> group()\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a04:f340::a\" then \"h01\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a04:f340::a\" then \"h01\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:10c0::a\" then \"h02\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:10c0::a\" then \"h02\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:67c:470::a\" then \"h03\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:67c:470::a\" then \"h03\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:c38::a\" then \"h04\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:c38::a\" then \"h04\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a02:2d8::a\" then \"h05\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a02:2d8::a\" then \"h05\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2607:5d00::a\" then \"h06\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2607:5d00::a\" then \"h06\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a05:ff80::a\" then \"h07\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a05:ff80::a\" then \"h07\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a0a:de00::a\" then \"h08\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a0a:de00::a\" then \"h08\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:274::a\" then \"h09\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:274::a\" then \"h09\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:e0::a\" then \"h10\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:e0::a\" then \"h10\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:7f0::a\" then \"h11\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:7f0::a\" then \"h11\" else r.dst }))",
      "refId": "A"
     }
    ],
@@ -213,7 +224,7 @@
       "steps": [
        {
         "color": "green",
-        "value": null
+        "value": 0
        },
        {
         "color": "red",
@@ -233,6 +244,12 @@
    "id": 4,
    "options": {
     "displayMode": "basic",
+    "legend": {
+     "calcs": [],
+     "displayMode": "list",
+     "placement": "bottom",
+     "showLegend": false
+    },
     "maxVizHeight": 300,
     "minVizHeight": 16,
     "minVizWidth": 8,
@@ -249,14 +266,14 @@
     "sizing": "auto",
     "valueMode": "color"
    },
-   "pluginVersion": "10.4.1",
+   "pluginVersion": "12.4.2",
    "targets": [
     {
      "datasource": {
       "type": "influxdb",
       "uid": "P3C6603E967DC8568"
      },
-     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x01\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"flow_label\", \"dst\"])\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> group(columns: [\"dst\"])\n  |> drop(columns: [\"type_5051\", \"in_packets\"])\n  |> aggregateWindow(every: 5m, fn: mean)\n",
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x00\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"flow_label\", \"dst\"])\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> group(columns: [\"dst\"])\n  |> drop(columns: [\"type_5051\", \"in_packets\"])\n  |> aggregateWindow(every: 5m, fn: mean)\n",
      "refId": "A"
     }
    ],
@@ -359,6 +376,7 @@
       "axisLabel": "Average Flow Efficiency Indicator",
       "axisPlacement": "auto",
       "barAlignment": 0,
+      "barWidthFactor": 0.6,
       "drawStyle": "line",
       "fillOpacity": 0,
       "gradientMode": "none",
@@ -375,6 +393,7 @@
        "type": "linear"
       },
       "showPoints": "auto",
+      "showValues": false,
       "spanNulls": false,
       "stacking": {
        "group": "A",
@@ -390,7 +409,7 @@
       "steps": [
        {
         "color": "green",
-        "value": null
+        "value": 0
        },
        {
         "color": "red",
@@ -399,41 +418,7 @@
       ]
      }
     },
-    "overrides": [
-     {
-      "__systemRef": "hideSeriesFrom",
-      "matcher": {
-       "id": "byNames",
-       "options": {
-        "mode": "exclude",
-        "names": [
-         "h05",
-         "h11",
-         "h10",
-         "h09",
-         "h08",
-         "h07",
-         "h04",
-         "h03",
-         "h02",
-         "h01"
-        ],
-        "prefix": "All except:",
-        "readOnly": true
-       }
-      },
-      "properties": [
-       {
-        "id": "custom.hideFrom",
-        "value": {
-         "legend": false,
-         "tooltip": false,
-         "viz": true
-        }
-       }
-      ]
-     }
-    ]
+    "overrides": []
    },
    "gridPos": {
     "h": 25,
@@ -457,17 +442,19 @@
      "sortDesc": true
     },
     "tooltip": {
+     "hideZeros": false,
      "mode": "single",
      "sort": "none"
     }
    },
+   "pluginVersion": "12.4.2",
    "targets": [
     {
      "datasource": {
       "type": "influxdb",
       "uid": "P3C6603E967DC8568"
      },
-     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x01\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"flow_label\", \"dst\"])\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> group(columns: [\"dst\"])\n  |> drop(columns: [\"type_5051\", \"in_packets\"])\n  |> aggregateWindow(every: 5m, fn: mean)\n",
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x00\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"flow_label\", \"dst\"])\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> group(columns: [\"dst\"])\n  |> drop(columns: [\"type_5051\", \"in_packets\"])\n  |> aggregateWindow(every: 5m, fn: mean)\n",
      "refId": "A"
     }
    ],
@@ -558,7 +545,6 @@
     "type": "influxdb",
     "uid": "P3C6603E967DC8568"
    },
-   "description": "",
    "fieldConfig": {
     "defaults": {
      "color": {
@@ -572,7 +558,11 @@
        "tooltip": false,
        "viz": false
       },
-      "lineWidth": 1
+      "lineWidth": 1,
+      "stacking": {
+       "group": "A",
+       "mode": "none"
+      }
      },
      "displayName": "Number of flows in corresponding efficiency range",
      "mappings": [],
@@ -580,7 +570,8 @@
       "mode": "absolute",
       "steps": [
        {
-        "color": "green"
+        "color": "green",
+        "value": 0
        },
        {
         "color": "red",
@@ -604,15 +595,21 @@
      "displayMode": "list",
      "placement": "bottom",
      "showLegend": true
+    },
+    "tooltip": {
+     "hideZeros": false,
+     "mode": "single",
+     "sort": "none"
     }
    },
+   "pluginVersion": "12.4.2",
    "targets": [
     {
      "datasource": {
       "type": "influxdb",
       "uid": "P3C6603E967DC8568"
      },
-     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x01\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"flow_label\"])\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> drop(columns: [\"type_5051\", \"in_packets\"])\n  |> group()",
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x00\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"flow_label\"])\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> drop(columns: [\"type_5051\", \"in_packets\"])\n  |> group()",
      "refId": "A"
     }
    ],
@@ -635,6 +632,9 @@
        "type": "auto"
       },
       "filterable": true,
+      "footer": {
+       "reducers": []
+      },
       "inspect": false
      },
      "mappings": [],
@@ -642,7 +642,8 @@
       "mode": "absolute",
       "steps": [
        {
-        "color": "green"
+        "color": "green",
+        "value": 0
        },
        {
         "color": "red",
@@ -662,14 +663,6 @@
    "id": 7,
    "options": {
     "cellHeight": "sm",
-    "footer": {
-     "countRows": false,
-     "fields": "",
-     "reducer": [
-      "sum"
-     ],
-     "show": false
-    },
     "showHeader": true,
     "sortBy": [
      {
@@ -678,14 +671,14 @@
      }
     ]
    },
-   "pluginVersion": "10.4.1",
+   "pluginVersion": "12.4.2",
    "targets": [
     {
      "datasource": {
       "type": "influxdb",
       "uid": "P3C6603E967DC8568"
      },
-     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x01\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"flow_label\"])\n  |> pivot(rowKey: [\"_time\", \"dst\", \"src\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> drop(columns: [\"type_5051\", \"in_packets\", \"_start\", \"_stop\"])\n  |> group(columns: [\"dst\"])\n  |> sort(columns: [\"_value\"], desc: true)\n  |> unique(column: \"dst\")\n  |> group()\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a04:f340::a\" then \"h01\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a04:f340::a\" then \"h01\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:10c0::a\" then \"h02\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:10c0::a\" then \"h02\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:67c:470::a\" then \"h03\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:67c:470::a\" then \"h03\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:c38::a\" then \"h04\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:c38::a\" then \"h04\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a02:2d8::a\" then \"h05\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a02:2d8::a\" then \"h05\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2607:5d00::a\" then \"h06\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2607:5d00::a\" then \"h06\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a05:ff80::a\" then \"h07\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a05:ff80::a\" then \"h07\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a0a:de00::a\" then \"h08\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a0a:de00::a\" then \"h08\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:274::a\" then \"h09\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:274::a\" then \"h09\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:e0::a\" then \"h10\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:e0::a\" then \"h10\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:7f0::a\" then \"h11\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:7f0::a\" then \"h11\" else r.dst }))",
+     "query": "from(bucket: \"aggregated_data_export\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"netflow\")\n  |> filter(fn: (r) => r[\"type_5053\"] == \"0\" and r[\"type_5054\"] == \"0\" and r[\"type_5055\"] == \"0\" and r[\"type_5056\"] == \"0\")\n  |> filter(fn: (r) => r[\"type_5052\"] == \"0x00\")\n  |> filter(fn: (r) => r[\"_field\"] == \"type_5051\" or r[\"_field\"] == \"in_packets\")\n  |> group(columns: [\"flow_label\"])\n  |> pivot(rowKey: [\"_time\", \"dst\", \"src\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.type_5051 / r.in_packets }))\n  |> drop(columns: [\"type_5051\", \"in_packets\", \"_start\", \"_stop\"])\n  |> group(columns: [\"dst\"])\n  |> sort(columns: [\"_value\"], desc: true)\n  |> unique(column: \"dst\")\n  |> group()\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a04:f340::a\" then \"h01\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a04:f340::a\" then \"h01\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:10c0::a\" then \"h02\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:10c0::a\" then \"h02\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:67c:470::a\" then \"h03\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:67c:470::a\" then \"h03\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a00:c38::a\" then \"h04\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a00:c38::a\" then \"h04\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a02:2d8::a\" then \"h05\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a02:2d8::a\" then \"h05\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2607:5d00::a\" then \"h06\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2607:5d00::a\" then \"h06\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a05:ff80::a\" then \"h07\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a05:ff80::a\" then \"h07\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2a0a:de00::a\" then \"h08\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2a0a:de00::a\" then \"h08\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:274::a\" then \"h09\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:274::a\" then \"h09\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:e0::a\" then \"h10\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:e0::a\" then \"h10\" else r.dst }))\n\n  |> map(fn: (r) => ({ r with src: if r.src == \"2001:678:7f0::a\" then \"h11\" else r.src }))\n  |> map(fn: (r) => ({ r with dst: if r.dst == \"2001:678:7f0::a\" then \"h11\" else r.dst }))",
      "refId": "A"
     }
    ],
@@ -720,8 +713,9 @@
    "type": "table"
   }
  ],
+ "preload": false,
  "refresh": "1m",
- "schemaVersion": 39,
+ "schemaVersion": 42,
  "tags": [],
  "templating": {
   "list": []

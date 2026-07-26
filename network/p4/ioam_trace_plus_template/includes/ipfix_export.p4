@@ -23,42 +23,30 @@ control process_ipfix_export(inout headers hdr,
         bit<16> ioam_option_header_pto = hdr.ioam_option_pto.reserved
         ++ hdr.ioam_option_pto.ioamOptType;
 
-        bit<192> ioam_pto_data = hdr.ioam_pto.namespaceID
+        bit<288> ioam_pto_data = hdr.ioam_pto.namespaceID
         ++ hdr.ioam_pto.nodeLen
         ++ hdr.ioam_pto.flags
         ++ hdr.ioam_pto.remainingLen
         ++ hdr.ioam_pto.ioamTraceType
-        ++ hdr.ioam_pto.reserved
-        ++ hdr.ioam_pto.dataList;
-
-        bit<16> ipv6_option_header_ioam_aggregation = hdr.ipv6_option_aggregation.optionType
-        ++ hdr.ipv6_option_aggregation.optionDataLen;
-
-        bit<16> ioam_aggregation_header = hdr.ioam_option_aggregation.reserved
-        ++ hdr.ioam_option_aggregation.ioamOptType;
-
-        bit<128> ioam_aggregation_data = hdr.ioam_aggregation.namespaceID
-        ++ hdr.ioam_aggregation.reserved
+        ++ hdr.ioam_pto.templateID
         ++ hdr.ioam_aggregation.dataParam
         ++ hdr.ioam_aggregation.aggregator
         ++ hdr.ioam_aggregation.flags
         ++ hdr.ioam_aggregation.aggregate
         ++ hdr.ioam_aggregation.auxilDataNodeID
-        ++ hdr.ioam_aggregation.hopCount;
+        ++ hdr.ioam_aggregation.hopCount
+        ++ hdr.ioam_pto_ndl.dataList;
 
         bit<16> ipv6_option_header_padn = hdr.ipv6_option_padn.optionType
         ++ hdr.ipv6_option_padn.optionDataLen;
 
         bit<32> padn_data = hdr.padn.padding;
 
-        bit<768> raw_full_ipv6_header = ipv6_main_header
+        bit<704> raw_full_ipv6_header = ipv6_main_header
         ++ hop_by_hop_ext_header
         ++ ipv6_option_header_ioam_pto
         ++ ioam_option_header_pto
         ++ ioam_pto_data
-        ++ ipv6_option_header_ioam_aggregation
-        ++ ioam_aggregation_header
-        ++ ioam_aggregation_data
         ++ ipv6_option_header_padn
         ++ padn_data;
 

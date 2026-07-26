@@ -1,6 +1,6 @@
 .PHONY: build prepare config run run-debug stop clean setup-env generate-config update-config clean-config build-network run-network run-network-debug stop-network clean-network run-monitoring stop-monitoring clean-monitoring
 
-# Chose the IOAM version to be deployed (currently supported: template, aggregation)
+# Chose the IOAM version to be deployed (currently supported: aggregation, template, trace_plus_template)
 IOAM_OPTION = aggregation
 
 # Reset this variable to chose the topology which should be deployed

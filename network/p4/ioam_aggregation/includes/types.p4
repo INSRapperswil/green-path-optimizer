@@ -15,14 +15,14 @@ typedef bit<128> ip6Addr_t;
 typedef bit<24> ioamNodeID_t;
 typedef bit<24> ioamDataParam_t;
 typedef bit<4> ioamFlag_t;
-typedef bit<8> ioamAggregator_t;
+typedef bit<4> ioamAggregator_t;
 typedef bit<32> ioamAggregate_t;
 typedef bit<16> ioamNamespace_t;
 
 struct ioamAggregationMeta_t {
     ioamAggregate_t aggregate;
     ioamDataParam_t dataParam;
-    bit<2> aggregatorSelector;
+    bit<2> aggrFuncSelector;
     bit<1> dataParamError;
     bit<1> otherError;
     bit<8> optionLength;

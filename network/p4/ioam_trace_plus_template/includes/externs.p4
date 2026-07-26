@@ -10,5 +10,5 @@ extern void ProcessEfficiencyIndicatorMetadata(
                                         in ioamAggregate_t indicatorValue,
                                         in ioamAggregateFunc_t indicatorAggregator,
                                         in ioamFlag_t indicatorFlags,
-                                        in bit<768> raw_ipv6_header
+                                        in bit<704> raw_ipv6_header
                                     );

@@ -66,10 +66,10 @@ header ioam_pto_t {
 // IOAM Aggreagation Type Option Header
 header ioam_aggregation_t {
     bit<16> namespaceID;
-    bit<4> flags;
-    bit<12> reserved;
+    bit<16> reserved;
     ioamDataParam_t dataParam; // identifies the type of data being aggregated
     ioamAggregator_t aggregator;
+    bit<4> flags;
     ioamAggregate_t aggregate;
     ioamNodeID_t auxilDataNodeID;
     bit<8> hopCount;

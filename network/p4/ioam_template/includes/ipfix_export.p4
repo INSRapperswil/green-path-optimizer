@@ -39,7 +39,7 @@ control process_ipfix_export(inout headers hdr,
 
         bit<32> ioam_header_template = hdr.ioam_template.namespaceID
         ++ hdr.ioam_template.templateID
-        ++ hdr.ioam_template.length;
+        ++ hdr.ioam_template.fep;
 
         bit<96> ioam_template_aggregation = hdr.ioam_aggregation.dataParam
         ++ hdr.ioam_aggregation.aggregator

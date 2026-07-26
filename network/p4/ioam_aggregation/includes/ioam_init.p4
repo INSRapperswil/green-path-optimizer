@@ -30,8 +30,8 @@ control process_ioam_init(inout headers hdr,
         meta.ioamAggregationMeta.dataParam = data_param;
     }
 
-    action init_ioam_aggregatorSelector() {
-        meta.ioamAggregationMeta.aggregatorSelector = (bit<2>) hdr.ipv6.payloadLen & 0b11;
+    action init_ioam_aggrFuncSelector() {
+        meta.ioamAggregationMeta.aggrFuncSelector = (bit<2>) hdr.ipv6.payloadLen & 0b11;
     }
 
     action init_ipv6_hop_opt() {
@@ -161,7 +161,7 @@ control process_ioam_init(inout headers hdr,
 
     table ioam_aggr_aggregator {
         key = {
-            meta.ioamAggregationMeta.aggregatorSelector: exact;
+            meta.ioamAggregationMeta.aggrFuncSelector: exact;
         }
         actions = {
             ioam_aggr_set_aggregator;
@@ -192,7 +192,7 @@ control process_ioam_init(inout headers hdr,
 
         // Initialize IOAM
         if (!hdr.ipv6_hop_opt.isValid() && meta.ioamAggregationMeta.otherError == 0 && meta.forwardingMeta.reverseRouteType == 0) {
-            init_ioam_aggregatorSelector();
+            init_ioam_aggrFuncSelector();
             init_ipv6_hop_opt();
             ioam_pto_push();
             ioam_aggregation_push();

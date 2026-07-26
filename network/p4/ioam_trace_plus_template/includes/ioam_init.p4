@@ -47,10 +47,10 @@ control process_ioam_init(inout headers hdr,
         hdr.ipv6_hop_opt.setValid();  
 
         // 2 Bytes: Hop By Hop Option header fields (Next Header, Length)
-        // 6 Bytes: All Option Header identifications (IOAM PTO, IOAM Template, PadN) each 2 Bytes 
+        // 4 Bytes: All Option Header identifications (IOAM PTO, PadN) each 2 Bytes 
         // Divided by 8 due to 8 octet alignment
         // Minus one because the first 8 octets are not included in the header length as per RFC8200
-        hdr.ipv6_hop_opt.hdrLen = (2 + 6 + IOAM_PTO_OPTION_LEN + meta.ioamTemplateMeta.optionLength + meta.ioamTemplateMeta.paddingLength) / 8 - 1;
+        hdr.ipv6_hop_opt.hdrLen = (2 + 4 + IOAM_PTO_OPTION_LEN + meta.ioamTemplateMeta.templateLength + meta.ioamTemplateMeta.paddingLength) / 8 - 1;
         
         // Initialize IPv6 Hop by Hop Extension Header
         hdr.ipv6_hop_opt.nextHeader = hdr.ipv6.nextHeader;
@@ -69,11 +69,11 @@ control process_ioam_init(inout headers hdr,
 
         // Initialize Option
         hdr.ipv6_option_pto.optionType = HOP_BY_HOP_IOAM_OPTION;
-        hdr.ipv6_option_pto.optionDataLen = IOAM_PTO_OPTION_LEN;
+        hdr.ipv6_option_pto.optionDataLen = IOAM_PTO_OPTION_LEN + meta.ioamTemplateMeta.templateLength;
 
         // Initialize IOAM Header
         hdr.ioam_option_pto.reserved = 0;
-        hdr.ioam_option_pto.ioamOptType = IOAM_PRE_ALLOC_TRACE_OPTION_TYPE;
+        hdr.ioam_option_pto.ioamOptType = IOAM_TRACE_PLUS_TEMPLATE_OPTION_TYPE;
 
         // Initialize IOAM Trace Option Type Header
         hdr.ioam_pto.namespaceID = meta.ioamMeta.namespaceID;
@@ -81,31 +81,15 @@ control process_ioam_init(inout headers hdr,
         hdr.ioam_pto.flags = 0;
         hdr.ioam_pto.remainingLen = (bit<7>) IOAM_PTO_NUM_NODES; // num of 4 octet units
         hdr.ioam_pto.ioamTraceType = 0x800000; // MSB set to 1
-        hdr.ioam_pto.reserved = 0;
-        hdr.ioam_pto.dataList = 0;
+        hdr.ioam_pto.templateID = IOAM_AGGREGATION_TEMPLATE;
     }
 
+    // For now this function only supports the initialization of the aggregation template
     action ioam_template_push() {
         // Set the added headers to be valid
-        hdr.ipv6_option_template.setValid();
-        hdr.ioam_option_template.setValid();
-        hdr.ioam_template.setValid();
         hdr.ioam_aggregation.setValid();
         hdr.ipv6_option_padn.setValid();
         hdr.padn.setValid();
-
-        // Initialize Option
-        hdr.ipv6_option_template.optionType = HOP_BY_HOP_IOAM_OPTION;
-        hdr.ipv6_option_template.optionDataLen = meta.ioamTemplateMeta.optionLength;
-
-        // Initialize IOAM Header
-        hdr.ioam_option_template.reserved = 0;
-        hdr.ioam_option_template.ioamOptType = IOAM_TEMPLATE_OPTION_TYPE;
-
-        // Initialize IOAM Template Option Type Header
-        hdr.ioam_template.namespaceID = meta.ioamMeta.namespaceID;
-        hdr.ioam_template.templateID = meta.ioamTemplateMeta.templateID;
-        hdr.ioam_template.fep = 0;
         
         // Initialize Aggregation Template fields
         hdr.ioam_aggregation.flags = 0;
@@ -118,6 +102,12 @@ control process_ioam_init(inout headers hdr,
         hdr.ipv6_option_padn.optionType = 1;
         hdr.ipv6_option_padn.optionDataLen = meta.ioamTemplateMeta.paddingLength;
         hdr.padn.padding = 0;
+    }
+
+    action ioam_pto_nl_push() {
+        // Set the added headers to be valid
+        hdr.ioam_pto_ndl.setValid();
+        hdr.ioam_pto_ndl.dataList = 0;
     }
 
     action ioam_aggr_set_aggregator(ioamAggregateFunc_t aggregator) {
@@ -208,6 +198,7 @@ control process_ioam_init(inout headers hdr,
             init_ipv6_hop_opt();
             ioam_pto_push();
             ioam_template_push();
+            ioam_pto_nl_push();
             ioam_aggr_aggregator.apply();
         }
     }
